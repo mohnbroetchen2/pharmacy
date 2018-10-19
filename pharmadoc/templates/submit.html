@@ -1,0 +1,121 @@
+{% extends 'bulma/base.html' %} {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+<script src="{% static '/js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+<link rel="stylesheet" href="{% static '/css/dataTables.bootstrap4.min.css' %}">
+{% block title %}FLI Pharmacy - Submission{% endblock %}
+{% endblock %}{% block content %}
+<h1 class="text-center"> FLI Pharmacy - Submission</h1>
+<form action="createsubmission" method="post"> {% csrf_token %}
+  <div class="field">
+    <label class="label">Pharmacy</label>
+    <div class="control">
+      <input class="input" name="pharmacy" type="text" readonly="readonly" value="{{object.pharmacy}}">
+      <input name="productid" type="hidden" value="{{object.pk}}" readonly="readonly">
+    </div>
+  </div> 
+  <div class="field">
+    <label class="label">Batch number</label>
+    <div class="control">
+      <input class="input" name="batch_number" type="text" readonly="readonly" value="{{object.batch_number}}">
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">Application number</label>
+    <div class="control">
+      <input class="input" name="application_number" type="text">
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">Submission date</label>
+    <div class="control">
+      <input class="input" name="submission_date" type="date">
+    </div>
+  </div>
+  <div class="control">
+    <label class="label">Recipient</label>
+    <div class="select">
+      <select name="recipient">
+         <option></option>
+         {% for p in persons %}
+         <option value="{{p.pk}}">{{p.name}}</option>
+         {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label" style="margin-top: 5px">Amount of (full) containers</label>
+    <div class="field has-addons has-addons-left">
+      <div class="control">
+        <input id="containers" class="input" name="full_containers" onchange="calculate()" type="number" value="0">
+      </div>
+      <label class="label" style="margin-left: 2em">Available containers</label>
+      {% for c in range %}
+      <div style="width:4em; margin-bottom:1em ">
+        <progress class="progress" value="{{object.quantity}}" max="{{object.quantity}}" style="-webkit-transform: rotate(270deg);
+        -moz-transform: rotate(270deg);
+        -o-transform: rotate(270deg);
+        transform: rotate(270deg);">100%</progress>
+      </div>
+      {% endfor %}
+      <div style="width:4em; margin-bottom:1em">
+        <progress class="progress" value="{{quantity_last_container}}" max="{{object.quantity}}" style="-webkit-transform: rotate(270deg);
+        -moz-transform: rotate(270deg);
+        -o-transform: rotate(270deg);
+        transform: rotate(270deg);">100%</progress>
+      </div>
+    </div>
+  </div>
+  <div class="field ">
+    <label class="label">Quantity ({{object.unit}})</label>
+    <div class="field has-addons has-addons-left">
+      <div class="control">
+        <input class="input" id="quantity" name="quantity" type="number" onchange="calculate()" placeholder="{{object.unit}}" value="0">
+        <input id="quantity_one_container" name="quantity_one_container" type="hidden" value="{{object.quantity}}" readonly="readonly">
+        <input id="available_quantity" name="available_quantity" type="hidden" value="{{object.available_quantity}}" readonly="readonly">
+      </div>
+      <div class="field">
+          <label class="label" style="margin-left: 2em">Overall quantity ({{object.unit}})</label>
+      </div>
+      <div class="field" style="margin-left: 2em" >
+          <input id="overall_quantity" class="input" name="overall_quantity" type="number" readonly="readonly" value="0">
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">Comment</label>
+    <div class="control">
+      <textarea class="textarea" name="comment"></textarea>
+    </div>
+  </div>
+  <div class="field is-grouped">
+    <div class="control">
+      <input type="submit" class="button is-primary" name='submit' value="Submit">
+    </div>
+    <!--div class="control" style="margin-left:2em">
+        <button class="button is-light">Cancel</button>
+    </div-->
+  </div>
+</div>
+</form>
+
+<script type="text/javascript">
+  function calculate ()
+  {
+    var quantity = document.getElementById('quantity').value;
+    var available_quantity = document.getElementById('available_quantity').value;
+    var containers= document.getElementById('containers').value;
+    var quantity_one_container = document.getElementById('quantity_one_container').value;
+    var summe = parseInt(quantity_one_container * containers) +  parseInt(quantity);
+
+    if (parseInt(summe)>parseInt(available_quantity))
+    {
+      var summe = ""
+    }
+    document.getElementById('overall_quantity').value = summe;
+  }
+  </script>
+
+{% endblock %}
