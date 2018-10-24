@@ -29,9 +29,9 @@ class Pharmacy(models.Model):
     company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
     animal_species = models.CharField(max_length=250, null=True)
     umwidmungsstufe = models.PositiveIntegerField()
-    storage_instructions = models.CharField(max_length=400, null=True)
+    storage_instructions = models.CharField(max_length=400, null=True, blank=True,)
     comment = models.TextField(blank=True, null=True) 
-    attachment = models.FileField(null=True, upload_to='uploads/pharmacy/%Y/%m/%d/')
+    attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/%Y/%m/%d/')
 
 
 

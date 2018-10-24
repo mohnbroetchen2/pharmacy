@@ -61,8 +61,16 @@
             <th class="header"> Batch Number
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Available
-            </th>
+            <th class="header"> Delivered quantity
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Delivered containers
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Available quantity
+          </th>
+          <th class="header"> Available containers 
+          </th>
             <th class="header"> Comments
             </th>
             <th class="header"></th>
@@ -74,12 +82,15 @@
           <tr {% if not p.available %}class="strikeout" {% endif %}>
             <td>{{p.pk}}</td>
             <td>{{p.pharmacy}}</td>
-            <td>{{p.pharmacy.molecule}}</td>
+            <td>{{p.molecule}}</td>
             <td>{{p.pharmacy.company}}</td>
             <td>{{p.delivery_date}}</td>
             <td>{{p.expiry_date}}</td>
             <td>{{p.batch_number}}</td>
-            <td>{{p.available_quantity}}{{p.unit}} ({{p.available_containers}} from {{p.amount_containers}} containers)</td>
+            <td>{{p.delivered_quantity}}{{p.unit}}</td>
+            <td>{{p.amount_containers}}</td>
+            <td>{{p.delivered_quantity}}{{p.unit}}</td>
+            <td>{{p.available_containers}}</td>
             <td>{{p.comments}}</td>
             <td><a href="/submit/{{p.pk}}">submit</a></td>
             <td><a href="/submissions/{{p.pk}}">more</a></td>
