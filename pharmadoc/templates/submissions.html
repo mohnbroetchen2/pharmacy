@@ -57,7 +57,7 @@
             <th class="header"> Expiry Date
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Delivered quantity
+            <th class="header"> Delivered quantity ({{product.unit}})
                 <i class="icon-sort"></i>
             </th>
             <th class="header"> Delivered containers
@@ -66,7 +66,9 @@
             <th class="header"> Batch Number
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Available
+            <th class="header"> Available ({{product.unit}})
+            </th>
+            <th class="header"> Available containers 
             </th>
             <th class="header"> Comments
             </th>
@@ -80,10 +82,11 @@
             <td>{{product.pharmacy.company}}</td>
             <td>{{product.delivery_date}}</td>
             <td>{{product.expiry_date}}</td>
-            <td>{{product.delivered_quantity}}{{product.unit}}</td>
+            <td>{{product.delivered_quantity}}</td>
             <td>{{product.amount_containers}}</td>
             <td>{{product.batch_number}}</td>
-            <td>{{product.available_quantity}}{{product.unit}} ({{product.available_containers}} containers)</td>
+            <td>{{product.available_quantity}} from {{product.delivered_quantity}}</td>
+            <td>{{product.available_containers}} from {{product.amount_containers}}</td>
             <td>{{product.comments}}</td>
           </tr>
         </tbody>

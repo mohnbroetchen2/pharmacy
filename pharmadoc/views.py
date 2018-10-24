@@ -9,24 +9,24 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from .models import Product, Pharmacy, Person, Submission, DrugClass, Company, Submission
-from .filters import ProductFilter
+from .models import Pharmacy, Person, Submission, DrugClass, Company, StockProduct
+from .filters import StockProductFilter
 from django.utils.html import strip_tags
 
 @login_required
 def start_view(request):
-    productlist = Product.objects.all()
-    f = ProductFilter(request.GET, queryset=productlist)
+    productlist = StockProduct.objects.all()
+    f = StockProductFilter(request.GET, queryset=productlist)
     return render(request, 'home.html', {'filter': f})
 
 @login_required
 def submit_view(request, primary_key):
-    product= get_object_or_404(Product, pk=primary_key)
+    product= get_object_or_404(StockProduct, pk=primary_key)
     persons = Person.objects.filter(state='active')
     available_containers = product.available_containers()
     available_quantity = product.available_quantity()
     available_quantity_last_container = product.available_quantity_last_container()
-    return render(request, 'submit.html', {'object': product, 'persons':persons, 'range':range(available_containers-1), 'quantity_last_container':available_quantity_last_container,})
+    return render(request, 'submit.html', {'object': product, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,})
 
 @login_required
 def createsubmission(request):
@@ -48,9 +48,9 @@ def createsubmission(request):
 
 @login_required
 def seesubmissions(request, primary_key):
-    product= get_object_or_404(Product, pk=primary_key)
+    product= get_object_or_404(StockProduct, pk=primary_key)
     submissionlist = Submission.objects.filter(product__pk=primary_key).order_by('-date')
     available_containers = product.available_containers()
     available_quantity = product.available_quantity()
     available_quantity_last_container = product.available_quantity_last_container()
-    return render(request, 'submissions.html', {'product': product, 'submissions':submissionlist, 'range':range(available_containers-1), 'quantity_last_container':available_quantity_last_container,})
+    return render(request, 'submissions.html', {'product': product, 'submissions':submissionlist, 'quantity_last_container':available_quantity_last_container,})

@@ -25,8 +25,8 @@ var/
 auth.json
 auth_permission.json
 backup.json
-animals.Lab.json
-animals.Person.json
+pharmadoc.Lab.json
+pharmadoc.Person.json
 
 
 example_import_fish.xlsx
@@ -74,11 +74,12 @@ local_settings.py
 .vscode/
 db.sqlite3
 db.sqlite3.*
-animals/lab.yaml
-animals/person.yaml
-animals/animals.yaml
-animals/auth.yaml
-animals/migrations
+pharmadoc/lab.yaml
+pharmadoc/person.yaml
+pharmadoc/pharmadoc.yaml
+pharmadoc/auth.yaml
+pharmadoc/migrations
+uploads/
 doc/_build
 anishare/local_settings.py
 static_collected

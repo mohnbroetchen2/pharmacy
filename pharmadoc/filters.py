@@ -3,9 +3,9 @@ Filters: using django-filters to filter querysets
 """
 import django_filters
 from django_filters import FilterSet
-from .models import Product, Pharmacy, Person, Submission, DrugClass, Company
+from .models import StockProduct, Pharmacy, Person, Submission, DrugClass, Company
 
-class ProductFilter(FilterSet):
+class StockProductFilter(FilterSet):
     class Meta:
-        model = Product
+        model = StockProduct
         fields = ['pharmacy','batch_number']
