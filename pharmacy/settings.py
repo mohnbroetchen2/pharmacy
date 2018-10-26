@@ -26,7 +26,7 @@ SECRET_KEY = 'j4l-*$cxsw%us(sz=#6-u(oh$1pof3d0a#+w7r2)mf(%v^-end'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pharmacy.scinet.fli-leibniz.de','pharmacy.flinet.fli-leibniz.de','pharmacy.fli-leibniz.de' ]
+ALLOWED_HOSTS = ['pharmacy.scinet.fli-leibniz.de','pharmacy.flinet.fli-leibniz.de','pharmacy.fli-leibniz.de','pharmacy.scinet.leibniz-fli.de','pharmacy.flinet.leibniz-fli.de','pharmacy.leibniz-fli.de']
 
 
 # Application definition
