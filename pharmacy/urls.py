@@ -25,4 +25,5 @@ urlpatterns = [
     path('submit/<int:primary_key>', pharmadoc.views.submit_view, name='submitview'),
     path('submissions/<int:primary_key>', pharmadoc.views.seesubmissions, name='seesubmissions'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('password/reset', pharmadoc.views.change_password, name='change_password'),
 ]

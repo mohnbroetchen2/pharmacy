@@ -26,13 +26,12 @@ SECRET_KEY = 'j4l-*$cxsw%us(sz=#6-u(oh$1pof3d0a#+w7r2)mf(%v^-end'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pharmacy.scinet.fli-leibniz.de','pharmacy.flinet.fli-leibniz.de','pharmacy.fli-leibniz.de','pharmacy.scinet.leibniz-fli.de','pharmacy.flinet.leibniz-fli.de','pharmacy.leibniz-fli.de']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','pharmacy.scinet.fli-leibniz.de','pharmacy.flinet.fli-leibniz.de','pharmacy.fli-leibniz.de','pharmacy.scinet.leibniz-fli.de','pharmacy.flinet.leibniz-fli.de','pharmacy.leibniz-fli.de']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'pharmadoc.apps.PharmadocConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'pharmadoc',
+    'admin_reorder',
     'bulma',
 ]
 
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 ROOT_URLCONF = 'pharmacy.urls'
@@ -103,13 +105,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ADMIN_REORDER = (
+    {'app': 'pharmadoc', 'label': 'PHARMADOC', 'models': (
+        {'model': 'pharmadoc.Pharmacy', 'label': 'Product Infos'},
+        {'model': 'pharmadoc.StockProduct', 'label': 'Stock products'},
+        {'model': 'pharmadoc.Submission', 'label': 'Submissions'},
+        {'model': 'pharmadoc.Person', 'label': 'Persons'},
+        {'model': 'pharmadoc.Company', 'label': 'Companies'},
+        {'model': 'pharmadoc.DrugClass', 'label': 'Drug class'},
+        )},
+    {'app': 'auth', 'label': 'Authentication and Authorization'},
+    'admin_interface',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
+
+DATETIME_FORMAT = 'd.m.Y H:i:sO'
+DATE_FORMAT = 'd.m.Y'
+DATE_INPUT_FORMATS =\
+[
+    '%d.%m.%y', '%d.%m.%Y',
+    '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', # '2006-10-25', '10/25/2006', '10/25/06'
+    '%b %d %Y', '%b %d, %Y',            # 'Oct 25 2006', 'Oct 25, 2006'
+    '%d %b %Y', '%d %b, %Y',            # '25 Oct 2006', '25 Oct, 2006'
+    '%B %d %Y', '%B %d, %Y',            # 'October 25 2006', 'October 25, 2006'
+    '%d %B %Y', '%d %B, %Y',            # '25 October 2006', '25 October, 2006'
+]
 
 USE_I18N = True
 

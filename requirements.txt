@@ -1,2 +1,3 @@
 django-filter>=2.0
 django-bulma>=0.5.1
+django-modeladmin-reorder>=0.1.0

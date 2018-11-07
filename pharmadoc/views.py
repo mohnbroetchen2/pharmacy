@@ -11,7 +11,9 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from .models import Pharmacy, Person, Submission, DrugClass, Company, StockProduct
 from .filters import StockProductFilter
-from django.utils.html import strip_tags
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import redirect
 
 @login_required
 def start_view(request):
@@ -34,7 +36,7 @@ def createsubmission(request):
         productid = request.POST.get("productid")
         personid  = request.POST.get("recipient")
         new_submission = Submission();
-        new_submission.product              = Product.objects.get(pk=productid)
+        new_submission.product              = StockProduct.objects.get(pk=productid)
         new_submission.person               = Person.objects.get(pk=personid)
         new_submission.application_number   = request.POST.get("application_number",None)
         new_submission.date                 = request.POST.get("submission_date",None)
@@ -54,3 +56,20 @@ def seesubmissions(request, primary_key):
     available_quantity = product.available_quantity()
     available_quantity_last_container = product.available_quantity_last_container()
     return render(request, 'submissions.html', {'product': product, 'submissions':submissionlist, 'quantity_last_container':available_quantity_last_container,})
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'accounts/change_password.html', {
+        'form': form
+    })

@@ -6,11 +6,15 @@ class Company(models.Model):
     name = models.CharField(max_length=250)
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name_plural = "Companies"
 
 class DrugClass(models.Model):
     name = models.CharField(max_length=250)
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name_plural = "Drug class"
 
 
 class Pharmacy(models.Model):
@@ -20,20 +24,20 @@ class Pharmacy(models.Model):
         ('deactivated', 'deactivated'),
         ),default='active')
     active_substance = models.CharField(max_length=250)
-    dose = models.CharField(max_length=250, null=True)
+    dose = models.CharField(max_length=250, null=True, verbose_name='concentration')
     drug_class = models.ManyToManyField(DrugClass, related_name='Drug_class',)
     type = models.CharField(max_length=50, choices=(
         ('veterinary', 'veterinary'),
         ('human', 'human'),
         ),)
-    company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
     animal_species = models.CharField(max_length=250, null=True)
     umwidmungsstufe = models.PositiveIntegerField()
     storage_instructions = models.CharField(max_length=400, null=True, blank=True,)
     comment = models.TextField(blank=True, null=True) 
     attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/%Y/%m/%d/')
-
-
+    class Meta:
+        verbose_name = "Product Info"
+        verbose_name_plural = "Product Infos"
 
 
     def __str__(self):
@@ -41,12 +45,13 @@ class Pharmacy(models.Model):
 
 class StockProduct (models.Model):
     pharmacy = models.ForeignKey(Pharmacy, null=True, on_delete=models.SET_NULL)
+    company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
     state = models.CharField(max_length=50, choices=(
         ('active', 'active'),
         ('deactivated', 'deactivated'),
         ),default='active')
     molecule = models.CharField(max_length=250)
-    amount_containers = models.PositiveIntegerField(default=1)
+    amount_containers = models.PositiveIntegerField(default=1, verbose_name='Amount of ordered Containers')
     quantity = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,)
     unit = models.CharField(max_length=10, choices=(
         ('ml', 'ml'),
@@ -59,7 +64,7 @@ class StockProduct (models.Model):
     batch_number = models.CharField(max_length=250)
     consumed = models.DecimalField(null=True, blank=True,default=0,max_digits=10, decimal_places=3,)
     comment = models.TextField(blank=True, null=True) 
-    alarm_value =  models.PositiveIntegerField(null=True, blank=True) 
+    alarm_value =  models.PositiveIntegerField(null=True, blank=True, help_text="Please enter a number of full containers. If less container are available Alessia gets a mail.") 
     
 
     def __str__(self):
