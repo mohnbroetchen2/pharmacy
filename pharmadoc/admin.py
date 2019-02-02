@@ -23,8 +23,8 @@ class PersonAdmin(admin.ModelAdmin):
 
 @admin.register(StockProduct)
 class StockProductAdmin(admin.ModelAdmin):
-    list_display = ('pharmacy','state','amount_containers','quantity','unit','delivery_date','expiry_date','company','batch_number','consumed','available_containers','available_quantity','alarm_value')
-    search_fields = ('pharmacy','state','amount_containers','quantity','unit','delivery_date','expiry_date','company','batch_number','consumed','alarm_value')
+    list_display = ('pharmacy','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed','available_containers','available_quantity')
+    search_fields = ('pharmacy','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
     #ordering = ('pharmacy','pharmacy__name', )
 
 @admin.register(Submission)
@@ -37,8 +37,8 @@ class SubmissionAdmin(admin.ModelAdmin):
 class PharmacyAdmin(admin.ModelAdmin):
     #list_display = ('name','state','molecule','type','company','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
     #search_fields = ('name','state','molecule','type','company__name','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
-    list_display = ('name','state','dose','type','animal_species','umwidmungsstufe','storage_instructions','comment','attachment')
-    search_fields = ('name','state','dose','type','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
+    list_display = ('name','company','state','dose','type','animal_species','umwidmungsstufe','storage_instructions','comment','attachment')
+    search_fields = ('name','company__name','state','dose','type','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
     ordering = ('name','state',)
 
 class SubmissionForm(forms.ModelForm):
@@ -64,4 +64,4 @@ class StockProductForm(forms.ModelForm):
     """
     class Meta:
         model = StockProduct
-        fields = ('pharmacy','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','company')
+        fields = ('pharmacy','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number')

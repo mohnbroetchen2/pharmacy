@@ -10,15 +10,22 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from .models import Pharmacy, Person, Submission, DrugClass, Company, StockProduct
-from .filters import StockProductFilter
+from .filters import StockProductFilter, PharmacyFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect
 
 @login_required
 def start_view(request):
-    productlist = StockProduct.objects.all()
-    f = StockProductFilter(request.GET, queryset=productlist)
+    pharmacylist = Pharmacy.objects.all()
+    for p in pharmacylist:
+        if pha
+    f = PharmacyFilter(request.GET, queryset=pharmacylist)
+    return render(request, 'home.html', {'filter': f})
+
+def active_pharmacy_view(request, primary_key):
+    pharmacy = Pharmacy.objects.get(pk=primary_key)
+    stockProductlist =  StockProduct.object.filter(pharmacy__pk=primary_key).filter(state='active')
     return render(request, 'home.html', {'filter': f})
 
 @login_required

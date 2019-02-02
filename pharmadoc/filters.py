@@ -8,4 +8,9 @@ from .models import StockProduct, Pharmacy, Person, Submission, DrugClass, Compa
 class StockProductFilter(FilterSet):
     class Meta:
         model = StockProduct
-        fields = ['pharmacy','batch_number','company']
+        fields = ['pharmacy','batch_number']
+
+class PharmacyFilter(FilterSet):
+    class Meta:
+        model = Pharmacy
+        fields = ['name','company',]
