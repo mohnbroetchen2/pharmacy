@@ -11,23 +11,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "static_collected")
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'j4l-*$cxsw%us(sz=#6-u(oh$1pof3d0a#+w7r2)mf(%v^-end'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost','127.0.0.1','pharmacy.scinet.fli-leibniz.de','pharmacy.flinet.fli-leibniz.de','pharmacy.fli-leibniz.de','pharmacy.scinet.leibniz-fli.de','pharmacy.flinet.leibniz-fli.de','pharmacy.leibniz-fli.de']
-
 
 # Application definition
 

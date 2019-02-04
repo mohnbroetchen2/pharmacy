@@ -18,8 +18,11 @@ from django.shortcuts import redirect
 @login_required
 def start_view(request):
     pharmacylist = Pharmacy.objects.all()
+    i=0
     for p in pharmacylist:
-        if pha
+        if p.available_quantity() == 0:
+            pharmacylist.delete(i)
+            i=i+1
     f = PharmacyFilter(request.GET, queryset=pharmacylist)
     return render(request, 'home.html', {'filter': f})
 
@@ -57,11 +60,16 @@ def createsubmission(request):
 
 @login_required
 def seesubmissions(request, primary_key):
-    product= get_object_or_404(StockProduct, pk=primary_key)
-    submissionlist = Submission.objects.filter(product__pk=primary_key).order_by('-date')
-    available_containers = product.available_containers()
-    available_quantity = product.available_quantity()
-    available_quantity_last_container = product.available_quantity_last_container()
+    # übergabe der arznei --> Anzeige aller aktiven produkte mit deren submissions
+    #pharmacy = Pharmacy.objects.get(pk=primary_key)
+    #oder
+    productlist = StockProduct.objects.filter(state='active').filter(pharmacy__pk=primary_key)
+    
+    #product= get_object_or_404(StockProduct, pk=primary_key)
+    #submissionlist = Submission.objects.filter(product__pk=primary_key).order_by('-date')
+    #available_containers = product.available_containers()
+    #available_quantity = product.available_quantity()
+    #available_quantity_last_container = product.available_quantity_last_container()
     return render(request, 'submissions.html', {'product': product, 'submissions':submissionlist, 'quantity_last_container':available_quantity_last_container,})
 
 @login_required

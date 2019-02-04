@@ -101,7 +101,9 @@ class StockProduct (models.Model):
     
 
     def __str__(self):
-        return self.batch_number
+        text = self.pharmacy.name
+        text = text + " " + self.batch_number + " " + str(self.delivery_date)
+        return (text)
 
     def available(self):
         """
