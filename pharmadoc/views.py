@@ -19,10 +19,10 @@ from django.shortcuts import redirect
 def start_view(request):
     pharmacylist = Pharmacy.objects.all()
     i=0
-    for p in pharmacylist:
-        if p.available_quantity() == 0:
-            pharmacylist.delete(i)
-            i=i+1
+    #for p in pharmacylist:
+        #if p.available_quantity() == 0:
+        #    pharmacylist.delete(i)
+        #    i=i+1
     f = PharmacyFilter(request.GET, queryset=pharmacylist)
     return render(request, 'home.html', {'filter': f})
 
