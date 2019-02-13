@@ -16,6 +16,15 @@ class DrugClass(models.Model):
     class Meta:
         verbose_name_plural = "Drug class"
 
+class Molecule(models.Model):
+    name = models.CharField(max_length=250)
+    drug_class = models.ManyToManyField(DrugClass, related_name='Drug_class',)
+    def __str__(self):
+        return self.name
+    
+    def get_drug_class(self):
+        """Get all organ types which are used"""
+        return ", ".join([dc.name for dc in self.drug_class.all()])
 
 class Pharmacy(models.Model):
     name = models.CharField(max_length=250)
@@ -23,10 +32,9 @@ class Pharmacy(models.Model):
         ('active', 'active'),
         ('deactivated', 'deactivated'),
         ),default='active')
-    company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
-    active_substance = models.CharField(max_length=250, verbose_name='molecule')
-    dose = models.CharField(max_length=250, null=True, verbose_name='concentration')
-    drug_class = models.ManyToManyField(DrugClass, related_name='Drug_class',)
+    molecule = models.ForeignKey(Molecule, null=False, on_delete=models.CASCADE) 
+    company = models.ForeignKey(Company, null=False, on_delete=models.CASCADE)
+    dose = models.CharField(max_length=250, null=False, verbose_name='concentration active substance')
     type = models.CharField(max_length=50, choices=(
         ('veterinary', 'veterinary'),
         ('human', 'human'),
@@ -43,25 +51,27 @@ class Pharmacy(models.Model):
 
 
     def __str__(self):
-        return self.name
+        return (self.name + " " + self.dose)
 
     def available_quantity(self):
-        products = self.stockproduct_set.all()
+        products = self.order_set.all()
         quantity = 0
         for p in products:
-            quantity = quantity + p.available_quantity()
+            if p.state == 'active':
+                quantity = quantity + p.available_quantity()
         return quantity 
     
     def available_container(self):
-        products = self.stockproduct_set.all()
+        products = self.order_set.all()
         quantity = 0
         for p in products:
-            quantity = quantity + p.available_containers()
+            if p.state == 'active':
+                quantity = quantity + p.available_containers()
         
         return quantity 
     
     def unit(self):
-        products = self.stockproduct_set.all()
+        products = self.order_set.all()
         i=0
         unit = ''
         for p in products:
@@ -74,9 +84,9 @@ class Pharmacy(models.Model):
         return (unit)
 
 
-
-
-class StockProduct (models.Model):
+#class StockProduct (models.Model):
+class Order (models.Model):
+    identifier = models.CharField(max_length=50)
     pharmacy = models.ForeignKey(Pharmacy, null=True, on_delete=models.SET_NULL)
     #company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
     state = models.CharField(max_length=50, choices=(
@@ -84,8 +94,9 @@ class StockProduct (models.Model):
         ('deactivated', 'deactivated'),
         ),default='active')
     #molecule = models.CharField(max_length=250)
-    amount_containers = models.PositiveIntegerField(default=1, verbose_name='Amount of ordered Containers')
-    quantity = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,)
+    
+    amount_containers = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
+    quantity = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
     unit = models.CharField(max_length=10, choices=(
         ('ml', 'ml'),
         ('l', 'l'),
@@ -95,7 +106,6 @@ class StockProduct (models.Model):
     delivery_date = models.DateField(null=False)
     expiry_date = models.DateField(null=False)
     batch_number = models.CharField(max_length=250)
-    consumed = models.DecimalField(null=True, blank=True,default=0,max_digits=10, decimal_places=3,)
     comment = models.TextField(blank=True, null=True) 
     
     
@@ -116,7 +126,7 @@ class StockProduct (models.Model):
         return(self.amount_containers * self.quantity)
     
     def available_containers(self):
-        submissionlist = Submission.objects.filter(product__pk=self.pk)
+        submissionlist = Submission.objects.filter(order__pk=self.pk)
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -131,7 +141,7 @@ class StockProduct (models.Model):
             return((realamount // quantity)+1)
 
     def available_quantity(self):
-        submissionlist = Submission.objects.filter(product__pk=self.pk)
+        submissionlist = Submission.objects.filter(order__pk=self.pk)
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -145,7 +155,7 @@ class StockProduct (models.Model):
         return(realamount)
     
     def available_quantity_last_container(self):
-        submissionlist = Submission.objects.filter(product__pk=self.pk)
+        submissionlist = Submission.objects.filter(order__pk=self.pk)
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -171,7 +181,7 @@ class Person(models.Model):
 
 class Submission(models.Model):
     application_number = models.CharField(max_length=250)
-    product = models.ForeignKey(StockProduct, null=True, on_delete=models.SET_NULL)
+    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
     date = models.DateField(null=False)
     creation_date = models.DateTimeField(null=False, auto_now_add=True)
     person = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
@@ -180,12 +190,12 @@ class Submission(models.Model):
     comment = models.TextField(blank=True, null=True)
     procedure_control = models.CharField(max_length=800,  null=True, blank=True,)
     added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
-    attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/stockproduct/%Y/%m/%d/')
-    attachment2 = models.FileField(null=True, blank=True, upload_to='uploads/stockproduct/%Y/%m/%d/') 
+    attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
+    attachment2 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
 
     def fullamount(self):
         if self.amount_containers is None:
             return (self.quantity)
         else:
-            return (self.amount_containers * self.product.quantity + self.quantity)
-# Create your models here.
+            return (self.amount_containers * self.order.quantity + self.quantity)
+

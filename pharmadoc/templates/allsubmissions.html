@@ -1,0 +1,168 @@
+{% extends "base.html" %} {% load static %} {% block extrascripts %}{% load widget_tweaks %}
+
+
+
+{% block title %}FLI Pharmacy{% endblock %}
+<script>
+  $(document).ready(function () {
+    $('#datatable').DataTable({
+      "searching": true,
+      "scrollX": false,
+      "order": [[0, 'desc']],
+      "scrollCollapse": true,
+      "paging": true,
+    });
+  });
+</script> {% endblock %} {% block content %}
+<style>
+  < !-- style the filterform so it kinda fits on the screen>-->#filterform label {
+    font-size: 75%;
+  }
+
+  #filterform select {
+    font-size: 75%;
+  }
+
+  #filterform input {
+    font-size: 75%;
+  }
+
+  #filterform {
+    padding: 10px;
+  }
+</style>
+<h1 class="text-center"> FLI Pharmacy - Submissions {{Pharmacy}}</h1>
+  <div class="col-lg-12">
+    <div class="table-responsive">
+      <table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
+        <thead>
+          <tr>
+            <th class="header"> Name
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Company
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Molecule
+                <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Drug class
+                <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Dose
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Pharmacy type
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Animal species
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Umwidmungs-stufe
+                <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Storage instructions
+                <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Comment
+            </th>
+            <th class="header"> Attachment
+            </th>
+            <th class="header"> Alarm value 
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{pharmacy}}</td>        
+            <td>{{pharmacy.company}}</td>
+            <td>{{pharmacy.molecule}}</td>
+            <td>{{pharmacy.molecule.get_drug_class}}</td>
+            <td>{{pharmacy.dose}}</td>
+            <td>{{pharmacy.type}}</td>
+            <td>{{pharmacy.animal_species}}</td>
+            <td>{{pharmacy.umwidmungsstufe}}</td>
+            <td>{{pharmacy.storage_instructions}}</td>
+            <td>{{pharmacy.comment}}</td>
+            <td>{{pharmacy.attachment}}</td>
+            <td>{{pharmacy.alarm_value}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <section class="section">
+        <div class="container "> 
+            <div class="notification">
+                <div class="columns is-centered">
+                    <div class="column is-narrow">
+    
+                        <form method="get">
+                          <div class="well">
+                            <div class="container-fluid">
+                              <div class="m-sm-1">
+                                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#filterBlock">Filter</button>
+                              </div>
+                              <div id="filterBlock" class="collapse">
+                                <div class="row">
+                                  <div class="form-group col-sm-3 col-md-2">
+                                    {{filter.form.application_number.label_tag}} {% render_field filter.form.application_number class="form-control" %}
+                                  </div>
+                                  <div class="form-group col-sm-3 col-md-3">
+                                      {{filter.form.order.label_tag}} {% render_field filter.form.order class="form-control" %}
+                                  </div>
+                                  <div class="form-group col-sm-3 col-md-3">
+                                      {{filter.form.person.label_tag}} {% render_field filter.form.person class="form-control" %}
+                                  </div>
+                                  <div>
+                                    <p>
+                                      <button type="submit" style="margin-top:42%;" class="btn">Search</button>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+    <table id="submission" class="table table is-striped table is-hoverable">
+      <thead>
+        <tr>
+          <th class="header"> Application number
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Submitted order
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Submission date
+            <i class="icon-sort"></i>
+          </th>
+          
+          <th class="header"> Recipient
+            <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Delivered quantity
+            <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Comments
+          </th>
+          <th class="header"> Added by
+            </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in filter.qs %}
+        <tr>
+          <td>{{s.application_number}}</td>
+          <td>{{s.order.identifier}}</td>
+          <td>{{s.date}}</td>
+          <td>{{s.person}}</td>
+          <td>{{s.fullamount|floatformat:0}} {{s.order.unit}}</td>
+          <td>{{s.comment}}</td>
+          <td>{{s.added_by}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div> </div></div> </div>
+  </section>
+  </div>
+{% endblock %}

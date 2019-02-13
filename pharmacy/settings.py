@@ -15,7 +15,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "static_collected")
-
+EMAIL_HOST = '127.0.0.1'
 # Application definition
 
 INSTALLED_APPS = [
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'widget_tweaks',
     'pharmadoc',
     'admin_reorder',
     'bulma',
@@ -94,16 +95,26 @@ AUTH_PASSWORD_VALIDATORS = [
 
 ADMIN_REORDER = (
     {'app': 'pharmadoc', 'label': 'PHARMADOC', 'models': (
-        {'model': 'pharmadoc.Pharmacy', 'label': 'Product Infos'},
-        {'model': 'pharmadoc.StockProduct', 'label': 'Stock products'},
+        {'model': 'pharmadoc.Pharmacy', 'label': 'Pharmacy'},
+        {'model': 'pharmadoc.Order', 'label': 'Order'},
         {'model': 'pharmadoc.Submission', 'label': 'Submissions'},
         {'model': 'pharmadoc.Person', 'label': 'Persons'},
         {'model': 'pharmadoc.Company', 'label': 'Companies'},
         {'model': 'pharmadoc.DrugClass', 'label': 'Drug class'},
+        {'model': 'pharmadoc.Molecule', 'label': 'Molecule'},
         )},
     {'app': 'auth', 'label': 'Authentication and Authorization'},
     'admin_interface',
 )
+
+def FILTERS_VERBOSE_LOOKUPS():
+    from django_filters.conf import DEFAULTS
+
+    verbose_lookups = DEFAULTS['VERBOSE_LOOKUPS'].copy()
+    verbose_lookups.update({
+        'icontains': '',
+    })
+    return verbose_lookups
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/

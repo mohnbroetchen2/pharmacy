@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 import pharmadoc
 from pharmadoc import urls
 
@@ -22,8 +24,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', pharmadoc.views.start_view, name='startview'),
     path('submit/createsubmission', pharmadoc.views.createsubmission, name='createsubmission'),
+    path('selectpharmacyforsubmitview/<int:primary_key>', pharmadoc.views.selectpharmacyforsubmitview, name='selectpharmacyforsubmitview'),
     path('submit/<int:primary_key>', pharmadoc.views.submit_view, name='submitview'),
     path('submissions/<int:primary_key>', pharmadoc.views.seesubmissions, name='seesubmissions'),
+    path('allsubmissions/<int:primary_key>', pharmadoc.views.allsubmissions, name='allsubmissions'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('showorders/<int:primary_key>', pharmadoc.views.showorders, name='showorders'),
     path('password/reset', pharmadoc.views.change_password, name='change_password'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

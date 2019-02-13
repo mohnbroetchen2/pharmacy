@@ -33,13 +33,13 @@
     padding: 10px;
   }
 </style>
-<h1 class="text-center"> FLI Pharmacy - See all Submissions</h1>
+<h1 class="text-center"> FLI Pharmacy - Submissions {{order.identifier}}</h1>
   <div class="col-lg-12">
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
         <thead>
           <tr>
-            <th class="header"> ID
+            <th class="header"> Identifier
               <i class="icon-sort"></i>
             </th>
             <th class="header"> Name
@@ -60,13 +60,13 @@
             <th class="header"> Batch Number
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Delivered quantity ({{product.unit}})
+            <th class="header"> Delivered quantity ({{order.unit}})
                 <i class="icon-sort"></i>
             </th>
             <th class="header"> Delivered containers
                 <i class="icon-sort"></i>
             </th>
-            <th class="header"> Available ({{product.unit}})
+            <th class="header"> Available ({{order.unit}})
             </th>
             <th class="header"> Available containers 
             </th>
@@ -76,18 +76,18 @@
         </thead>
         <tbody>
           <tr>
-            <td>{{product.pk}}</td>
-            <td>{{product.pharmacy}}</td>
-            <td>{{product.molecule}}</td>
-            <td>{{product.company}}</td>
-            <td>{{product.delivery_date}}</td>
-            <td>{{product.expiry_date}}</td>
-            <td>{{product.batch_number}}</td>
-            <td>{{product.delivered_quantity}}</td>
-            <td>{{product.amount_containers}}</td>
-            <td>{{product.available_quantity}} from {{product.delivered_quantity}}</td>
-            <td>{{product.available_containers}} from {{product.amount_containers}}</td>
-            <td>{{product.comments}}</td>
+            <td>{{order.identifier}}</td>
+            <td>{{pharmacy}}</td>
+            <td>{{pharmacy.molecule}}</td>
+            <td>{{pharmacy.company}}</td>
+            <td>{{order.delivery_date}}</td>
+            <td>{{order.expiry_date}}</td>
+            <td>{{order.batch_number}}</td>
+            <td>{{order.delivered_quantity}}</td>
+            <td>{{order.amount_containers}}</td>
+            <td>{{order.available_quantity}} from {{order.delivered_quantity}}</td>
+            <td>{{order.available_containers}} from {{order.amount_containers}}</td>
+            <td>{{order.comments}}</td>
           </tr>
         </tbody>
       </table>
