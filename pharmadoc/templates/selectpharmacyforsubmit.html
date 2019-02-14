@@ -1,10 +1,12 @@
-{% extends 'bulma/base.html' %} {% load static %} {% block extrascripts %}
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
 {% load bulma_tags %}
 
 <script src="{% static '/js/jquery-2.0.3.min.js' %}"></script>
 <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
 <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
 <link rel="stylesheet" href="{% static '/css/dataTables.bootstrap4.min.css' %}">
+
+
 {% block title %}FLI Pharmacy - Select the order for the submission{% endblock %}
 {% endblock %}{% block content %}
 <h1 class="text-center"> FLI Pharmacy - Select the order for the submission</h1>
@@ -32,7 +34,7 @@
         {% for o in order %}
         <tr >
           <td>
-              <input type="radio" class="custom-control-input" id="select{{o.pk}}" name="selected" value="{{o.pk}}">
+              <input type="radio"  id="select{{o.pk}}" name="selected" value="{{o.pk}}">
           </td>
           <td>{{pharmacy}}</td>
           <td>{{o.identifier}}</td>
