@@ -18,13 +18,18 @@ from django.shortcuts import redirect
 @login_required
 def start_view(request):
     pharmacylist = Pharmacy.objects.all()
-    i=0
+    #i=0
     #for p in pharmacylist:
-        #if p.available_quantity() == 0:
-        #    pharmacylist.delete(i)
-        #    i=i+1
+    #    if p.available_quantity() == 0:
+     #      pharmacylist.remove(i)
+     #   i=i+1
     f = PharmacyFilter(request.GET, queryset=pharmacylist)
     return render(request, 'home.html', {'filter': f})
+
+def start_all_view(request):
+    pharmacylist = Pharmacy.objects.all()
+    f = PharmacyFilter(request.GET, queryset=pharmacylist)
+    return render(request, 'home_all.html', {'filter': f})
 
 def active_pharmacy_view(request, primary_key):
     pharmacy = Pharmacy.objects.get(pk=primary_key)

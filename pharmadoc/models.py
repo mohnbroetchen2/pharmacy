@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
+import os
 
 class Company(models.Model):
     name = models.CharField(max_length=250)
@@ -18,7 +19,6 @@ class DrugClass(models.Model):
 
 class Molecule(models.Model):
     name = models.CharField(max_length=250)
-    drug_class = models.ManyToManyField(DrugClass, related_name='Drug_class',)
     def __str__(self):
         return self.name
     
@@ -32,8 +32,10 @@ class Pharmacy(models.Model):
         ('active', 'active'),
         ('deactivated', 'deactivated'),
         ),default='active')
-    molecule = models.ForeignKey(Molecule, null=False, on_delete=models.CASCADE) 
+    #molecule = models.ForeignKey(Molecule, null=False, on_delete=models.CASCADE) 
+    molecule = models.ManyToManyField(Molecule, related_name='molecule_class',)
     company = models.ForeignKey(Company, null=False, on_delete=models.CASCADE)
+    drug_class = models.ManyToManyField(DrugClass, related_name='Drug_class',)
     dose = models.CharField(max_length=250, null=False, verbose_name='concentration active substance')
     type = models.CharField(max_length=50, choices=(
         ('veterinary', 'veterinary'),
@@ -48,6 +50,13 @@ class Pharmacy(models.Model):
     class Meta:
         verbose_name = "Product Info"
         verbose_name_plural = "Product Infos"
+
+    def get_molecule(self):
+        return ",\n".join([ot.name for ot in self.molecule.all()])
+        
+    @property
+    def attachment_name(self):
+        return os.path.basename(self.attachment.name)
 
 
     def __str__(self):

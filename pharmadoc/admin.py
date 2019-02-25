@@ -38,7 +38,7 @@ class OrderAdmin(admin.ModelAdmin):
         if not obj.pk: # Only set identifier during the first save.
             stringdate = str(obj.delivery_date)
             new_identifier =  obj.pharmacy.name[:3] + stringdate[2:] 
-            existingOrder = Order.objects.get(identifier=new_identifier)
+            existingOrder = Order.objects.filter(identifier=new_identifier)
             if existingOrder:
                 found = 1
                 i=2
@@ -67,7 +67,7 @@ class PharmacyAdmin(admin.ModelAdmin):
     #list_display = ('name','state','molecule','type','company','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
     #search_fields = ('name','state','molecule','type','company__name','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
     list_display = ('name','company','state','type','animal_species','umwidmungsstufe','storage_instructions','comment','attachment')
-    search_fields = ( 'name','company__name','state','type','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
+    search_fields = ( 'name','company__name','state','drug_class','type','molecule','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
     ordering = ('name','state',)
    
 class SubmissionForm(forms.ModelForm):

@@ -23,6 +23,7 @@ from pharmadoc import urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', pharmadoc.views.start_view, name='startview'),
+    path('all', pharmadoc.views.start_all_view, name='startallview'),
     path('submit/createsubmission', pharmadoc.views.createsubmission, name='createsubmission'),
     path('selectpharmacyforsubmitview/<int:primary_key>', pharmadoc.views.selectpharmacyforsubmitview, name='selectpharmacyforsubmitview'),
     path('submit/<int:primary_key>', pharmadoc.views.submit_view, name='submitview'),
@@ -32,3 +33,6 @@ urlpatterns = [
     path('showorders/<int:primary_key>', pharmadoc.views.showorders, name='showorders'),
     path('password/reset', pharmadoc.views.change_password, name='change_password'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

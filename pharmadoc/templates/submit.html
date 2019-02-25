@@ -4,7 +4,7 @@
 {% block title %}FLI Pharmacy - Submission{% endblock %}
 {% endblock %}{% block content %}
 <h1 class="text-center"> FLI Pharmacy - Submission</h1>
-<form action="createsubmission" method="post"> {% csrf_token %}
+<form action="/submit/createsubmission" method="post"> {% csrf_token %}
   <div class="field">
     <label class="label">Pharmacy</label>
     <div class="control">

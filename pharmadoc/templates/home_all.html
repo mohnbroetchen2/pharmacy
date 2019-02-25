@@ -43,14 +43,13 @@
           <th class="header"> Company</th>
           <th class="header"> Available quantity</th>
           <th class="header"> Available containers</th>
-          <th class="header"> Attachment</th>
           <th class="header"></th>
           <th class="header"></th>
           </tr>
         </thead>
         <tbody>
           {% for p in filter.qs %}
-          <tr {% if p.available_quantity == 0 %}style="display:none;" {% endif %}>
+          <tr>
             <td>{{p.pk}}</td>
             <td><a href="/allsubmissions/{{p.pk}}">{{p}}</a></td>
             <td>{{p.get_molecule}}</td>
@@ -61,7 +60,6 @@
             <td>{{p.delivered_quantity}}{{p.unit}}</td-->
             <td>{{p.available_quantity|floatformat:0}} {{p.unit}}</td>
             <td>{{p.available_container}}</td>
-            <td><a href="{{MEDIA_URL}}/{{p.attachment}}">{{p.attachment_name}}</a></td>
             <td><a href="/selectpharmacyforsubmitview/{{p.pk}}">submit</a></td>
             <td><a href="/showorders/{{p.pk}}">more</a></td>
           </tr>
