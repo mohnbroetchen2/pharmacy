@@ -21,10 +21,6 @@ class Molecule(models.Model):
     name = models.CharField(max_length=250)
     def __str__(self):
         return self.name
-    
-    def get_drug_class(self):
-        """Get all organ types which are used"""
-        return ", ".join([dc.name for dc in self.drug_class.all()])
 
 class Pharmacy(models.Model):
     name = models.CharField(max_length=250)
@@ -53,6 +49,10 @@ class Pharmacy(models.Model):
 
     def get_molecule(self):
         return ",\n".join([ot.name for ot in self.molecule.all()])
+    
+    def get_drug_class(self):
+        """Get all organ types which are used"""
+        return ", ".join([dc.name for dc in self.drug_class.all()])
         
     @property
     def attachment_name(self):

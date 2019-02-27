@@ -7,7 +7,7 @@
       "scrollX": false,
       "order": [[0, 'desc']],
       "scrollCollapse": true,
-      "paging": true,
+      "paging": false,
     });
   });
 </script> {% endblock %} {% block content %}
@@ -73,15 +73,15 @@
           <tr>
             <td>{{pharmacy}}</td>        
             <td>{{pharmacy.company}}</td>
-            <td>{{pharmacy.molecule}}</td>
-            <td>{{pharmacy.molecule.get_drug_class}}</td>
+            <td>{{pharmacy.get_molecule}}</td>
+            <td>{{pharmacy.get_drug_class}}</td>
             <td>{{pharmacy.dose}}</td>
             <td>{{pharmacy.type}}</td>
             <td>{{pharmacy.animal_species}}</td>
             <td>{{pharmacy.umwidmungsstufe}}</td>
             <td>{{pharmacy.storage_instructions}}</td>
             <td>{{pharmacy.comment}}</td>
-            <td>{{pharmacy.attachment}}</td>
+            <td><a href="{{MEDIA_URL}}/{{p.attachment}}">{{pharmacy.attachment_name}}</a></td>
             <td>{{pharmacy.alarm_value}}</td>
           </tr>
         </tbody>
