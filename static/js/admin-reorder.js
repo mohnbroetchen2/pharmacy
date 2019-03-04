@@ -1,1 +1,0 @@
-/u/people/fmonheim/.local/share/virtualenvs/fmonheim-Kpz6V2jk/lib/python3.6/site-packages/admin_reorder/static/js/admin-reorder.js

@@ -37,7 +37,6 @@
       <table id="datatable" class="table is-striped table is-hoverable">
         <thead>
           <tr>
-          <th class="header"> ID</th>
           <th class="header"> Name</th>
           <th class="header"> Molecule</th>
           <th class="header"> Company</th>
@@ -50,7 +49,6 @@
         <tbody>
           {% for p in filter.qs %}
           <tr>
-            <td>{{p.pk}}</td>
             <td><a href="/allsubmissions/{{p.pk}}">{{p}}</a></td>
             <td>{{p.get_molecule}}</td>
             <td>{{p.company}}</td>

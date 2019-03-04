@@ -25,17 +25,18 @@ def start_view(request):
      #   i=i+1
     f = PharmacyFilter(request.GET, queryset=pharmacylist)
     return render(request, 'home.html', {'filter': f})
-@login_required
-def start_all_view(request):
-    pharmacylist = Pharmacy.objects.all()
-    f = PharmacyFilter(request.GET, queryset=pharmacylist)
-    return render(request, 'home_all.html', {'filter': f})
 
 @login_required
 def active_pharmacy_view(request, primary_key):
     pharmacy = Pharmacy.objects.get(pk=primary_key)
     orderlist =  Order.object.filter(pharmacy__pk=primary_key).filter(state='active')
     return render(request, 'home.html', {'filter': f})
+
+@login_required
+def start_all_view(request):
+    pharmacylist = Pharmacy.objects.all()
+    f = PharmacyFilter(request.GET, queryset=pharmacylist)
+    return render(request, 'home_all.html', {'filter': f})
 
 @login_required
 def submit_view(request, primary_key):
@@ -49,7 +50,7 @@ def submit_view(request, primary_key):
     available_containers = order.available_containers()
     available_quantity = order.available_quantity()
     available_quantity_last_container = order.available_quantity_last_container()
-    return render(request, 'submit.html', {'object': order, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,})
+    return render(request, 'submit.html', {'object': order, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,})
 
 @login_required
 def selectpharmacyforsubmitview(request, primary_key):

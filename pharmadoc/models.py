@@ -41,7 +41,7 @@ class Pharmacy(models.Model):
     umwidmungsstufe = models.PositiveIntegerField()
     storage_instructions = models.CharField(max_length=400, null=True, blank=True,)
     comment = models.TextField(blank=True, null=True) 
-    attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/%Y/%m/%d/')
+    attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/%Y/%m/')
     alarm_value =  models.PositiveIntegerField(null=True, blank=True, help_text="Please enter a number of full containers. If less container are available Alessia gets a mail.") 
     class Meta:
         verbose_name = "Product Info"
@@ -115,6 +115,7 @@ class Order (models.Model):
     delivery_date = models.DateField(null=False)
     expiry_date = models.DateField(null=False)
     batch_number = models.CharField(max_length=250)
+    attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/order/%Y/%m/')
     comment = models.TextField(blank=True, null=True) 
     
     
