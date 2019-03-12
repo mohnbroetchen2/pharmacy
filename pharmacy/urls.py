@@ -32,6 +32,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('showorders/<int:primary_key>', pharmadoc.views.showorders, name='showorders'),
     path('password/reset', pharmadoc.views.change_password, name='change_password'),
+    path('export', pharmadoc.views.exportcsv, name='exportcsv'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
