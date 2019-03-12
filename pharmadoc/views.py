@@ -16,6 +16,20 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect
 
 @login_required
+def exportcsv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
+    writer = csv.writer(response)
+    pharmacy = Pharmacy.objects.all()
+    writer.writerow(["Name", "Molecule", "available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
+                    "Comment", "Attachment"])
+    for p in pharmacy:
+        if p.available_quantity()>0:
+            writer.writerow([p.name, p.get_molecule(), p.available_quantity(), p.available_container(), p.company, p.state, p.get_drug_class(), p.dose,
+                             p.type, p.animal_species, p.umwidmungsstufe, p.storage_instructions, p.comment, p.attachment])
+    return response
+
+@login_required
 def start_view(request):
     pharmacylist = Pharmacy.objects.all()
     #i=0
