@@ -2,3 +2,4 @@ django-filter>=2.1
 django-bulma>=0.5.1
 django-modeladmin-reorder>=0.1.0
 django-widget-tweaks>=1.4.2
+django-admin-list-filter-dropdown>=1.0.2
