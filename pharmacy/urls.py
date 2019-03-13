@@ -19,6 +19,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 import pharmadoc
 from pharmadoc import urls
+import changelog
+from changelog import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +35,7 @@ urlpatterns = [
     path('showorders/<int:primary_key>', pharmadoc.views.showorders, name='showorders'),
     path('password/reset', pharmadoc.views.change_password, name='change_password'),
     path('export', pharmadoc.views.exportcsv, name='exportcsv'),
+    path('changes/', changelog.views.changehistory, name='changes'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

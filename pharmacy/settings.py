@@ -30,7 +30,9 @@ INSTALLED_APPS = [
     'django_filters',
     'widget_tweaks',
     'pharmadoc',
-    'admin_reorder',
+    'django_admin_listfilter_dropdown',
+    'changelog.apps.ChangelogConfig',
+    #'admin_reorder',
     'bulma',
 ]
 
@@ -42,7 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'admin_reorder.middleware.ModelAdminReorder',
+    #'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 ROOT_URLCONF = 'pharmacy.urls'
