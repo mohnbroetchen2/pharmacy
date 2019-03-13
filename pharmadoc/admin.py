@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule
 from django import forms
+import csv
+from django.http import HttpResponse
+from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 # Register your models here.
 
 class ExportCsvMixin:
@@ -71,6 +74,15 @@ class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
                 obj.identifier = new_identifier
 
         super().save_model(request, obj, form, change)
+    list_filter = (('pharmacy', RelatedDropdownFilter),
+                   ('identifier', DropdownFilter),
+                   'state',
+                   ('amount_containers', DropdownFilter),
+                   ('quantity', DropdownFilter),
+                   ('unit', DropdownFilter),
+                   ('delivery_date', DropdownFilter),
+                   ('expiry_date', DropdownFilter),
+                   ('batch_number', DropdownFilter))
     actions = ["export_as_csv"]
 
 
@@ -79,6 +91,13 @@ class SubmissionAdmin(admin.ModelAdmin):
     list_display = ('application_number','date','person','amount_containers','quantity','comment','procedure_control')
     search_fields = ('application_number','date','person__name','amount_containers','quantity','comment','procedure_control')
     ordering = ('application_number','date','person__name','amount_containers','quantity','comment','procedure_control')
+    list_filter = (('application_number', DropdownFilter),
+                   ('date', DropdownFilter),
+                   'person',
+                   ('amount_containers', DropdownFilter),
+                   ('quantity', DropdownFilter),
+                   ('comment', DropdownFilter),
+                   ('procedure_control', DropdownFilter))
     actions = ["export_as_csv"]
 
 @admin.register(Pharmacy)
@@ -88,6 +107,13 @@ class PharmacyAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ('name','company','state','type','animal_species','umwidmungsstufe','storage_instructions','comment','attachment')
     search_fields = ( 'name','company__name','state','drug_class','type','molecule','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
     ordering = ('name','state',)
+    list_filter = (('company',RelatedDropdownFilter),
+                   ('state',DropdownFilter),
+                   ('type',DropdownFilter),
+                   ('animal_species',DropdownFilter),
+                   ('umwidmungsstufe',DropdownFilter),
+                   ('storage_instructions',DropdownFilter),
+                   ('comment',DropdownFilter))
     actions = ["export_as_csv"]
    
 class SubmissionForm(forms.ModelForm):
