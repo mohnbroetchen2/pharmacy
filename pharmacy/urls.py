@@ -36,6 +36,7 @@ urlpatterns = [
     path('password/reset', pharmadoc.views.change_password, name='change_password'),
     path('export', pharmadoc.views.exportcsv, name='exportcsv'),
     path('changes/', changelog.views.changehistory, name='changes'),
+    path('addorder/', pharmadoc.views.add_order, name='addorder'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import generic
 from datetime import datetime
 from django import forms
+import time
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,6 +16,34 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect
 import csv
+from .forms import addOrderForm
+
+#view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
+def add_order(request):
+    if request.method == 'POST': # If the form has been submitted...
+        form = addOrderForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            pharmacy = Pharmacy.objects.all()
+            new_order = Order()
+
+            new_order.pharmacy = pharmacy[int(request.POST['pharmacy']) - 2].name + ' ' + pharmacy[int(request.POST['pharmacy']) - 2].dose
+
+            new_order.added_by = request.user
+            new_order.save()
+
+            """
+            new_order.state             = request.POST['state'] == 0 ? 'active' : 'deactivated'
+            new_order.amount_containers = request.POST['amount']
+            new_order.quantity          = request.POST['quantity']
+            new_order.unit              = request.POST['unit']
+            new_order.delivery_date     = request.POST['delivery']
+            new_order.expiry_date       = request.POST['expiry']
+            new_order.batch_number      = request.POST['batch']
+            new_order.comment           = request.POST['comment']
+            """
+            return HttpResponseRedirect('/')  # Redirect after POST
+    else:
+        return render(request, 'form_orderadd.html', {'form': addOrderForm()})
 
 @login_required
 def exportcsv(request):
