@@ -44,7 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'admin_reorder.middleware.ModelAdminReorder',
+    'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 ROOT_URLCONF = 'pharmacy.urls'
@@ -109,6 +109,7 @@ ADMIN_REORDER = (
         {'model': 'pharmadoc.Molecule', 'label': 'Molecule'},
         )},
     {'app': 'auth', 'models': ('auth.User',) },
+    {'app': 'changelog', 'label': 'Changelog' },
     'admin_interface',
 )
 
