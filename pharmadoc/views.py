@@ -16,6 +16,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect
 import csv
+import codecs
 from .forms import addOrderForm
 
 #view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
