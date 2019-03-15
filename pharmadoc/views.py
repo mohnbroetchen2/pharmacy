@@ -49,6 +49,7 @@ def add_order(request):
 def exportcsv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
+    response.write("\xEF\xBB\xBF")
     writer = csv.writer(response, delimiter=',', dialect='excel')
     pharmacy = Pharmacy.objects.all()
     writer.writerow(["Name", "Molecule", "available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
