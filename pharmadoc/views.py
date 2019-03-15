@@ -53,12 +53,12 @@ def exportcsv(request):
     response.write(codecs.BOM_UTF8)
     writer = csv.writer(response, delimiter=';', dialect='excel')
     pharmacy = Pharmacy.objects.all()
-    writer.writerow(["Name", "Molecule", "available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
-                    "Comment", "Attachment"])
+    writer.writerow(["Name", "Molecule","available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
+                    "Comment"])
     for p in pharmacy:
         if p.available_quantity()>0:
-            writer.writerow([p.name, p.get_molecule(), p.available_quantity(), p.available_container(), p.company, p.state, p.get_drug_class(), p.dose,
-                             p.type, p.animal_species, p.umwidmungsstufe, p.storage_instructions, p.comment, p.attachment])
+            writer.writerow([p.name, p.get_molecule(),"{}{}".format(p.available_quantity(),p.unit()), p.available_container(), p.company, p.state, p.get_drug_class(), p.dose,
+                             p.type, p.animal_species, p.umwidmungsstufe, p.storage_instructions, p.comment])
     return response
 
 @login_required
