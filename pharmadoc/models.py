@@ -92,6 +92,13 @@ class Pharmacy(models.Model):
             i = i +1
         return (unit)
 
+    def available_quantity_date(self, Date):
+        products = self.order_set.all()
+        quantity = 0
+        for p in products:
+            if p.state == 'active':
+                quantity = quantity + p.available_quantity_date(Date=Date)
+        return quantity
 
 #class StockProduct (models.Model):
 class Order (models.Model):
@@ -134,7 +141,7 @@ class Order (models.Model):
 
     def delivered_quantity(self):
         return(self.amount_containers * self.quantity)
-    
+
     def available_containers(self):
         submissionlist = Submission.objects.filter(order__pk=self.pk)
         if submissionlist is None:
@@ -149,6 +156,19 @@ class Order (models.Model):
             return (realamount // quantity)
         else:
             return((realamount // quantity)+1)
+
+    def available_quantity_date(self, Date):
+        submissionlist = Submission.objects.filter(order__pk=self.pk)
+        if submissionlist is None:
+            return(self.amount_containers)
+        quantity = self.quantity
+        containers = self.amount_containers
+        fullamount = quantity * containers
+        realamount = fullamount
+        for s in submissionlist:
+            if s.date >= Date: #datetime.date(datetime.strptime(Date, '%Y-%m-%d')): #convert string to datetime and datetime to date
+                realamount = realamount - s.fullamount() #amount now minus all submission ever since the date
+        return(realamount)
 
     def available_quantity(self):
         submissionlist = Submission.objects.filter(order__pk=self.pk)

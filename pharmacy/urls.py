@@ -34,7 +34,9 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('showorders/<int:primary_key>', pharmadoc.views.showorders, name='showorders'),
     path('password/reset', pharmadoc.views.change_password, name='change_password'),
-    path('export', pharmadoc.views.exportcsv, name='exportcsv'),
+    path('export', pharmadoc.views.exportcsv, name='exportcsv'), #mailalarm
+    path('exportall', pharmadoc.views.exportcsv_all, name='exportcsv_all'),
+    path('exportadvanced', pharmadoc.views.exportcsvadvanced, name='exportcsvadvanced'),
     path('changes/', changelog.views.changehistory, name='changes'),
     path('addorder/', pharmadoc.views.add_order, name='addorder'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

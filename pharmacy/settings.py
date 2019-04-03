@@ -20,6 +20,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_collected")
 EMAIL_HOST = '127.0.0.1'
 # Application definition
 
+#EMAIL_RESPONSIBLE = 'info.huber@aol.de'
+#EMAIL_ADMIN = 'info.huber@aol.de'
+#DEFAULT_FROM_EMAIL = "bushaltestelle.70@gmail.com"
+#EMAIL_HOST = "smtp.gmail.com"
+#EMAIL_HOST_USER = "bushaltestelle.70@gmail.com"
+#EMAIL_HOST_PASSWORD = ""
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

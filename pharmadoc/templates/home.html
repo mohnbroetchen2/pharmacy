@@ -31,7 +31,7 @@
   }
 </style>
 <h1 class="text-center"> FLI Pharmacy - Overview</h1>
-<form action="" method="POST"> {% csrf_token %}
+<form action="/exportadvanced" method="POST"> {% csrf_token %}
   <div class="col-lg-12">
     <div class="table-responsive">
       <table id="datatable" class="table is-striped table is-hoverable">
@@ -66,9 +66,14 @@
           {% endfor %}
         </tbody>
       </table>
-      <a href="/export" class="btn btn-light">Download .csv file</a>
-      <!--a href="/changes" class="btn btn-light">View Maintenance History</a>
-      <a href="/addorder" class="btn btn-light">check forms development</a-->
+      <a href="/export" class="btn btn-light">Export</a>
+      <br>
+
+      <input type="submit" name='claim' value="Export advanced">
+      <tr><td>from</td><td><input type="date" name="exportFromDate" value="{{m.from|date:"d/m/Y"}}" required=True></td></tr>
+      <tr><td>to</td><td><input type="date" name="exportToDate" value="{{m.to|date:"d/m/Y"}}" required=True></td></tr>
+      <!--a href="/changes" class="btn btn-light">View Maintenance History</a-->
+      <a href="/addorder" class="btn btn-light">check forms development</a>
     </div>
   </div>
 </form>

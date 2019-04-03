@@ -18,6 +18,22 @@ from django.shortcuts import redirect
 import csv
 import codecs
 from .forms import addOrderForm
+from django.core.mail import send_mail
+
+
+@login_required
+def mailalarm(request):
+    from_email = "bushaltestelle.70@gmail.com" #settings.EMAIL_ADMIN
+    to_email = ['bushaltestelle.80@web.de']#settings.EMAIL_RESPONSIBLE
+    #pharmacy = Pharmacy.objects.get(primary_key)
+    #available = pharmacy.available_containers()
+    #threshold = pharmacy.alarm_value()
+    #if available < threshold:
+    message = "This item is running low"#: {}.\nMinimum amount: {}\nCurrent amount: {}".format(pharmacy.name,pharmacy.minimum_containers,pharmacy.available_containers)
+    subject = "FLI-Pharmacy"#: {} is running low".format(pharmacy.name)
+    send_mail(subject, message, from_email, to_email, html_message=message)
+    #return HttpResponseRedirect('/')
+
 
 #view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
 def add_order(request):
@@ -26,14 +42,9 @@ def add_order(request):
         if form.is_valid(): # All validation rules pass
             pharmacy = Pharmacy.objects.all()
             new_order = Order()
-
-            new_order.pharmacy = pharmacy[int(request.POST['pharmacy']) - 2].name + ' ' + pharmacy[int(request.POST['pharmacy']) - 2].dose
-
-            new_order.added_by = request.user
-            new_order.save()
-
-            """
-            new_order.state             = request.POST['state'] == 0 ? 'active' : 'deactivated'
+            # new_order.pharmacy = Pharmacy.object.filter(pharmacy__pk=...)
+            new_order.pharmacy = pharmacy[int(request.POST['pharmacy']) - 2]
+            new_order.state             = request.POST['state']# == 0 ? 'active' : 'deactivated'
             new_order.amount_containers = request.POST['amount']
             new_order.quantity          = request.POST['quantity']
             new_order.unit              = request.POST['unit']
@@ -41,24 +52,84 @@ def add_order(request):
             new_order.expiry_date       = request.POST['expiry']
             new_order.batch_number      = request.POST['batch']
             new_order.comment           = request.POST['comment']
-            """
+
+            new_order.added_by = request.user
+            new_order.save()
+
             return HttpResponseRedirect('/')  # Redirect after POST
     else:
         return render(request, 'form_orderadd.html', {'form': addOrderForm()})
 
 @login_required
+def exportcsvadvanced(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
+    response.write(codecs.BOM_UTF8)
+    writer = csv.writer(response, delimiter=',', dialect='excel')
+    pharmacy = Pharmacy.objects.all()
+
+#get the dates the user has chosen for the export
+    fromDate = request.POST.get("exportFromDate", None)
+    toDate = request.POST.get("exportToDate", None)
+
+#write the csv file
+    #write the header
+    writer.writerow(
+        ["Name", "Molecule", "Quantity", "Date", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe",
+         'application_number', 'order', 'person', 'amount_containers', 'quantity', 'comment', 'procedure_control'])
+    #for each pharmacy, write the following lines
+    for p in pharmacy:
+        #row 1: the amount for the FROM date
+        writer.writerow([p.name, p.get_molecule(),
+                         "{}{}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))), p.unit()),
+                         datetime.date(datetime.strptime(fromDate, '%Y-%m-%d')),
+                         p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
+        #row 2 to x: each submussion has a row, showing all details and the amount left after the submission
+        submissionlist = Submission.objects.filter(order__pk=p.pk)
+        for s in submissionlist:
+            if (s.date >= datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))) &\
+                    (s.date <= datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))):
+                writer.writerow(
+                    [p.name, p.get_molecule(), "{}{}".format(p.available_quantity_date(Date=s.date), p.unit()),
+                     s.date,
+                     p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe,
+                     s.application_number, s.order, s.person, s.amount_containers, s.quantity, s.comment,
+                     s.procedure_control])
+        #last row: the amount for the TO date
+        writer.writerow([p.name, p.get_molecule(),
+                         "{}{}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))),p.unit()),
+                         datetime.date(datetime.strptime(toDate, '%Y-%m-%d')),
+                         p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
+
+    return response
+
+@login_required #used to export items, that have a quantity higher than 0 (used in Home)
 def exportcsv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
     response.write(codecs.BOM_UTF8)
-    writer = csv.writer(response, delimiter=';', dialect='excel')
+    writer = csv.writer(response, delimiter=',', dialect='excel')
     pharmacy = Pharmacy.objects.all()
     writer.writerow(["Name", "Molecule","available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
                     "Comment"])
     for p in pharmacy:
         if p.available_quantity()>0:
-            writer.writerow([p.name, p.get_molecule(),"{}{}".format(p.available_quantity(),p.unit()), p.available_container(), p.company, p.state, p.get_drug_class(), p.dose,
+            writer.writerow([p.name, p.get_molecule(),"{}{}".format(p.available_quantity(), p.unit()), p.available_container(), p.company, p.state, p.get_drug_class(), p.dose,
                              p.type, p.animal_species, p.umwidmungsstufe, p.storage_instructions, p.comment])
+    return response
+
+@login_required #used to export all items, independent of their quantity (used in Full Overview)
+def exportcsv_all(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
+    response.write(codecs.BOM_UTF8)
+    writer = csv.writer(response, delimiter=',', dialect='excel')
+    pharmacy = Pharmacy.objects.all()
+    writer.writerow(["Name", "Molecule","available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
+                    "Comment"])
+    for p in pharmacy:
+        writer.writerow([p.name, p.get_molecule(),"{}{}".format(p.available_quantity(), p.unit()), p.available_container(), p.company, p.state, p.get_drug_class(), p.dose,
+                         p.type, p.animal_species, p.umwidmungsstufe, p.storage_instructions, p.comment])
     return response
 
 @login_required
