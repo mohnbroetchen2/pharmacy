@@ -62,6 +62,14 @@ class Pharmacy(models.Model):
     def __str__(self):
         return (self.name + " " + self.dose)
 
+    def available_quantity_date(self, Date):
+        products = self.order_set.all()
+        quantity = 0
+        for p in products:
+            if p.state == 'active':
+                quantity = quantity + p.available_quantity_date(Date=Date)
+        return quantity
+
     def available_quantity(self):
         products = self.order_set.all()
         quantity = 0
@@ -91,14 +99,6 @@ class Pharmacy(models.Model):
                     return ('false')
             i = i +1
         return (unit)
-
-    def available_quantity_date(self, Date):
-        products = self.order_set.all()
-        quantity = 0
-        for p in products:
-            if p.state == 'active':
-                quantity = quantity + p.available_quantity_date(Date=Date)
-        return quantity
 
 #class StockProduct (models.Model):
 class Order (models.Model):

@@ -21,20 +21,6 @@ from .forms import addOrderForm
 from django.core.mail import send_mail
 
 
-@login_required
-def mailalarm(request):
-    from_email = "bushaltestelle.70@gmail.com" #settings.EMAIL_ADMIN
-    to_email = ['bushaltestelle.80@web.de']#settings.EMAIL_RESPONSIBLE
-    #pharmacy = Pharmacy.objects.get(primary_key)
-    #available = pharmacy.available_containers()
-    #threshold = pharmacy.alarm_value()
-    #if available < threshold:
-    message = "This item is running low"#: {}.\nMinimum amount: {}\nCurrent amount: {}".format(pharmacy.name,pharmacy.minimum_containers,pharmacy.available_containers)
-    subject = "FLI-Pharmacy"#: {} is running low".format(pharmacy.name)
-    send_mail(subject, message, from_email, to_email, html_message=message)
-    #return HttpResponseRedirect('/')
-
-
 #view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
 def add_order(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -75,13 +61,39 @@ def exportcsvadvanced(request):
 #write the csv file
     #write the header
     writer.writerow(
-        ["Name", "Molecule", "Quantity", "Date", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe",
-         'application_number', 'order', 'person', 'amount_containers', 'quantity', 'comment', 'procedure_control'])
+        ["Name", "Molecule", "Start Quantity", "End Quantity", "Start Date", "End Date", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe",
+         'application_number', 'order', 'person', 'date', 'amount_containers', 'quantity', 'total quantity', 'comment', 'procedure_control'])
     #for each pharmacy, write the following lines
     for p in pharmacy:
+        #each pharmacy is listed
+        writer.writerow([p.name, p.get_molecule(),
+                         "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))), p.unit()), #to- and from-date have to be reversed here, but I don't know why
+                         "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))), p.unit()),
+                         datetime.date(datetime.strptime(fromDate, '%Y-%m-%d')), datetime.date(datetime.strptime(toDate, '%Y-%m-%d')),
+                         p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
+    for p in pharmacy:
+        # each submussion (of each pharmacy) has a row
+        submissionlist = Submission.objects.filter(order__pk=p.pk)
+        for s in submissionlist:
+            if (s.date >= datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))) & \
+                    (s.date <= datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))):
+                writer.writerow(
+                    [p.name, p.get_molecule(),
+                     "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))), p.unit()),
+                     "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))), p.unit()),
+                     datetime.date(datetime.strptime(fromDate, '%Y-%m-%d')),
+                     datetime.date(datetime.strptime(toDate, '%Y-%m-%d')),
+                     p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe,
+                     s.application_number, s.order, s.person, s.date,
+                    s.amount_containers,
+                     "{} {}".format(s.quantity, p.unit()),
+                     "{} {}".format(s.fullamount(), p.unit()),
+                     s.comment, s.procedure_control])
+
+        """ old vizualisation
         #row 1: the amount for the FROM date
         writer.writerow([p.name, p.get_molecule(),
-                         "{}{}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))), p.unit()),
+                         "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))), p.unit()),
                          datetime.date(datetime.strptime(fromDate, '%Y-%m-%d')),
                          p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
         #row 2 to x: each submussion has a row, showing all details and the amount left after the submission
@@ -90,17 +102,17 @@ def exportcsvadvanced(request):
             if (s.date >= datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))) &\
                     (s.date <= datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))):
                 writer.writerow(
-                    [p.name, p.get_molecule(), "{}{}".format(p.available_quantity_date(Date=s.date), p.unit()),
+                    [p.name, p.get_molecule(), "{} {}".format(p.available_quantity_date(Date=s.date), p.unit()),
                      s.date,
                      p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe,
-                     s.application_number, s.order, s.person, s.amount_containers, s.quantity, s.comment,
+                     s.application_number, s.order, s.person, s.amount_containers, "{} {}".format(s.quantity, p.unit()), s.comment,
                      s.procedure_control])
         #last row: the amount for the TO date
         writer.writerow([p.name, p.get_molecule(),
-                         "{}{}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))),p.unit()),
+                         "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))),p.unit()),
                          datetime.date(datetime.strptime(toDate, '%Y-%m-%d')),
                          p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
-
+        """
     return response
 
 @login_required #used to export items, that have a quantity higher than 0 (used in Home)
@@ -184,8 +196,12 @@ def createsubmission(request):
     if request.method == "POST":
         productid = request.POST.get("productid")
         personid  = request.POST.get("recipient")
+
+        orderObject = Order.objects.get(pk=productid)
+        pharmacyObject = Pharmacy.objects.get(pk=productid)
+
         new_submission = Submission();
-        new_submission.order                = Order.objects.get(pk=productid)
+        new_submission.order                = orderObject
         new_submission.person               = Person.objects.get(pk=personid)
         new_submission.application_number   = request.POST.get("application_number",None)
         new_submission.date                 = request.POST.get("submission_date",None)
@@ -195,6 +211,20 @@ def createsubmission(request):
         new_submission.added_by             = request.user
         new_submission.save()
         messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
+
+
+        quantityMin = pharmacyObject.alarm_value
+        quantityCurrent = pharmacyObject.available_quantity() #is this the total quantity?yes
+        quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
+
+        if (quantitySubmission>=(quantityCurrent-quantityMin)):
+            # from_email = "bushaltestelle.80@web.de" #settings.EMAIL_ADMIN
+            # to_email = ['bushaltestelle.80@web.de']#settings.EMAIL_RESPONSIBLE
+            message = "This item is running low: {}.\nMinimum amount: {}\nCurrent amount: {}".format(pharmacyObject.name,
+                                                                                                     pharmacyObject.alarm_value,
+                                                                                                     pharmacyObject.available_quantity())
+            subject = "FLI-Pharmacy: {} is running low".format(new_submission.pharmacy.name)
+            #send_mail(subject, message, from_email, to_email, html_message=message)
         return HttpResponseRedirect('/')
 
 @login_required

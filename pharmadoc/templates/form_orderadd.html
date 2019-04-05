@@ -1,5 +1,9 @@
-{% extends "base.html" %}  {% load static %} {% load widget_tweaks %}
-{% block content %}
+{% extends "base.html" %}  {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+{% block title %}FLI Pharmacy - Order{% endblock %}
+{% endblock %}{% block content %}
+<h1 class="text-center"> FLI Pharmacy - Order</h1>
 <form action="/addorder/" method="post">
 <table>
     {% csrf_token %}
