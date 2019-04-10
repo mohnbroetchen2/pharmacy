@@ -23,28 +23,29 @@ from django.core.mail import send_mail
 
 #view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
 def add_order(request):
-    if request.method == 'POST': # If the form has been submitted...
-        form = addOrderForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            pharmacy = Pharmacy.objects.all()
-            new_order = Order()
-            # new_order.pharmacy = Pharmacy.object.filter(pharmacy__pk=...)
-            new_order.pharmacy = pharmacy[int(request.POST['pharmacy']) - 2]
-            new_order.state             = request.POST['state']# == 0 ? 'active' : 'deactivated'
-            new_order.amount_containers = request.POST['amount']
-            new_order.quantity          = request.POST['quantity']
-            new_order.unit              = request.POST['unit']
-            new_order.delivery_date     = request.POST['delivery']
-            new_order.expiry_date       = request.POST['expiry']
-            new_order.batch_number      = request.POST['batch']
-            new_order.comment           = request.POST['comment']
+        if request.method == 'POST':  # If the form has been submitted...
+            form = addOrderForm(request.POST)  # A form bound to the POST data
+            if form.is_valid():  # All validation rules pass
+                pharmacy = Pharmacy.objects.all()
+                new_order = Order()
+                # new_order.pharmacy = Pharmacy.object.filter(pharmacy__pk=...)
+                new_order.pharmacy = pharmacy[int(request.POST['pharmacy']) - 2]
+                new_order.state = request.POST['state']  # == 0 ? 'active' : 'deactivated'
+                new_order.amount_containers = request.POST['amount']
+                new_order.quantity = request.POST['quantity']
+                new_order.unit = request.POST['unit']
+                new_order.delivery_date = request.POST['delivery']
+                new_order.expiry_date = request.POST['expiry']
+                new_order.batch_number = request.POST['batch']
+                new_order.comment = request.POST['comment']
 
-            new_order.added_by = request.user
-            new_order.save()
+                new_order.added_by = request.user
+                new_order.save()
 
-            return HttpResponseRedirect('/')  # Redirect after POST
-    else:
-        return render(request, 'form_orderadd.html', {'form': addOrderForm()})
+                return HttpResponseRedirect('/')  # Redirect after POST
+        else:
+            return render(request, 'form_orderadd.html', {'form': addOrderForm()})
+
 
 @login_required
 def exportcsvadvanced(request):
@@ -73,7 +74,7 @@ def exportcsvadvanced(request):
                          p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
     for p in pharmacy:
         # each submussion (of each pharmacy) has a row
-        submissionlist = Submission.objects.filter(order__pk=p.pk)
+        submissionlist = Submission.objects.filter(order__pharmacy__pk=p.pk)
         for s in submissionlist:
             if (s.date >= datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))) & \
                     (s.date <= datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))):
@@ -89,30 +90,6 @@ def exportcsvadvanced(request):
                      "{} {}".format(s.quantity, p.unit()),
                      "{} {}".format(s.fullamount(), p.unit()),
                      s.comment, s.procedure_control])
-
-        """ old vizualisation
-        #row 1: the amount for the FROM date
-        writer.writerow([p.name, p.get_molecule(),
-                         "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))), p.unit()),
-                         datetime.date(datetime.strptime(fromDate, '%Y-%m-%d')),
-                         p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
-        #row 2 to x: each submussion has a row, showing all details and the amount left after the submission
-        submissionlist = Submission.objects.filter(order__pk=p.pk)
-        for s in submissionlist:
-            if (s.date >= datetime.date(datetime.strptime(fromDate, '%Y-%m-%d'))) &\
-                    (s.date <= datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))):
-                writer.writerow(
-                    [p.name, p.get_molecule(), "{} {}".format(p.available_quantity_date(Date=s.date), p.unit()),
-                     s.date,
-                     p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe,
-                     s.application_number, s.order, s.person, s.amount_containers, "{} {}".format(s.quantity, p.unit()), s.comment,
-                     s.procedure_control])
-        #last row: the amount for the TO date
-        writer.writerow([p.name, p.get_molecule(),
-                         "{} {}".format(p.available_quantity_date(Date=datetime.date(datetime.strptime(toDate, '%Y-%m-%d'))),p.unit()),
-                         datetime.date(datetime.strptime(toDate, '%Y-%m-%d')),
-                         p.company, p.state, p.get_drug_class(), p.dose, p.type, p.animal_species, p.umwidmungsstufe])
-        """
     return response
 
 @login_required #used to export items, that have a quantity higher than 0 (used in Home)
@@ -198,7 +175,7 @@ def createsubmission(request):
         personid  = request.POST.get("recipient")
 
         orderObject = Order.objects.get(pk=productid)
-        pharmacyObject = Pharmacy.objects.get(pk=productid)
+        pharmacyObject = orderObject.pharmacy
 
         new_submission = Submission();
         new_submission.order                = orderObject

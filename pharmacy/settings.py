@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'changelog.apps.ChangelogConfig',
     #'admin_reorder',
     'bulma',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

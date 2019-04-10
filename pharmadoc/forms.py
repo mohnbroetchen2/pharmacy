@@ -2,6 +2,7 @@ from django import forms
 from .models import Pharmacy
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
 def pharmacy_choices():
     pharmacy = Pharmacy.objects.all()
     i=1
@@ -25,6 +26,9 @@ class addOrderForm(forms.Form):
         self.fields['attachment'] = forms.FileField(required=False)
         self.fields['comment'] = forms.CharField(widget=forms.Textarea, required=False)
         self.fields['identifier'] = forms.CharField(max_length=100, required=False)
+
+        #for the design:
+        self.fields['batch'].widget.attrs.update(size='40')
 
     """
     pharmacy = forms.ChoiceField(choices=pharmacy_choices()) #only refreshes values when the server is reset!!!
