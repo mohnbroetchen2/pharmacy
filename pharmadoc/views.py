@@ -23,29 +23,30 @@ from django.core.mail import send_mail
 
 #view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
 def add_order(request):
+    try:
         if request.method == 'POST':  # If the form has been submitted...
             form = addOrderForm(request.POST)  # A form bound to the POST data
             if form.is_valid():  # All validation rules pass
                 pharmacy = Pharmacy.objects.all()
                 new_order = Order()
-                # new_order.pharmacy = Pharmacy.object.filter(pharmacy__pk=...)
-                new_order.pharmacy = pharmacy[int(request.POST['pharmacy']) - 2]
-                new_order.state = request.POST['state']  # == 0 ? 'active' : 'deactivated'
+                new_order.pharmacy = pharmacy[int(request.POST['pharmacy'])-2] #doesnt work
+                new_order.state = request.POST['state']  # == 0 ? 'active' : 'deactivated' #is ok
                 new_order.amount_containers = request.POST['amount']
                 new_order.quantity = request.POST['quantity']
                 new_order.unit = request.POST['unit']
-                new_order.delivery_date = request.POST['delivery']
-                new_order.expiry_date = request.POST['expiry']
+                new_order.delivery_date = "2017-05-22"
+                #new_order.delivery_date = request.POST['delivery'] #doesnt work
+                #new_order.expiry_date = request.POST['expiry'] #doesnt work
                 new_order.batch_number = request.POST['batch']
                 new_order.comment = request.POST['comment']
-
                 new_order.added_by = request.user
-                new_order.save()
+                #new_order.save() #doesnt work
 
                 return HttpResponseRedirect('/')  # Redirect after POST
         else:
             return render(request, 'form_orderadd.html', {'form': addOrderForm()})
-
+    except:
+        print("error")
 
 @login_required
 def exportcsvadvanced(request):
