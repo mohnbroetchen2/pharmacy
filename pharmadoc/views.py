@@ -201,7 +201,7 @@ def createsubmission(request):
             message = "This item is running low: {}.\nMinimum amount: {}\nCurrent amount: {}".format(pharmacyObject.name,
                                                                                                      pharmacyObject.alarm_value,
                                                                                                      pharmacyObject.available_quantity())
-            subject = "FLI-Pharmacy: {} is running low".format(new_submission.pharmacy.name)
+            subject = "FLI-Pharmacy: {} is running low".format(pharmacyObject.name)
             send_mail(subject, message, from_email, to_email, html_message=message)
         return HttpResponseRedirect('/')
 
