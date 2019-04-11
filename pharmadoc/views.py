@@ -194,8 +194,8 @@ def createsubmission(request):
         quantityMin = pharmacyObject.alarm_value
         quantityCurrent = pharmacyObject.available_quantity() #is this the total quantity?yes
         quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
-
-        if (quantitySubmission>=(quantityCurrent-quantityMin)):
+        #messages.add_message(request, messages.SUCCESS, '{} {}'.format(quantitySubmission, ))
+        if (quantityMin<=quantityCurrent):
             from_email = "fabian.monheim@leibniz-fli.de" #settings.EMAIL_ADMIN
             to_email = ['fabian.monheim@leibniz-fli.de'] #settings.EMAIL_RESPONSIBLE
             message = "This item is running low: {}.\nMinimum amount: {}\nCurrent amount: {}".format(pharmacyObject.name,
@@ -203,6 +203,7 @@ def createsubmission(request):
                                                                                                      pharmacyObject.available_quantity())
             subject = "FLI-Pharmacy: {} is running low".format(pharmacyObject.name)
             send_mail(subject, message, from_email, to_email, html_message=message)
+            messages.add_message(request, messages.SUCCESS, 'mail gesendet')
         return HttpResponseRedirect('/')
 
 @login_required
