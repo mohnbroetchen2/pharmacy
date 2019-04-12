@@ -8,38 +8,38 @@
   <div class="field">
     <label class="label">Pharmacy</label>
     <div class="control">
-      <input class="input" name="pharmacy" type="text" readonly="readonly" value="{{object.pharmacy}}">
+      <input class="input" name="pharmacy" type="text" readonly="readonly" value="{{object.pharmacy}}" required>
       <input name="productid" type="hidden" value="{{object.pk}}" readonly="readonly">
     </div>
   </div> 
   <div class="field">
     <label class="label">Identifier</label>
     <div class="control">
-      <input class="input" name="identifier" type="text" readonly="readonly" value="{{object.identifier}}">
+      <input class="input" name="identifier" type="text" readonly="readonly" value="{{object.identifier}}" required>
     </div>
   </div>
   <div class="field">
     <label class="label">Batch number</label>
     <div class="control">
-      <input class="input" name="batch_number" type="text" readonly="readonly" value="{{object.batch_number}}">
+      <input class="input" name="batch_number" type="text" readonly="readonly" value="{{object.batch_number}}" required>
     </div>
   </div>
   <div class="field">
     <label class="label">Application number</label>
     <div class="control">
-      <input class="input" name="application_number" type="text">
+      <input class="input" name="application_number" type="text" required>
     </div>
   </div>
   <div class="field">
     <label class="label">Submission date</label>
     <div class="control">
-      <input class="input" name="submission_date" type="date">
+      <input class="input" name="submission_date" type="date" required>
     </div>
   </div>
   <div class="control">
     <label class="label">Recipient</label>
     <div class="select">
-      <select name="recipient">
+      <select name="recipient" required>
          <option></option>
          {% for p in persons %}
          <option value="{{p.pk}}">{{p.name}}</option>
