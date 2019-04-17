@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.views import generic
 from datetime import datetime
 from django import forms
@@ -190,20 +191,20 @@ def createsubmission(request):
         new_submission.save()
         messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
 
-
+        admin_mail = getattr(settings, "ADMIN_EMAIL", None)
         quantityMin = pharmacyObject.alarm_value
-        quantityCurrent = pharmacyObject.available_quantity() #is this the total quantity?yes
+        quantityCurrent = pharmacyObject.available_container() #is this the total quantity?yes
         quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
         #messages.add_message(request, messages.SUCCESS, '{} {}'.format(quantitySubmission, ))
-        if (quantityMin<=quantityCurrent):
-            from_email = "fabian.monheim@leibniz-fli.de" #settings.EMAIL_ADMIN
-            to_email = ['fabian.monheim@leibniz-fli.de'] #settings.EMAIL_RESPONSIBLE
-            message = "This item is running low: {}.\nMinimum amount: {}\nCurrent amount: {}".format(pharmacyObject.name,
+        if (quantityMin>=quantityCurrent):
+            from_email = admin_mail #settings.EMAIL_ADMIN
+            to_email = [admin_mail] #settings.EMAIL_RESPONSIBLE
+            message = "This item is running low: {}.<br> Alarm value: {} container<br> Current amount: {} container".format(pharmacyObject.name,
                                                                                                      pharmacyObject.alarm_value,
-                                                                                                     pharmacyObject.available_quantity())
+                                                                                                     quantityCurrent)
             subject = "FLI-Pharmacy: {} is running low".format(pharmacyObject.name)
             send_mail(subject, message, from_email, to_email, html_message=message)
-            messages.add_message(request, messages.SUCCESS, 'mail gesendet')
+            messages.add_message(request, messages.SUCCESS, admin_mail +' has been informed about a little stock of '+pharmacyObject.name)
         return HttpResponseRedirect('/')
 
 @login_required
