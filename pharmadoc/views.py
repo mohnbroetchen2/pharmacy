@@ -193,6 +193,8 @@ def createsubmission(request):
 
         admin_mail = getattr(settings, "ADMIN_EMAIL", None)
         quantityMin = pharmacyObject.alarm_value
+        if quantityMin == None:
+            quantityMin = 0
         quantityCurrent = pharmacyObject.available_container() #is this the total quantity?yes
         quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
         #messages.add_message(request, messages.SUCCESS, '{} {}'.format(quantitySubmission, ))
