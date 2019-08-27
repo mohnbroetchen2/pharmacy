@@ -42,6 +42,7 @@
           <th class="header"> Company</th>
           <th class="header"> Available quantity</th>
           <th class="header"> Available containers</th>
+          <th class="header"> Attachment</th>
           <th class="header"></th>
           <th class="header"></th>
           </tr>
@@ -58,6 +59,7 @@
             <td>{{p.delivered_quantity}}{{p.unit}}</td-->
             <td>{{p.available_quantity|floatformat:0}} {{p.unit}}</td>
             <td>{{p.available_container}}</td>
+            <td><a href="{{MEDIA_URL}}/{{p.attachment}}">{{p.attachment_name}}</a></td>
             <td><a href="/selectpharmacyforsubmitview/{{p.pk}}">submit</a></td>
             <td><a href="/showorders/{{p.pk}}">more</a></td>
           </tr>
