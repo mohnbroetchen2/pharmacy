@@ -6,14 +6,14 @@
   },
   "description": "Bulma for Django",
   "dependencies": {
-    "bulma": "0.7.1"
+    "bulma": "0.7.5"
   },
   "devDependencies": {
-    "autoprefixer": "^8.2.0",
-    "clean-css-cli": "^4.1.11",
-    "node-sass": "^4.8.3",
-    "postcss-cli": "^5.0.0",
-    "rimraf": "^2.6.2"
+    "autoprefixer": "^9.5.1",
+    "clean-css-cli": "^4.3.0",
+    "node-sass": "^4.12.0",
+    "postcss-cli": "^6.1.2",
+    "rimraf": "^2.6.3"
   },
   "license": "MIT",
   "main": "style.sass",
@@ -27,6 +27,5 @@
     "build-sass": "node-sass --output-style expanded --source-map true style.sass ../css/style.css",
     "deploy": "npm run build",
     "start": "npm run build-sass -- --watch"
-  },
-  "version": "0.5.1"
+  }
 }
