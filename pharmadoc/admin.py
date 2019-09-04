@@ -140,3 +140,4 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('pharmacy','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number')
+
