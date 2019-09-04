@@ -4,6 +4,11 @@
 {% block title %}FLI Pharmacy - Submission{% endblock %}
 {% endblock %}{% block content %}
 <h1 class="text-center"> FLI Pharmacy - Submission</h1>
+<div class="field is-grouped is-grouped-right">
+    <div class="control">
+        <button type="button" onclick="discard()" class="btn btn-outline-warning">Discard</button>
+    </div>
+  </div>
 <form action="/submit/createsubmission" method="post"> {% csrf_token %}
   <div class="field">
     <label class="label">Pharmacy</label>
@@ -27,19 +32,30 @@
   <div class="field">
     <label class="label">Application number</label>
     <div class="control">
-      <input class="input" name="application_number" type="text" required>
+      <input class="input" id="application_number" name="application_number" type="text" required>
     </div>
   </div>
+
   <div class="field">
     <label class="label">Submission date</label>
-    <div class="control">
-      <input class="input" name="submission_date" type="date" required>
+    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-today-highlight="true" >
+        <input id="submissiondate" type="text" class="input form-control" name="submission_date" required>
+        <div class="input-group-addon">
+            <span class="glyphicon glyphicon-th"></span>
+        </div>
     </div>
   </div>
+  
+  <!--div class="field">
+    <label class="label">Submission date</label>
+    <div class="control">
+      <input id="submissiondate" data-provide="datepicker" data-date-format="dd/mm/yyyy" class="input" name="submission_date" type="date" required>
+    </div>
+  </div-->
   <div class="control">
     <label class="label">Recipient</label>
     <div class="select">
-      <select name="recipient" required>
+      <select id="recipient" name="recipient" required>
          <option></option>
          {% for p in persons %}
          <option value="{{p.pk}}">{{p.name}}</option>
@@ -93,7 +109,7 @@
   <div class="field">
     <label class="label">Comment</label>
     <div class="control">
-      <textarea class="textarea" name="comment"></textarea>
+      <textarea class="textarea" id="comment" name="comment">asdfd</textarea>
     </div>
   </div>
   <div class="field is-grouped">
@@ -123,5 +139,31 @@
     document.getElementById('overall_quantity').value = summe;
   }
   </script>
+
+<script type="text/javascript">
+var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
+$.fn.bootstrapDP = datepicker;         
+</script>
+
+<script type="text/javascript">
+  function discard(){
+    document.getElementById("comment").innerHTML="Disposal because the shelf life has been exceeded"
+    document.getElementById("application_number").value="00"
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    document.getElementById("submissiondate").value=yyyy+'-'+mm+'-'+dd
+    document.getElementById("quantity").value="{{quantity_last_container}}"
+    calculate()
+
+    var recipient = document.getElementById("recipient");
+    var option = document.createElement("option");
+    option.text = "Trash";
+    recipient.add(option,recipient[0]);
+    recipient.selectedIndex=0
+
+  }
+</script>
 
 {% endblock %}

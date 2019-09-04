@@ -181,7 +181,8 @@ class Order (models.Model):
         for s in submissionlist:
             realamount = realamount - s.fullamount()
         if realamount == 0:
-            state = 'deactivated'
+            self.state = 'deactivated'
+            self.save()
         return(realamount)
     
     def available_quantity_last_container(self):
@@ -194,6 +195,10 @@ class Order (models.Model):
         realamount = fullamount  
         for s in submissionlist:
             realamount = realamount - s.fullamount()
+        if realamount == quantity:
+            self.state = 'deactivated'
+            self.save()
+            return(0)
         if realamount % quantity == 0:
             return (quantity)
         else:

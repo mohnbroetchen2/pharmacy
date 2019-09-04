@@ -18,6 +18,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect
 import csv
 import codecs
+import time
 from .forms import addOrderForm
 from django.core.mail import send_mail
 
@@ -181,9 +182,11 @@ def createsubmission(request):
 
         new_submission = Submission();
         new_submission.order                = orderObject
-        new_submission.person               = Person.objects.get(pk=personid)
+        if personid!="Trash":
+            new_submission.person               = Person.objects.get(pk=personid)
         new_submission.application_number   = request.POST.get("application_number",None)
         new_submission.date                 = request.POST.get("submission_date",None)
+        #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
         new_submission.amount_containers    = request.POST.get("full_containers",0)
         new_submission.quantity             = request.POST.get("quantity",0)
         new_submission.comment              = request.POST.get("comment",None)

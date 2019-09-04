@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     #'admin_reorder',
     'bulma',
     'django_extensions',
+    'bootstrap_datepicker_plus',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +76,11 @@ TEMPLATES = [
         },
     },
 ]
+
+BOOTSTRAP4 = {
+    'include_jquery': True,
+}
+
 
 WSGI_APPLICATION = 'pharmacy.wsgi.application'
 
