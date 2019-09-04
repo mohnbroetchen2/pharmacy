@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     #'admin_reorder',
     'bulma',
     'django_extensions',
-    'bootstrap_datepicker_plus',
 ]
 
 MIDDLEWARE = [
