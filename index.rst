@@ -72,10 +72,18 @@ The ``more`` link (last coloumn) shows all orders concerning the pharmacy.
 To create a submissions you can use the ``submit`` link (second last coloumn). If there are containers from several orders available the user has to select
 an order from which the pharmacy is taken. 
 
+On all websites the available quantity is the full amount of the available pharmacy.
+
 Full Overview
 """""""""""""
 
 The full overview shows also pharmacy which isn't available
+
+
+Submit
+""""""
+To create a Submission please use the submit link in the second last column on the overview sites. The user has to select one order from he will take the pharmacy for submission
+if the current stock consist of two orders or more together. If it is needed to select two orders the submission has to be split.
 
 Entities
 -------------------

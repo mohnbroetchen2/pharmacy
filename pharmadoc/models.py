@@ -124,6 +124,27 @@ class Order (models.Model):
     batch_number = models.CharField(max_length=250)
     attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/order/%Y/%m/')
     comment = models.TextField(blank=True, null=True) 
+
+    def save(self, *args, **kwargs):
+        if not self.pk: # Only set identifier during the first save.
+            stringdate = str(self.delivery_date)
+            new_identifier =  self.pharmacy.name[:3] + stringdate[2:] 
+            existingOrder = Order.objects.filter(identifier=new_identifier)
+            if existingOrder:
+                found = 1
+                i=2
+                while found == 1: 
+                    temp_identifier =new_identifier+"_"+str(i)
+                    existingOrder = Order.objects.filter(identifier=temp_identifier)
+                    if existingOrder:
+                        i=i+1
+                    else:
+                        found = 0
+                self.identifier = new_identifier+"_"+str(i)
+            else:
+                self.identifier = new_identifier
+
+        return super(Order, self).save(*args, **kwargs)
     
     
 

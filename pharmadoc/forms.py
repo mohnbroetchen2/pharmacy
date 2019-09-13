@@ -1,7 +1,7 @@
 from django import forms
-from .models import Pharmacy
+from .models import Pharmacy, Order
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from datetime import datetime
 
 def pharmacy_choices():
     pharmacy = Pharmacy.objects.all()
@@ -12,23 +12,30 @@ def pharmacy_choices():
         choices_list.append([i,p.name + ' ' + p.dose])
     return choices_list
 
-class addOrderForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+#class addOrderForm(forms.Form):
+class addOrderForm(forms.ModelForm): 
+    delivery_date   = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget(),initial=datetime.now())
+    expiry_date     = forms.DateField(label='Expiry date', widget=forms.SelectDateWidget)
+    attachment      = forms.FileField(required=False)
+    class Meta:
+        model = Order
+        fields = ('pharmacy','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','attachment','comment')
+    """def __init__(self, *args, **kwargs):
         super(addOrderForm, self).__init__(*args, **kwargs)
-        self.fields['pharmacy'] = forms.TypedChoiceField(choices=pharmacy_choices())
+        self.fields['pharmacy'] = forms.TypedChoiceField(choices=pharmacy_choices(),widget=forms.Select(attrs={"class":"select"}))
         self.fields['state'] = forms.TypedChoiceField(choices=((1, 'active'), (2, 'deactivated')))
         self.fields['amount'] = forms.IntegerField(label='Amount ordered Containers', min_value=1)
         self.fields['quantity'] = forms.DecimalField(label='Quantity one Container', min_value=1)
         self.fields['unit'] = forms.TypedChoiceField(choices=((1, '---'), (2, 'g'), (3, 'mg'), (4, 'ug'), (5, 'l'), (6, 'ml'), (7, 'ul')))
-        self.fields['delivery'] = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget)
+        self.fields['delivery'] = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget(),initial=datetime.now())
         self.fields['expiry'] = forms.DateField(label='Expiry date', widget=forms.SelectDateWidget)
         self.fields['batch'] = forms.CharField(label='Batch number', max_length=100)
         self.fields['attachment'] = forms.FileField(required=False)
-        self.fields['comment'] = forms.CharField(widget=forms.Textarea, required=False)
-        self.fields['identifier'] = forms.CharField(max_length=100, required=False)
+        self.fields['comment'] = forms.CharField(widget=forms.Textarea, required=False)"""
+        #self.fields['identifier'] = forms.CharField(max_length=100, required=False)
 
         #for the design:
-        self.fields['batch'].widget.attrs.update(size='40')
+        #self.fields['batch'].widget.attrs.update(size='40')
 
     """
     pharmacy = forms.ChoiceField(choices=pharmacy_choices()) #only refreshes values when the server is reset!!!
@@ -44,8 +51,11 @@ class addOrderForm(forms.Form):
     identifier = forms.CharField(max_length=100, required=False)
     """
 
+class addPharmacyForm(forms.ModelForm): 
+    class Meta:
+        model = Pharmacy
+        exclude =()
 
-#file_data = {'pharmacyfile': SimpleUploadedFile('manual.pdf', <file data>)}
 
 
 

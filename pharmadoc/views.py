@@ -15,40 +15,74 @@ from .models import Pharmacy, Person, Submission, DrugClass, Company, Order
 from .filters import OrderFilter, PharmacyFilter, SubmissionFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect
 import csv
 import codecs
 import time
-from .forms import addOrderForm
+from .forms import addOrderForm, addPharmacyForm
 from django.core.mail import send_mail
 
+
+def add_pharmacy(request):
+    try:
+        if request.method == 'POST':  # If the form has been submitted...
+            form = addPharmacyForm(request.POST, request.FILES)  # A form bound to the POST data
+            if form.is_valid(): 
+                form.save()
+                messages.success(request, 'New pharmacy successfully created')
+                return HttpResponseRedirect('/')  # Redirect after POST
+        else:
+            return render(request, 'form_pharmacyadd.html', {'form': addPharmacyForm()})
+    except BaseException as e:
+        messages.error(request, 'Error creating a new pharmacy {}'.format(e))
+        return HttpResponseRedirect('/')  # Redirect after POST
 
 #view is responsible for one form: when form is first initiated (else) and when the form is submitted  with data (if)
 def add_order(request):
     try:
         if request.method == 'POST':  # If the form has been submitted...
-            form = addOrderForm(request.POST)  # A form bound to the POST data
+            form = addOrderForm(request.POST, request.FILES)  # A form bound to the POST data
             if form.is_valid():  # All validation rules pass
-                pharmacy = Pharmacy.objects.all()
+                form.save()
+                """"pharmacy = Pharmacy.objects.all()
                 new_order = Order()
-                new_order.pharmacy = pharmacy[int(request.POST['pharmacy'])-2] #doesnt work
-                new_order.state = request.POST['state']  # == 0 ? 'active' : 'deactivated' #is ok
-                new_order.amount_containers = request.POST['amount']
-                new_order.quantity = request.POST['quantity']
-                new_order.unit = request.POST['unit']
-                new_order.delivery_date = "2017-05-22"
+                new_order.pharmacy          = pharmacy[int(form.cleaned_data['pharmacy'])-2]
+                new_order.state             = form.cleaned_data['state']
+                new_order.amount_containers = form.cleaned_data['amount']
+                new_order.quantity          = form.cleaned_data['quantity']
+                new_order.unit              = form.cleaned_data['unit']
+                new_order.delivery_date     = form.cleaned_data['delivery']
+                new_order.expiry_date       = form.cleaned_data['expiry']
+                new_order.batch_number      = form.cleaned_data['batch']
+                new_order.comment           = form.cleaned_data['comment']
+                attachment = request.FILES['attachment']
+                fs = FileSystemStorage()
+                new_order.attachment        = form.cleaned_data['attachment']"""
+                
+                """new_order.added_by          = request.user
+                new_order.save()"""
+                
+                #new_order.pharmacy = pharmacy[int(request.POST['pharmacy'])-2] #doesnt work
+                #new_order.state = request.POST['state']  # == 0 ? 'active' : 'deactivated' #is ok
+                #new_order.amount_containers = request.POST['amount']
+                #new_order.quantity = request.POST['quantity']
+                #new_order.unit = request.POST['unit']
+                #new_order.delivery_date = "2017-05-22"
                 #new_order.delivery_date = request.POST['delivery'] #doesnt work
                 #new_order.expiry_date = request.POST['expiry'] #doesnt work
-                new_order.batch_number = request.POST['batch']
-                new_order.comment = request.POST['comment']
-                new_order.added_by = request.user
+                #new_order.batch_number = request.POST['batch']
+                #new_order.comment = request.POST['comment']
+                #new_order.added_by = request.user
                 #new_order.save() #doesnt work
+                messages.success(request, 'Order successfully created')
 
                 return HttpResponseRedirect('/')  # Redirect after POST
         else:
             return render(request, 'form_orderadd.html', {'form': addOrderForm()})
-    except:
-        print("error")
+    except BaseException as e:
+        messages.error(request, 'Error creating a new order {}'.format(e))
+        return HttpResponseRedirect('/')  # Redirect after POST
 
 @login_required
 def exportcsvadvanced(request):

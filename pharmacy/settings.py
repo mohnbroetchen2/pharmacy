@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     #'admin_reorder',
     'bulma',
     'django_extensions',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,7 @@ BOOTSTRAP4 = {
     'include_jquery': True,
 }
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 WSGI_APPLICATION = 'pharmacy.wsgi.application'
 
