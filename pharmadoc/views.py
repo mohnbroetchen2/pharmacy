@@ -213,7 +213,9 @@ def createsubmission(request):
 
         orderObject = Order.objects.get(pk=productid)
         pharmacyObject = orderObject.pharmacy
-
+        if orderObject.available_quantity() < (float(request.POST.get("full_containers",0)) * float(orderObject.quantity)) + float(request.POST.get("quantity",0)):
+            messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount is higher than the available stock')
+            return HttpResponseRedirect('/')
         new_submission = Submission();
         new_submission.order                = orderObject
         if personid!="Trash":

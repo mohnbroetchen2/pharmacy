@@ -88,10 +88,11 @@ class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('application_number','date','person','amount_containers','quantity','comment','procedure_control')
-    search_fields = ('application_number','date','person__name','amount_containers','quantity','comment','procedure_control')
-    ordering = ('application_number','date','person__name','amount_containers','quantity','comment','procedure_control')
-    list_filter = (('application_number', DropdownFilter),
+    list_display = ('application_number','order','date','person','amount_containers','quantity','comment','procedure_control')
+    search_fields = ('date','application_number','person__name','amount_containers','quantity','comment','procedure_control')
+    ordering = ('-date','order__pharmacy','application_number','person__name','amount_containers','quantity','comment','procedure_control')
+    list_filter = ('order',
+                    ('application_number', DropdownFilter),
                    ('date', DropdownFilter),
                    'person',
                    ('amount_containers', DropdownFilter),
@@ -107,7 +108,8 @@ class PharmacyAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ('name','company','state','type','animal_species','umwidmungsstufe','storage_instructions','comment','attachment')
     search_fields = ( 'name','company__name','state','drug_class','type','molecule','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
     ordering = ('name','state',)
-    list_filter = (('company',RelatedDropdownFilter),
+    list_filter = (
+                    ('company',RelatedDropdownFilter),
                    ('state',DropdownFilter),
                    ('type',DropdownFilter),
                    ('animal_species',DropdownFilter),

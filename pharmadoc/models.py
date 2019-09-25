@@ -150,7 +150,7 @@ class Order (models.Model):
 
     def __str__(self):
         text = self.pharmacy.name
-        text = text + " " + self.batch_number + " " + str(self.delivery_date)
+        text = text + " " +self.identifier
         return (text)
 
     def available(self):
