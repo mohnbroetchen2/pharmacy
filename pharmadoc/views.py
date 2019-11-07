@@ -20,8 +20,10 @@ from django.shortcuts import redirect
 import csv
 import codecs
 import time
+import sys
 from .forms import addOrderForm, addPharmacyForm
 from django.core.mail import send_mail
+from django.core import management
 
 
 def add_pharmacy(request):
@@ -208,45 +210,53 @@ def selectpharmacyforsubmitview(request, primary_key):
 @login_required
 def createsubmission(request):
     if request.method == "POST":
-        productid = request.POST.get("productid")
-        personid  = request.POST.get("recipient")
+        try:
+            productid = request.POST.get("productid")
+            personid  = request.POST.get("recipient")
 
-        orderObject = Order.objects.get(pk=productid)
-        pharmacyObject = orderObject.pharmacy
-        if orderObject.available_quantity() < (float(request.POST.get("full_containers",0)) * float(orderObject.quantity)) + float(request.POST.get("quantity",0)):
-            messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount is higher than the available stock')
+            orderObject = Order.objects.get(pk=productid)
+            pharmacyObject = orderObject.pharmacy
+            if orderObject.available_quantity() < (float(request.POST.get("full_containers",0)) * float(orderObject.quantity)) + float(request.POST.get("quantity",0)):
+                messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount is higher than the available stock')
+                return HttpResponseRedirect('/')
+            new_submission = Submission();
+            new_submission.order                = orderObject
+            if personid!="Trash":
+                new_submission.person               = Person.objects.get(pk=personid)
+            else:
+                try:
+                    new_submission.person               = Person.objects.get(name="Trash")
+                except:
+                    messages.add_message(request, messages.WARNING, 'There is not a person called Trash') 
+            new_submission.application_number   = request.POST.get("application_number",None)
+            new_submission.date                 = request.POST.get("submission_date",None)
+            #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
+            new_submission.amount_containers    = request.POST.get("full_containers",0)
+            new_submission.quantity             = request.POST.get("quantity",0)
+            new_submission.comment              = request.POST.get("comment",None)
+            new_submission.added_by             = request.user
+            new_submission.save()
+            messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
+
+            admin_mail = getattr(settings, "ADMIN_EMAIL", None)
+            quantityMin = pharmacyObject.alarm_value
+            if quantityMin == None:
+                quantityMin = 0
+            quantityCurrent = pharmacyObject.available_container() #is this the total quantity?yes
+            quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
+            #messages.add_message(request, messages.SUCCESS, '{} {}'.format(quantitySubmission, ))
+            if (quantityMin>=quantityCurrent):
+                from_email = admin_mail #settings.EMAIL_ADMIN
+                to_email = [admin_mail] #settings.EMAIL_RESPONSIBLE
+                message = "This item is running low: {}.<br> Alarm value: {} container<br> Current amount: {} container".format(pharmacyObject.name,
+                                                                                                        pharmacyObject.alarm_value,
+                                                                                                        quantityCurrent)
+                subject = "FLI-Pharmacy: {} is running low".format(pharmacyObject.name)
+                send_mail(subject, message, from_email, to_email, html_message=message)
+                messages.add_message(request, messages.SUCCESS, admin_mail +' has been informed about a little stock of '+pharmacyObject.name)
             return HttpResponseRedirect('/')
-        new_submission = Submission();
-        new_submission.order                = orderObject
-        if personid!="Trash":
-            new_submission.person               = Person.objects.get(pk=personid)
-        new_submission.application_number   = request.POST.get("application_number",None)
-        new_submission.date                 = request.POST.get("submission_date",None)
-        #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
-        new_submission.amount_containers    = request.POST.get("full_containers",0)
-        new_submission.quantity             = request.POST.get("quantity",0)
-        new_submission.comment              = request.POST.get("comment",None)
-        new_submission.added_by             = request.user
-        new_submission.save()
-        messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
-
-        admin_mail = getattr(settings, "ADMIN_EMAIL", None)
-        quantityMin = pharmacyObject.alarm_value
-        if quantityMin == None:
-            quantityMin = 0
-        quantityCurrent = pharmacyObject.available_container() #is this the total quantity?yes
-        quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
-        #messages.add_message(request, messages.SUCCESS, '{} {}'.format(quantitySubmission, ))
-        if (quantityMin>=quantityCurrent):
-            from_email = admin_mail #settings.EMAIL_ADMIN
-            to_email = [admin_mail] #settings.EMAIL_RESPONSIBLE
-            message = "This item is running low: {}.<br> Alarm value: {} container<br> Current amount: {} container".format(pharmacyObject.name,
-                                                                                                     pharmacyObject.alarm_value,
-                                                                                                     quantityCurrent)
-            subject = "FLI-Pharmacy: {} is running low".format(pharmacyObject.name)
-            send_mail(subject, message, from_email, to_email, html_message=message)
-            messages.add_message(request, messages.SUCCESS, admin_mail +' has been informed about a little stock of '+pharmacyObject.name)
-        return HttpResponseRedirect('/')
+        except BaseException as e:  
+            send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[admin_mail], html_message=message) 
 
 @login_required
 def seesubmissions(request, primary_key):

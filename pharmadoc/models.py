@@ -216,10 +216,10 @@ class Order (models.Model):
         realamount = fullamount  
         for s in submissionlist:
             realamount = realamount - s.fullamount()
-        if realamount == quantity:
-            self.state = 'deactivated'
-            self.save()
-            return(0)
+        #if realamount == quantity:
+        #    self.state = 'deactivated'
+        #    self.save()
+        #    return(0)
         if realamount % quantity == 0:
             return (quantity)
         else:
