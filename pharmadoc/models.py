@@ -155,7 +155,7 @@ class Order (models.Model):
 
     def available(self):
         """
-        Returns True if the animal is still available
+        Returns True if order is not expired
         """
         today = datetime.now().date()
         return (self.expiry_date >= today)

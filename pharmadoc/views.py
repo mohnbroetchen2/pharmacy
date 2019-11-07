@@ -209,6 +209,7 @@ def selectpharmacyforsubmitview(request, primary_key):
 
 @login_required
 def createsubmission(request):
+    admin_mail = getattr(settings, "ADMIN_EMAIL", None)
     if request.method == "POST":
         try:
             productid = request.POST.get("productid")
@@ -238,7 +239,7 @@ def createsubmission(request):
             new_submission.save()
             messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
 
-            admin_mail = getattr(settings, "ADMIN_EMAIL", None)
+            
             quantityMin = pharmacyObject.alarm_value
             if quantityMin == None:
                 quantityMin = 0
