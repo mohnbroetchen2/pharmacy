@@ -118,6 +118,7 @@ class Order (models.Model):
         ('l', 'l'),
         ('mg', 'mg'),
         ('g', 'g'),
+        ('pill', 'pill'),
         ),)
     delivery_date = models.DateField(null=False)
     expiry_date = models.DateField(null=False)
