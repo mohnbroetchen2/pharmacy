@@ -257,7 +257,7 @@ def createsubmission(request):
                 messages.add_message(request, messages.SUCCESS, admin_mail +' has been informed about a little stock of '+pharmacyObject.name)
             return HttpResponseRedirect('/')
         except BaseException as e:  
-            send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[admin_mail], html_message=message) 
+            send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[admin_mail]) 
 
 @login_required
 def seesubmissions(request, primary_key):
