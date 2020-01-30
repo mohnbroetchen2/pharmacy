@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule
+from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor
 from django import forms
 import csv
 from django.http import HttpResponse
@@ -48,10 +48,17 @@ class MoleculeAdmin(admin.ModelAdmin, ExportCsvMixin):
     ordering = ('name', )
     actions = ["export_as_csv"]
 
+@admin.register(Vendor)
+class VendorAdmin(admin.ModelAdmin, ExportCsvMixin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    ordering = ('name', )
+    actions = ["export_as_csv"]
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('pharmacy','identifier','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','available_containers','available_quantity')
-    search_fields = ('pharmacy','identifier','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number',)
+    list_display = ('pharmacy','identifier','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','available_containers','available_quantity')
+    search_fields = ('pharmacy','identifier','vendor__name','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number',)
     #ordering = ('pharmacy','pharmacy__name', )
     readonly_fields = ('identifier',)
     def save_model(self, request, obj, form, change):
@@ -76,6 +83,7 @@ class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
         super().save_model(request, obj, form, change)
     list_filter = (('pharmacy', RelatedDropdownFilter),
                    ('identifier', DropdownFilter),
+                   ('vendor__name', DropdownFilter),
                    'state',
                    ('amount_containers', DropdownFilter),
                    ('quantity', DropdownFilter),
@@ -141,5 +149,5 @@ class OrderForm(forms.ModelForm):
     """
     class Meta:
         model = Order
-        fields = ('pharmacy','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number')
+        fields = ('pharmacy','vendor','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number')
 

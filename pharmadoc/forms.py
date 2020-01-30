@@ -19,7 +19,7 @@ class addOrderForm(forms.ModelForm):
     attachment      = forms.FileField(required=False)
     class Meta:
         model = Order
-        fields = ('pharmacy','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','attachment','comment')
+        fields = ('pharmacy','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','attachment','comment')
     """def __init__(self, *args, **kwargs):
         super(addOrderForm, self).__init__(*args, **kwargs)
         self.fields['pharmacy'] = forms.TypedChoiceField(choices=pharmacy_choices(),widget=forms.Select(attrs={"class":"select"}))

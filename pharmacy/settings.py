@@ -122,6 +122,7 @@ ADMIN_REORDER = (
         {'model': 'pharmadoc.Submission', 'label': 'Submissions'},
         {'model': 'pharmadoc.Person', 'label': 'Persons'},
         {'model': 'pharmadoc.Company', 'label': 'Companies'},
+        {'model': 'pharmadoc.Vendor', 'label': 'Vendors'},
         {'model': 'pharmadoc.DrugClass', 'label': 'Drug class'},
         {'model': 'pharmadoc.Molecule', 'label': 'Molecule'},
         )},

@@ -10,6 +10,11 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = "Companies"
 
+class Vendor(models.Model):
+    name = models.CharField(max_length=250)
+    def __str__(self):
+        return self.name
+
 class DrugClass(models.Model):
     name = models.CharField(max_length=250)
     def __str__(self):
@@ -104,6 +109,7 @@ class Pharmacy(models.Model):
 class Order (models.Model):
     identifier = models.CharField(max_length=50)
     pharmacy = models.ForeignKey(Pharmacy, null=True, on_delete=models.SET_NULL)
+    vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.SET_NULL)
     #company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
     state = models.CharField(max_length=50, choices=(
         ('active', 'active'),
