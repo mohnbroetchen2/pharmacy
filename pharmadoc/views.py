@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from .models import Pharmacy, Person, Submission, DrugClass, Company, Order
+from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission
 from .filters import OrderFilter, PharmacyFilter, SubmissionFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -206,10 +206,79 @@ def selectpharmacyforsubmitview(request, primary_key):
     else:
         return(submit_view(request,order[0].pk))
 
+@login_required
+def selectordersformixedsubmission(request):
+    orders = Order.objects.filter(state='active')
+    return render(request, 'selectordersformixedsubmission.html', {'orders': orders,})
+
+@login_required
+def submitmixedsubmission(request):
+    tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
+    if request.method == "POST":
+        try:
+            orderlist = []
+            orderlist = request.POST.getlist("sbTwo",orderlist.append(0))
+            if len(orderlist) > 1:
+                orders = Order.objects.filter(pk__in = orderlist)
+                for o in orders:
+                    o.temp_available_containers = o.available_containers()-1
+                    o.temp_available_quantity = o.available_quantity()
+                    o.save()
+                orders = Order.objects.filter(pk__in = orderlist)
+                persons = Person.objects.filter(state='active')
+                return render(request, 'submitmixedsubmission.html', {'orders': orders,'persons':persons,})
+            else:
+                pharmacylist = Pharmacy.objects.all()
+                f = PharmacyFilter(request.GET, queryset=pharmacylist)
+                messages.add_message(request, messages.WARNING, 'At least two substances must be selected')
+                return render(request, 'home.html', {'filter': f})
+        except BaseException as e:  
+            send_mail("Error Pharmacy","Pharmacy error {} submitmixedsubmission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
+    
+@login_required
+def createmixedsubmission(request):
+    tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
+    if request.method == "POST":
+        try:
+            new_mixed_submission = Mixed_Submission()
+            new_mixed_submission.name               = request.POST.get("mixed_submission_title")
+            new_mixed_submission.application_number = request.POST.get("application_number",None)
+            new_mixed_submission.comment            = request.POST.get("comment",None)
+            new_mixed_submission.date               = request.POST.get("submission_date",None)
+
+            personid  = request.POST.get("recipient")
+            new_mixed_submission.person             = Person.objects.get(pk=personid)
+            new_mixed_submission.added_by           = request.user
+            orderlist                               = request.POST.getlist("orderid",None)
+            quantitylist                            = request.POST.getlist("quantity",None)
+            full_containerslist                      = request.POST.getlist("full_containers",None)
+            new_mixed_submission.save()
+            i=0  
+            for o in orderlist:
+                new_submission                      = Submission()
+                new_submission.order                = Order.objects.get(pk=o)
+                new_submission.person               = new_mixed_submission.person
+                new_submission.application_number   = new_mixed_submission.application_number
+                new_submission.date                 = new_mixed_submission.date
+                new_submission.amount_containers    = full_containerslist[i]
+                new_submission.quantity             = quantitylist[i]
+                new_submission.added_by             = new_mixed_submission.added_by
+                new_submission.comment        = "Mixed Submission: {} | {}".format(new_mixed_submission.name,new_mixed_submission.comment)
+                new_submission.save()
+                new_mixed_submission.submission.add(new_submission)
+                i=i+1
+            new_mixed_submission.save()
+            
+            messages.add_message(request, messages.SUCCESS, 'Mixed submission with id {} saved'.format(new_mixed_submission.pk))
+            return HttpResponseRedirect('/')
+        except BaseException as e:  
+            send_mail("Error Pharmacy","Pharmacy error {} createmixedsubmission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
+    
 
 @login_required
 def createsubmission(request):
     admin_mail = getattr(settings, "ADMIN_EMAIL", None)
+    tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
     if request.method == "POST":
         try:
             productid = request.POST.get("productid")
@@ -220,7 +289,7 @@ def createsubmission(request):
             if orderObject.available_quantity() < (float(request.POST.get("full_containers",0)) * float(orderObject.quantity)) + float(request.POST.get("quantity",0)):
                 messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount is higher than the available stock')
                 return HttpResponseRedirect('/')
-            new_submission = Submission();
+            new_submission = Submission()
             new_submission.order                = orderObject
             if personid!="Trash":
                 new_submission.person               = Person.objects.get(pk=personid)
@@ -257,7 +326,7 @@ def createsubmission(request):
                 messages.add_message(request, messages.SUCCESS, admin_mail +' has been informed about a little stock of '+pharmacyObject.name)
             return HttpResponseRedirect('/')
         except BaseException as e:  
-            send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[admin_mail]) 
+            send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
 
 @login_required
 def seesubmissions(request, primary_key):

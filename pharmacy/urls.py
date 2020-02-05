@@ -40,6 +40,9 @@ urlpatterns = [
     path('changes/', changelog.views.changehistory, name='changes'),
     path('addorder/', pharmadoc.views.add_order, name='addorder'),
     path('addpharmacy/', pharmadoc.views.add_pharmacy, name='addpharmacy'),
+    path('selectordersformixedsubmission/', pharmadoc.views.selectordersformixedsubmission, name='selectordersformixedsubmission'),
+    path('submitmixedsubmission/', pharmadoc.views.submitmixedsubmission, name='submitmixedsubmission'),
+    path('createmixedsubmission/', pharmadoc.views.createmixedsubmission, name='createmixedsubmission'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

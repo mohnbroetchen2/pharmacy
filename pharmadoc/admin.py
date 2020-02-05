@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor
+from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission
 from django import forms
 import csv
 from django.http import HttpResponse
@@ -57,7 +57,7 @@ class VendorAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('pharmacy','identifier','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','available_containers','available_quantity')
+    list_display = ('pk','pharmacy','identifier','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','available_containers','available_quantity')
     search_fields = ('pharmacy','identifier','vendor__name','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number',)
     #ordering = ('pharmacy','pharmacy__name', )
     readonly_fields = ('identifier',)
@@ -107,6 +107,17 @@ class SubmissionAdmin(admin.ModelAdmin):
                    ('quantity', DropdownFilter),
                    ('comment', DropdownFilter),
                    ('procedure_control', DropdownFilter))
+    actions = ["export_as_csv"]
+
+@admin.register(Mixed_Submission)
+class Mixed_SubmissionAdmin(admin.ModelAdmin):
+    list_display = ('name','application_number','date','person','comment',)
+    search_fields = ('name','date','application_number','person__name','comment',)
+    ordering = ('-date','name','application_number','person__name','comment','procedure_control')
+    list_filter = (('application_number', DropdownFilter),
+                   ('date', DropdownFilter),
+                   'person',
+                   ('comment', DropdownFilter),)
     actions = ["export_as_csv"]
 
 @admin.register(Pharmacy)

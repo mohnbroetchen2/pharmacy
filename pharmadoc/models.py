@@ -131,6 +131,8 @@ class Order (models.Model):
     batch_number = models.CharField(max_length=250)
     attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/order/%Y/%m/')
     comment = models.TextField(blank=True, null=True) 
+    temp_available_quantity = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
+    temp_available_containers = models.IntegerField( null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk: # Only set identifier during the first save.
@@ -261,4 +263,21 @@ class Submission(models.Model):
             return (self.quantity)
         else:
             return (self.amount_containers * self.order.quantity + self.quantity)
+    def __str__(self):
+        return ("{} | {}".format(self.application_number, self.order))
+
+class Mixed_Submission(models.Model):
+    name = models.CharField(max_length=250)
+    application_number = models.CharField(max_length=250)
+    date = models.DateField(null=False)
+    submission = models.ManyToManyField(Submission, related_name='submissions',) 
+    creation_date = models.DateTimeField(null=False, auto_now_add=True)
+    person = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
+    comment = models.TextField(blank=True, null=True)
+    procedure_control = models.CharField(max_length=800,  null=True, blank=True,)
+    added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
+    attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
+    attachment2 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
+
+    
 

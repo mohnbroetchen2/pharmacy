@@ -20,14 +20,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_collected")
 EMAIL_HOST = '127.0.0.1'
 # Application definition
 
-#EMAIL_RESPONSIBLE = 'info.huber@aol.de'
-#EMAIL_ADMIN = 'info.huber@aol.de'
-#DEFAULT_FROM_EMAIL = "bushaltestelle.70@gmail.com"
-#EMAIL_HOST = "smtp.gmail.com"
-#EMAIL_HOST_USER = "bushaltestelle.70@gmail.com"
-#EMAIL_HOST_PASSWORD = ""
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -125,6 +117,7 @@ ADMIN_REORDER = (
         {'model': 'pharmadoc.Vendor', 'label': 'Vendors'},
         {'model': 'pharmadoc.DrugClass', 'label': 'Drug class'},
         {'model': 'pharmadoc.Molecule', 'label': 'Molecule'},
+        {'model': 'pharmadoc.Mixed_Submission', 'label': 'Mixed Submission'},
         )},
     {'app': 'auth', 'models': ('auth.User',) },
     {'app': 'changelog', 'label': 'Changelog' },
