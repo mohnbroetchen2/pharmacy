@@ -6,10 +6,12 @@
     $('#datatable').DataTable({
       "searching": true,
       "scrollX": false,
+      "scrollY": "500px",
       "order": [[0, 'desc']],
       "scrollCollapse": true,
       "paging": true,
-      "pageLength": 100, 
+      "pageLength": 25,
+      "fixedHeader": true, 
     });
   });
 </script> {% endblock %} {% block content %}
@@ -34,7 +36,7 @@
 <form action="" method="POST"> {% csrf_token %}
   <div class="col-lg-12">
     <div class="table-responsive">
-      <table id="datatable" class="table is-striped table is-hoverable">
+      <table id="datatable" class="table is-striped is-hoverable is-scrollable">
         <thead>
           <tr>
           <th class="header"> Name</th>
