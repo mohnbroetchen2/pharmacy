@@ -7,9 +7,12 @@
     $('#datatable').DataTable({
       "searching": true,
       "scrollX": false,
+      "scrollY": "500px",
       "order": [[0, 'desc']],
       "scrollCollapse": true,
       "paging": true,
+      "pageLength": 25,
+      "fixedHeader": true, 
     });
   });
 </script> {% endblock %} {% block content %}
