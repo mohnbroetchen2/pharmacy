@@ -192,7 +192,7 @@ def submit_view(request, primary_key):
                 primary_key = pk_order
     order= get_object_or_404(Order, pk=primary_key)
     persons = Person.objects.filter(state='active')
-    license = License_Number.objects.filter(state='active')
+    license = License_Number.objects.filter(state='active').order_by('license')
     available_containers = order.available_containers()
     available_quantity = order.available_quantity()
     available_quantity_last_container = order.available_quantity_last_container()
