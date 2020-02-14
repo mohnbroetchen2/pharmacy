@@ -115,6 +115,7 @@ ADMIN_REORDER = (
         {'model': 'pharmadoc.Person', 'label': 'Persons'},
         {'model': 'pharmadoc.Company', 'label': 'Companies'},
         {'model': 'pharmadoc.Vendor', 'label': 'Vendors'},
+        {'model': 'pharmadoc.License_Number', 'label': 'Licenses'},
         {'model': 'pharmadoc.DrugClass', 'label': 'Drug class'},
         {'model': 'pharmadoc.Molecule', 'label': 'Molecule'},
         {'model': 'pharmadoc.Mixed_Submission', 'label': 'Mixed Submission'},

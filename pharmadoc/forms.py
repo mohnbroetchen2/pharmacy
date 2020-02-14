@@ -17,6 +17,7 @@ class addOrderForm(forms.ModelForm):
     delivery_date   = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget(),initial=datetime.now())
     expiry_date     = forms.DateField(label='Expiry date', widget=forms.SelectDateWidget)
     attachment      = forms.FileField(required=False)
+    #added_by        = forms.CharField(label='request.user(label)
     class Meta:
         model = Order
         fields = ('pharmacy','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','attachment','comment')

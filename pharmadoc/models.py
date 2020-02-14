@@ -116,7 +116,8 @@ class Order (models.Model):
         ('deactivated', 'deactivated'),
         ),default='active')
     #molecule = models.CharField(max_length=250)
-    
+    creation_date = models.DateTimeField(null=False, auto_now_add=True)
+    added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
     amount_containers = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
     quantity = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
     unit = models.CharField(max_length=10, choices=(
@@ -244,6 +245,15 @@ class Person(models.Model):
     def __str__(self):
         return self.name
 
+class License_Number(models.Model):
+    license = models.CharField(max_length=250)
+    state = models.CharField(max_length=50, choices=(
+        ('active', 'active'),
+        ('deactivated', 'deactivated'),
+        ),default='active')
+    def __str__(self):
+        return self.license
+
 class Submission(models.Model):
     application_number = models.CharField(max_length=250)
     order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
@@ -253,6 +263,7 @@ class Submission(models.Model):
     amount_containers = models.PositiveIntegerField(null=True)
     quantity = models.DecimalField(null=False, default=0,max_digits=10, decimal_places=3,) 
     comment = models.TextField(blank=True, null=True)
+    license = models.ForeignKey(License_Number, null=True, blank=False, on_delete=models.SET_NULL)
     procedure_control = models.CharField(max_length=800,  null=True, blank=True,)
     added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
     attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
@@ -278,6 +289,4 @@ class Mixed_Submission(models.Model):
     added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
     attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
     attachment2 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
-
-    
 

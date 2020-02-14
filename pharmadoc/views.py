@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission
+from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number
 from .filters import OrderFilter, PharmacyFilter, SubmissionFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -192,10 +192,11 @@ def submit_view(request, primary_key):
                 primary_key = pk_order
     order= get_object_or_404(Order, pk=primary_key)
     persons = Person.objects.filter(state='active')
+    license = License_Number.objects.filter(state='active')
     available_containers = order.available_containers()
     available_quantity = order.available_quantity()
     available_quantity_last_container = order.available_quantity_last_container()
-    return render(request, 'submit.html', {'object': order, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,})
+    return render(request, 'submit.html', {'license':license,'object': order, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,})
 
 @login_required
 def selectpharmacyforsubmitview(request, primary_key):
@@ -283,7 +284,7 @@ def createsubmission(request):
         try:
             productid = request.POST.get("productid")
             personid  = request.POST.get("recipient")
-
+            licenseid = request.POST.get("license")
             orderObject = Order.objects.get(pk=productid)
             pharmacyObject = orderObject.pharmacy
             if orderObject.available_quantity() < (float(request.POST.get("full_containers",0)) * float(orderObject.quantity)) + float(request.POST.get("quantity",0)):
@@ -299,6 +300,7 @@ def createsubmission(request):
                 except:
                     messages.add_message(request, messages.WARNING, 'There is not a person called Trash') 
             new_submission.application_number   = request.POST.get("application_number",None)
+            new_submission.license              = License_Number.objects.get(pk=licenseid)
             new_submission.date                 = request.POST.get("submission_date",None)
             #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
             new_submission.amount_containers    = request.POST.get("full_containers",0)

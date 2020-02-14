@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission
+from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission,License_Number
 from django import forms
 import csv
 from django.http import HttpResponse
@@ -48,6 +48,13 @@ class MoleculeAdmin(admin.ModelAdmin, ExportCsvMixin):
     ordering = ('name', )
     actions = ["export_as_csv"]
 
+@admin.register(License_Number)
+class License_NumberAdmin(admin.ModelAdmin, ExportCsvMixin):
+    list_display = ('license','state')
+    search_fields = ('license',)
+    ordering = ('license','state')
+    actions = ["export_as_csv"]
+
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ('name',)
@@ -58,7 +65,7 @@ class VendorAdmin(admin.ModelAdmin, ExportCsvMixin):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ('pk','pharmacy','identifier','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','available_containers','available_quantity')
-    search_fields = ('pharmacy','identifier','vendor__name','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number',)
+    search_fields = ('pharmacy__name','identifier','vendor__name','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number',)
     #ordering = ('pharmacy','pharmacy__name', )
     readonly_fields = ('identifier',)
     def save_model(self, request, obj, form, change):
@@ -96,13 +103,14 @@ class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('application_number','order','date','person','amount_containers','quantity','comment','procedure_control')
-    search_fields = ('date','application_number','person__name','amount_containers','quantity','comment','procedure_control')
+    list_display = ('application_number','order','date','person','license','amount_containers','quantity','comment','procedure_control')
+    search_fields = ('date','application_number','person__name','license__license','amount_containers','quantity','comment','procedure_control')
     ordering = ('-date','order__pharmacy','application_number','person__name','amount_containers','quantity','comment','procedure_control')
     list_filter = ('order',
                     ('application_number', DropdownFilter),
                    ('date', DropdownFilter),
                    'person',
+                   ('license__license',DropdownFilter),
                    ('amount_containers', DropdownFilter),
                    ('quantity', DropdownFilter),
                    ('comment', DropdownFilter),
@@ -125,7 +133,7 @@ class PharmacyAdmin(admin.ModelAdmin, ExportCsvMixin):
     #list_display = ('name','state','molecule','type','company','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
     #search_fields = ('name','state','molecule','type','company__name','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
     list_display = ('name','company','state','type','animal_species','umwidmungsstufe','storage_instructions','comment','attachment')
-    search_fields = ( 'name','company__name','state','drug_class','type','molecule','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
+    search_fields = ( 'name','company__name','state','drug_class__name','type','molecule__name','animal_species','umwidmungsstufe','storage_instructions','attachment','comment')
     ordering = ('name','state',)
     list_filter = (
                     ('company',RelatedDropdownFilter),
