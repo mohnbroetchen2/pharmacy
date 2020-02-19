@@ -43,6 +43,7 @@ urlpatterns = [
     path('selectordersformixedsubmission/', pharmadoc.views.selectordersformixedsubmission, name='selectordersformixedsubmission'),
     path('submitmixedsubmission/', pharmadoc.views.submitmixedsubmission, name='submitmixedsubmission'),
     path('createmixedsubmission/', pharmadoc.views.createmixedsubmission, name='createmixedsubmission'),
+    path('order/', pharmadoc.views.order_view, name='showorders'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

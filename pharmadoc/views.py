@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number
-from .filters import OrderFilter, PharmacyFilter, SubmissionFilter
+from .filters import OrderViewFilter, OrderFilter, PharmacyFilter, SubmissionFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.files.storage import FileSystemStorage
@@ -182,6 +182,12 @@ def start_all_view(request):
     pharmacylist = Pharmacy.objects.all()
     f = PharmacyFilter(request.GET, queryset=pharmacylist)
     return render(request, 'home_all.html', {'filter': f})
+
+@login_required
+def order_view(request):
+    orderlist = Order.objects.all()
+    f = OrderViewFilter(request.GET, queryset=orderlist)
+    return render(request, 'order_view.html', {'filter': f})
 
 @login_required
 def submit_view(request, primary_key):

@@ -1,0 +1,130 @@
+{% extends "base.html" %} {% load static %}{% load widget_tweaks %}{% block extrascripts %}
+{% load bulma_tags %}
+
+{% block title %}FLI Pharmacy{% endblock %}
+<script>
+  $(document).ready(function () {
+    $('#datatable').DataTable({
+      "searching": true,
+      "scrollX": false,
+      "scrollY": "500px",
+      "order": [[0, 'desc']],
+      "scrollCollapse": true,
+      "paging": true,
+      "pageLength": 25,
+      "fixedHeader": true, 
+    });
+  });
+</script> {% endblock %} {% block content %}
+<style>
+  <!-- style the filterform so it kinda fits on the screen-->#filterform label {
+    font-size: 75%;
+  }
+
+  #filterform select {
+    font-size: 75%;
+  }
+
+  #filterform input {
+    font-size: 75%;
+  }
+
+  #filterform {
+    padding: 10px;
+  }
+</style>
+<h1 class="text-center"> FLI Pharmacy - Order overview</h1>
+<form method="get">
+  <div class="well">
+    <div class="container-fluid">
+      <div class="m-sm-2">
+        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#filterBlock">Filter</button>
+      </div>
+      <div id="filterBlock" class="collapse">
+        <div class="row">
+          <div class="form-group col-sm-4 col-md-2">
+            {{ filter.form.delivery_date.label_tag }} {% render_field filter.form.delivery_date class="form-control" %}
+          </div>
+          <!--div class="form-group col-sm-4 col-md-1">
+            {{ filter.form.age.label_tag }} {% render_field filter.form.age class="form-control" %}
+          </div-->
+          <div class="form-group col-sm-4 col-md-3">
+            {{ filter.form.pharmacy.label_tag }} {% render_field filter.form.pharmacy%}
+          </div>
+          <div>
+            <p>
+              <button type="submit" style="margin-top:42%;" class="btn">Search</button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<form action="/animals/claim" method="POST"> {% csrf_token %}
+  <div class="col-lg-12">
+    <div class="table-responsive">
+      <table id="datatable" class="table table is-striped table is-hoverable">
+        <thead>
+          <tr>
+            <th class="header"> Identifier
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Pharmacy
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Molecule
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Company
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Vendor
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Delivery Date
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Expiry Date
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Batch Number
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Delivered quantity
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Delivered containers
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Available quantity
+          </th>
+          <th class="header"> Available containers 
+          </th>
+          <th class=""><a href="/allsubmissions/{{pharmacy.pk}}">All submissions</a></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in filter.qs %}
+          <tr>
+            <td>{{o.identifier}}</td>
+            <td>{{o.pharmacy}}</td>
+            <td>{{o.pharmacy.get_molecule}}</td>
+            <td>{{o.pharmacy.company}}</td>
+            <td>{{o.vendor}}</td>
+            <td>{{o.delivery_date}}</td>
+            <td>{{o.expiry_date}}</td>
+            <td>{{o.batch_number}}</td>
+            <td>{{o.delivered_quantity|floatformat:0}} {{o.unit}}</td>
+            <td>{{o.amount_containers}}</td>
+            <td>{{o.available_quantity|floatformat:0}} {{o.unit}}</td>
+            <td>{{o.available_containers}}</td>
+            <td><a href="/submissions/{{o.pk}}">Submissions</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</form>
+{% endblock %}
