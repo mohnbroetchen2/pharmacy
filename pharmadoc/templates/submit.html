@@ -45,17 +45,6 @@
         </div>
     </div>
   </div>
-  <div class="row-fluid">
-      <select class="selectpicker" data-show-subtext="true" data-live-search="true">
-        <option data-subtext="Rep California">Tom Foolery</option>
-        <option data-subtext="Sen California">Bill Gordon</option>
-        <option data-subtext="Sen Massacusetts">Elizabeth Warren</option>
-        <option data-subtext="Rep Alabama">Mario Flores</option>
-        <option data-subtext="Rep Alaska">Don Young</option>
-        <option data-subtext="Rep California" disabled="disabled">Marvin Martinez</option>
-      </select>
-      <span class="help-inline">With <code>data-show-subtext="true" data-live-search="true"</code>. Try searching for california</span>
-    </div>
   <div class="control">
     <label class="label">License Number</label>
     <div class="select">
@@ -187,6 +176,11 @@ $.fn.bootstrapDP = datepicker;
     option.text = "Trash";
     recipient.add(option,recipient[0]);
     recipient.selectedIndex=0;
+    var option_trash = document.createElement("option");
+    option_trash.text = "Trash";
+    var license = document.getElementById("license");
+    license.add(option_trash,license[0]);
+    license.selectedIndex=0;
   }
 </script>
 
