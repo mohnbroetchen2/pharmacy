@@ -118,6 +118,8 @@ ADMIN_REORDER = (
         {'model': 'pharmadoc.License_Number', 'label': 'Licenses'},
         {'model': 'pharmadoc.DrugClass', 'label': 'Drug class'},
         {'model': 'pharmadoc.Molecule', 'label': 'Molecule'},
+        {'model': 'pharmadoc.Mixed_Pharmacy', 'label': 'Mixed Pharmacy'},
+        {'model': 'pharmadoc.Mixed_Solution', 'label': 'Mixed Solution'},
         {'model': 'pharmadoc.Mixed_Submission', 'label': 'Mixed Submission'},
         )},
     {'app': 'auth', 'models': ('auth.User',) },

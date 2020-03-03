@@ -11,8 +11,8 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number
-from .filters import OrderViewFilter, OrderFilter, PharmacyFilter, SubmissionFilter
+from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number, Mixed_Pharmacy
+from .filters import OrderViewFilter, OrderFilter, PharmacyFilter, SubmissionFilter, MixedPharmacyFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.files.storage import FileSystemStorage
@@ -293,7 +293,7 @@ def createsubmission(request):
             licenseid = request.POST.get("license")
             orderObject = Order.objects.get(pk=productid)
             pharmacyObject = orderObject.pharmacy
-            if orderObject.available_quantity() < (float(request.POST.get("full_containers",0)) * float(orderObject.quantity)) + float(request.POST.get("quantity",0)):
+            if orderObject.available_quantity() < (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0")):
                 messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount is higher than the available stock')
                 return HttpResponseRedirect('/')
             new_submission = Submission()
@@ -374,6 +374,12 @@ def showorders(request, primary_key):
     pharmacy = Pharmacy.objects.get(pk=primary_key)
     return render(request, 'orders.html', {'pharmacy': pharmacy, 'orders':orderlist,})
 
+
+@login_required
+def mixed_solutions(request):
+    mixed_pharmacylist = Mixed_Pharmacy.objects.filter(state='active')
+    f = MixedPharmacyFilter(request.GET, queryset=mixed_pharmacylist)
+    return render(request, 'overview_mixed_solutions.html', {'filter': f})
 
 @login_required
 def change_password(request):

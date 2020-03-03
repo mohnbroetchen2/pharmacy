@@ -108,31 +108,29 @@ class Pharmacy(models.Model):
 
 #class StockProduct (models.Model):
 class Order (models.Model):
-    identifier = models.CharField(max_length=50)
-    pharmacy = models.ForeignKey(Pharmacy, null=True, on_delete=models.SET_NULL)
-    vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.SET_NULL)
-    #company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
-    state = models.CharField(max_length=50, choices=(
+    identifier          = models.CharField(max_length=50)
+    pharmacy            = models.ForeignKey(Pharmacy, null=True, on_delete=models.SET_NULL)
+    vendor              = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.SET_NULL)
+    state               = models.CharField(max_length=50, choices=(
         ('active', 'active'),
         ('deactivated', 'deactivated'),
         ),default='active')
-    #molecule = models.CharField(max_length=250)
-    creation_date = models.DateTimeField(null=False, auto_now_add=True)
-    added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
-    amount_containers = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
-    quantity = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
-    unit = models.CharField(max_length=10, choices=(
+    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
+    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
+    amount_containers   = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
+    quantity            = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
+    unit                = models.CharField(max_length=10, choices=(
         ('ml', 'ml'),
         ('l', 'l'),
         ('mg', 'mg'),
         ('g', 'g'),
         ('pill', 'pill'),
         ),)
-    delivery_date = models.DateField(null=False)
-    expiry_date = models.DateField(null=False)
-    batch_number = models.CharField(max_length=250)
-    attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/order/%Y/%m/')
-    comment = models.TextField(blank=True, null=True) 
+    delivery_date       = models.DateField(null=False)
+    expiry_date         = models.DateField(null=False)
+    batch_number        = models.CharField(max_length=250)
+    attachment          = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/order/%Y/%m/')
+    comment             = models.TextField(blank=True, null=True) 
     temp_available_quantity = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     temp_available_containers = models.IntegerField( null=True, blank=True)
 
@@ -190,13 +188,13 @@ class Order (models.Model):
             return((realamount // quantity)+1)
 
     def available_quantity_date(self, Date):
-        submissionlist = Submission.objects.filter(order__pk=self.pk)
+        submissionlist  = Submission.objects.filter(order__pk=self.pk)
         if submissionlist is None:
             return(self.amount_containers)
-        quantity = self.quantity
-        containers = self.amount_containers
-        fullamount = quantity * containers
-        realamount = fullamount
+        quantity        = self.quantity
+        containers      = self.amount_containers
+        fullamount      = quantity * containers
+        realamount      = fullamount
         for s in submissionlist:
             if s.date >= Date: #datetime.date(datetime.strptime(Date, '%Y-%m-%d')): #convert string to datetime and datetime to date
                 realamount = realamount - s.fullamount() #amount now minus all submission ever since the date
@@ -256,19 +254,19 @@ class License_Number(models.Model):
         return self.license
 
 class Submission(models.Model):
-    application_number = models.CharField(max_length=250)
-    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
-    date = models.DateField(null=False)
-    creation_date = models.DateTimeField(null=False, auto_now_add=True)
-    person = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
-    amount_containers = models.PositiveIntegerField(null=True)
-    quantity = models.DecimalField(null=False, default=0,max_digits=10, decimal_places=3,) 
-    comment = models.TextField(blank=True, null=True)
-    license = models.ForeignKey(License_Number, null=True, blank=False, on_delete=models.SET_NULL)
-    procedure_control = models.CharField(max_length=800,  null=True, blank=True,)
-    added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
-    attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
-    attachment2 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
+    application_number  = models.CharField(max_length=250)
+    order               = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+    date                = models.DateField(null=False)
+    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
+    person              = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
+    amount_containers   = models.PositiveIntegerField(null=True)
+    quantity            = models.DecimalField(null=False, default=0,max_digits=10, decimal_places=3,) 
+    comment             = models.TextField(blank=True, null=True)
+    license             = models.ForeignKey(License_Number, null=True, blank=False, on_delete=models.SET_NULL)
+    procedure_control   = models.CharField(max_length=800,  null=True, blank=True,)
+    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
+    attachment1         = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
+    attachment2         = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
 
     def fullamount(self):
         if self.amount_containers is None:
@@ -278,16 +276,69 @@ class Submission(models.Model):
     def __str__(self):
         return ("{} | {}".format(self.application_number, self.order))
 
+
 class Mixed_Submission(models.Model):
-    name = models.CharField(max_length=250)
-    application_number = models.CharField(max_length=250)
-    date = models.DateField(null=False)
-    submission = models.ManyToManyField(Submission, related_name='submissions',) 
-    creation_date = models.DateTimeField(null=False, auto_now_add=True)
-    person = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
-    comment = models.TextField(blank=True, null=True)
-    procedure_control = models.CharField(max_length=800,  null=True, blank=True,)
-    added_by = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
-    attachment1 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
-    attachment2 = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
+    name                = models.CharField(max_length=250)
+    application_number  = models.CharField(max_length=250)
+    date                = models.DateField(null=False)
+    submission          = models.ManyToManyField(Submission, related_name='submissions',) 
+    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
+    person              = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
+    comment             = models.TextField(blank=True, null=True)
+    procedure_control   = models.CharField(max_length=800,  null=True, blank=True,)
+    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
+    attachment1         = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
+    attachment2         = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
+
+
+class Mixed_Pharmacy(models.Model):
+    name                = models.CharField(max_length=250)
+    state               = models.CharField(max_length=50, choices=(
+        ('active', 'active'),
+        ('deactivated', 'deactivated'),
+        ),default='active')
+    included_pharmacy   = models.ManyToManyField(Pharmacy, related_name='included_pharmacy',) 
+    class Meta:
+        verbose_name = "Mixed Pharmacy"
+        verbose_name_plural = "Mixed Pharmacy"
+    def __str__(self):
+        return self.name
+    def get_substances(self):
+        return ",\n".join([ph.name for ph in self.included_pharmacy.all()])
+
+
+class Mixed_Solution(models.Model):
+    identifier          = models.CharField(max_length=50)
+    amount_containers   = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
+    quantity            = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
+    state               = models.CharField(max_length=50, choices=(
+        ('active', 'active'),
+        ('deactivated', 'deactivated'),
+        ),default='active')
+    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
+    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
+    unit                = models.CharField(max_length=10, choices=(
+        ('ml', 'ml'),
+        ('l', 'l'),
+        ('mg', 'mg'),
+        ('g', 'g'),
+        ('pill', 'pill'),
+        ),)
+    mixed_date          = models.DateField(null=False)
+    expiry_date         = models.DateField(null=False)
+    comment             = models.TextField(blank=True, null=True) 
+    class Meta:
+        verbose_name = "Mixed Solution"
+        verbose_name_plural = "Mixed Solutions"
+
+class Submission_For_Mixed_Solution(models.Model):
+    order               = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+    quantity            = models.DecimalField(null=False, default=0,max_digits=10, decimal_places=3,)
+    amount_containers   = models.PositiveIntegerField(null=True)
+    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
+    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE,)
+    used_for            = models.ForeignKey(Mixed_Solution, unique=False, on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = "Submission For Mixed Solution"
+        verbose_name_plural = "Submission For Mixed Solution"
 

@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', pharmadoc.views.start_view, name='startview'),
     path('all', pharmadoc.views.start_all_view, name='startallview'),
+    path('mixedsolutions', pharmadoc.views.mixed_solutions, name='overview mixed solution'),
     path('submit/createsubmission', pharmadoc.views.createsubmission, name='createsubmission'),
     path('selectpharmacyforsubmitview/<int:primary_key>', pharmadoc.views.selectpharmacyforsubmitview, name='selectpharmacyforsubmitview'),
     path('submit/<int:primary_key>', pharmadoc.views.submit_view, name='submitview'),

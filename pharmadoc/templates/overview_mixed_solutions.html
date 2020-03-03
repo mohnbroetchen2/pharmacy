@@ -1,0 +1,90 @@
+{% extends "base.html" %}  {% load static %} {% block extrascripts %}{% load widget_tweaks %}
+
+{% block title %}FLI Pharmacy{% endblock %}
+<script>
+  $(document).ready(function () {
+    $('#datatable').DataTable({
+      "searching": true,
+      "scrollX": false,
+      "scrollY": "500px",
+      "order": [[0, 'desc']],
+      "scrollCollapse": true,
+      "paging": true,
+      "pageLength": 25,
+      "fixedHeader": true, 
+    });
+  });
+</script> {% endblock %} {% block content %}
+<style>
+  #filterform label {
+    font-size: 75%;
+  }
+
+  #filterform select {
+    font-size: 75%;
+  }
+
+  #filterform input {
+    font-size: 75%;
+  }
+
+  #filterform {
+    padding: 10px;
+  }
+</style>
+<h1 class="text-center"> FLI Pharmacy - Overview Mixed Solutions</h1>
+<form action="/exportadvanced" method="POST"> {% csrf_token %}
+  <div class="col-lg-12">
+    <div class="table-responsive">
+      <table id="datatable" class="table is-striped is-hoverable is-scrollable">
+        <thead>
+          <tr>
+          <th class="header"> Name</th>
+          <th class="header"> Substances</th>
+          <th class="header"> Available quantity</th>
+          <th class="header"> Available containers</th>
+          <th class="header"> Attachment</th>
+          <th class="header"></th>
+          <th class="header"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in filter.qs %}
+          <tr {% if p.available_quantity == 0 %}style="display:none;" {% endif %}>
+            <td><a href="/allsubmissions/{{p.pk}}">{{p}}</a></td>
+            <td>{{p.get_substances}}</td>
+            <!--td>{{p.delivery_date}}</td>
+            <td>{{p.expiry_date}}</td>
+            <td>{{p.batch_number}}</td>
+            <td>{{p.delivered_quantity}}{{p.unit}}</td-->
+            <td>{{p.available_quantity|floatformat:0}} {{p.unit}}</td>
+            <td>{{p.available_container}}</td>
+            <td><a href="{{MEDIA_URL}}{{p.attachment}}">{{p.attachment_name}}</a></td>
+            <td><a href="/selectpharmacyforsubmitview/{{p.pk}}">submit</a></td>
+            <td><a href="/showorders/{{p.pk}}">more</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p>
+        <a class="btn btn-dark" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Options
+        </a>
+      </p>
+      <div class="collapse" id="collapseExample">
+        <a href="/export" class="btn btn-primary">Export</a>
+        <br>
+        <br>
+        <input type="submit" name='claim' value="Export advanced" class="btn btn-primary">
+        <tr><td>from </td><td><input type="date" name="exportFromDate" value="{{m.from|date:"d/m/Y"}}" required=True></td></tr>
+        <tr><td>to </td><td><input type="date" name="exportToDate" value="{{m.to|date:"d/m/Y"}}" required=True></td></tr>
+        <!--br>
+        <br>
+        <a-- href="/changes" class="btn btn-primary">View Maintenance History</a-->
+      </div>
+
+
+    </div>
+  </div>
+</form>
+{% endblock %}

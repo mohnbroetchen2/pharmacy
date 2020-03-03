@@ -5,7 +5,7 @@ import django_filters
 from django_filters import FilterSet
 from django.forms.widgets import CheckboxSelectMultiple
 import django.forms
-from .models import Order, Pharmacy, Person, Submission, DrugClass, Company
+from .models import Order, Pharmacy, Person, Submission, DrugClass, Company, Mixed_Pharmacy
 
 class OrderViewFilter(FilterSet):
     delivery_date = django_filters.DateFromToRangeFilter(label='Delivery date: (YYYY-MM-DD)')
@@ -29,3 +29,8 @@ class SubmissionFilter(FilterSet):
     class Meta:
         model = Submission
         fields = ['application_number','order','person','date',]
+
+class MixedPharmacyFilter(FilterSet):
+    class Meta:
+        model = Mixed_Pharmacy
+        fields = ['name',]

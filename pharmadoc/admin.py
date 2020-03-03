@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission,License_Number
+from .models import Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution
 from django import forms
 import csv
 from django.http import HttpResponse
@@ -127,6 +128,21 @@ class Mixed_SubmissionAdmin(admin.ModelAdmin):
                    'person',
                    ('comment', DropdownFilter),)
     actions = ["export_as_csv"]
+
+@admin.register(Mixed_Pharmacy)
+class Mixed_SubmissionAdmin(admin.ModelAdmin):
+    list_display = ('name','state')
+    search_fields = ('name','state')
+    ordering = ('name','state')
+
+@admin.register(Mixed_Solution)
+class Mixed_SolutionAdmin(admin.ModelAdmin):
+    list_display = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
+    search_fields = ('identifier','state')
+    ordering = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
+    class Meta:
+        model = Mixed_Solution
+        fields = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
 
 @admin.register(Pharmacy)
 class PharmacyAdmin(admin.ModelAdmin, ExportCsvMixin):
