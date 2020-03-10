@@ -176,7 +176,7 @@ class PharmacyForm(forms.ModelForm):
     class Meta:
         model = Pharmacy
         #fields = ('name','state','molecule','type','company','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number',)
-        fields = ('name','state','type',)
+        fields = ('name','state','type','identifier_shortcut',)
 
 class OrderForm(forms.ModelForm):
     """

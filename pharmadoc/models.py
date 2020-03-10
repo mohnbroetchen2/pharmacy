@@ -45,6 +45,7 @@ class Pharmacy(models.Model):
         ),)
     animal_species = models.CharField(max_length=250, null=True)
     umwidmungsstufe = models.PositiveIntegerField()
+    identifier_shortcut = models.CharField(max_length=3, null=True, blank=True,)
     storage_instructions = models.CharField(max_length=400, null=True, blank=True,)
     comment = models.TextField(blank=True, null=True) 
     attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/%Y/%m/')
@@ -137,7 +138,10 @@ class Order (models.Model):
     def save(self, *args, **kwargs):
         if not self.pk: # Only set identifier during the first save.
             stringdate = str(self.delivery_date)
-            new_identifier =  self.pharmacy.name[:3] + stringdate[2:] 
+            if self.pharmacy.identifier_shortcut == None:
+                new_identifier =  self.pharmacy.name[:3] + stringdate[2:]
+            else:
+                new_identifier =  self.pharmacy.identifier_shortcut + stringdate[2:] 
             existingOrder = Order.objects.filter(identifier=new_identifier)
             if existingOrder:
                 found = 1
