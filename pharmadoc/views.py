@@ -293,8 +293,9 @@ def createsubmission(request):
             licenseid = request.POST.get("license")
             orderObject = Order.objects.get(pk=productid)
             pharmacyObject = orderObject.pharmacy
+            submitted_amount = (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0"))
             if orderObject.available_quantity() < (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0")):
-                messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount is higher than the available stock')
+                messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount {} is higher than the available stock {}'.format(submitted_amount,orderObject.available_quantity()))
                 return HttpResponseRedirect('/')
             new_submission = Submission()
             new_submission.order                = orderObject
