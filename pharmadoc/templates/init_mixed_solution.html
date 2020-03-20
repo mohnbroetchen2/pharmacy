@@ -1,0 +1,149 @@
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+<script src="{% static '/js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+<link rel="stylesheet" href="{% static '/css/dataTables.bootstrap4.min.css' %}">
+
+
+{% endblock %}{% block content %}
+<h1 class="text-center"> FLI Pharmacy - Create new mixed solution {{mixed_pharmacy}}</h1>
+<form action="/addmixedsolution/" method="post"> {% csrf_token %}
+  <div class="field">
+    <label class="label">Mixed Pharmacy</label>
+    <div class="control">
+      <input class="input" id="mixed_pharmacy_name" name="mixed_pharmacy_name" type="text" readonly="readonly" value="{{mixed_pharmacy}}">
+    </div>
+    <div class="control">
+      <input class="input" id="mixedpharmacy" name="mixedpharmacy" type="hidden"  type="text" readonly="readonly" value="{{mixed_pharmacy.pk}}">
+    </div>
+  </div>
+  <div class="columns is-mobile is-multiline is-centered">
+    {% for o in orderlist %}
+    <div class="column is-narrow">
+      <div class="field">
+        <label class="label">Pharmacy</label>
+        <div class="control">
+          <input class="input" name="pharmacy" type="text" readonly="readonly" value="{{o.pharmacy}}" required>
+          <input name="orderid" type="hidden" value="{{o.pk}}" readonly="readonly">
+        </div>
+      </div> 
+      <div class="field">
+        <label class="label">Identifier</label>
+        <div class="control">
+          <input class="input" name="identifier_{{o.pk}}" type="text" readonly="readonly" value="{{o.identifier}}" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Batch number</label>
+        <div class="control">
+          <input class="input" name="batch_number_{{o.pk}}" type="text" readonly="readonly" value="{{o.batch_number}}" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" style="margin-top: 5px">Amount of (full) containers (max. {{o.temp_available_containers}}) </label>
+        <div class="field has-addons has-addons-left">
+          <div class="control">
+            <input id="containers_id_{{o.pk}}" class="input" name="full_containers" onchange="calculate({{o.pk}})" type="number" value="0" max="{{o.temp_available_containers}}">
+          </div>
+        </div>
+      </div>
+      <div class="field ">
+        <label class="label">Quantity ({{o.unit}})</label>
+        <div class="field has-addons has-addons-left">
+          <div class="control">
+            <input class="input" id="quantity_id_{{o.pk}}" name="quantity" type="number" max="{{o.temp_available_quantity}}" step="0.01" onchange="calculate({{o.pk}})" placeholder="{{o.unit}}" value="0">
+            <input id="quantity_one_container_id_{{o.pk}}" name="quantity_one_container" type="hidden" value="{{o.quantity}}" readonly="readonly">
+            <input id="available_quantity_id_{{o.pk}}" name="available_quantity" type="hidden" value="{{o.available_quantity}}" readonly="readonly">
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label"">Overall quantity (max. {{o.temp_available_quantity}}{{o.unit}})</label>
+      </div>
+      <div class="field">
+        <input id="overall_quantity_id_{{o.pk}}" class="input" name="overall_quantity" type="number" max="{{o.temp_available_quantity}}" step="0.01" readonly="readonly" value="0" required>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="field">
+    <label class="label">Identifier (new mixed solution)</label>
+    <input class="input" name="identifier" type="text" id='identifier' required>
+  </div>
+  <div class="field">
+    <label class="label">Amount new containers</label>
+    <input class="input" name="amount_containers" type="number" id='amount_containers' required>
+  </div>
+  <div class="field">
+    <label class="label">Quantity (one container)</label>
+    <input class="input" name="quantity" type="number" step="0.01" id='quantity' required>
+  </div>
+  <div class="field">
+    <label class="label">Unit</label>
+    <select name="unit" class="form-control form-control.sm">
+      <option value="ml">ml</option>
+      <option value="l">l</option>
+      <option value="mg">mg</option>
+      <option value="g">g</option>
+      <option value="pill">pill</option>
+    </select>
+  </div>
+  <div class="field">
+    <label class="label">Mixed Date</label>
+    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-today-highlight="true" >
+      <input id="mixed_date" type="text" class="input form-control" name="mixed_date" required>
+      <div class="input-group-addon">
+          <span class="glyphicon glyphicon-th"></span>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">Expiry Date</label>
+    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-today-highlight="true" >
+      <input id="expiry_date" type="text" class="input form-control" name="expiry_date" required>
+      <div class="input-group-addon">
+          <span class="glyphicon glyphicon-th"></span>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">Comment</label>
+    <div class="control">
+      <textarea class="textarea" id="comment" name="comment"></textarea>
+    </div>
+  </div>
+  <div class="field is-grouped">
+    <div class="control">
+      <input type="submit" class="button is-primary" name='submit' value="Submit">
+    </div>
+    <!--div class="control" style="margin-left:2em">
+        <button class="button is-light">Cancel</button>
+    </div-->
+  </div>
+  <label id="unit" style="display:none">{{object.unit}}</label>
+  </form>
+
+  <script type="text/javascript">
+    function calculate (id)
+    {
+      var quantity = document.getElementById('quantity_id_'+id).value;
+      var available_quantity = document.getElementById('available_quantity_id_'+id).value;
+      var containers= document.getElementById('containers_id_'+id).value;
+      var quantity_one_container = document.getElementById('quantity_one_container_id_'+id).value;
+      var summe = parseInt(quantity_one_container * containers) +  parseFloat(quantity);
+  
+      if (parseFloat(summe)>parseFloat(available_quantity))
+      {
+        var summe = "";
+        var message="There are only " +available_quantity+ document.getElementById('unit_id_'+id).innerHTML+" available. Please reduce the submission amount."; 
+        alert(message);
+        //document.getElementById('quantity_one_container').value = "0";
+        //document.getElementById('quantity').value = "0";
+      }
+      document.getElementById('overall_quantity_id_'+id).value = summe;
+    }
+    </script>
+
+{% endblock %}

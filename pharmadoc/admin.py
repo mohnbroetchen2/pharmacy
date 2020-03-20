@@ -144,6 +144,15 @@ class Mixed_SolutionAdmin(admin.ModelAdmin):
         model = Mixed_Solution
         fields = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
 
+@admin.register(Submission_For_Mixed_Solution)
+class Submission_For_Mixed_SolutionAdmin(admin.ModelAdmin):
+    list_display    = ('order','used_for','creation_date','amount_containers','quantity')
+    search_fields   = ('order__identifier','used_for__name','creation_date','amount_containers','quantity')
+    ordering        = ('order','used_for','creation_date','amount_containers','quantity')
+    class Meta:
+        model       = Submission_For_Mixed_Solution
+        fields      = ('order','used_for','creation_date','amount_containers','quantity')
+
 @admin.register(Pharmacy)
 class PharmacyAdmin(admin.ModelAdmin, ExportCsvMixin):
     #list_display = ('name','state','molecule','type','company','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','consumed')
@@ -185,4 +194,9 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('pharmacy','vendor','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number')
+
+class Mixed_SolutionForm(forms.ModelForm):
+    class Meta:
+        model = Mixed_Solution
+        fields = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
 

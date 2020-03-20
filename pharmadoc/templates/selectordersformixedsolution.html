@@ -1,0 +1,112 @@
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+<script src="{% static '/js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+$(function () { function moveItems(origin, dest) {
+  $(origin).find(':selected').appendTo(dest);
+}
+
+function moveAllItems(origin, dest) {
+  $(origin).children().appendTo(dest);
+}
+
+$('#left').click(function () {
+  moveItems('#sbTwo', '#sbOne');
+});
+
+$('#right').on('click', function () {
+  moveItems('#sbOne', '#sbTwo');
+});
+
+$('#leftall').on('click', function () {
+  moveAllItems('#sbTwo', '#sbOne');
+});
+
+$('#rightall').on('click', function () {
+  moveAllItems('#sbOne', '#sbTwo');
+});
+});
+</script>
+<link rel="stylesheet" href="{% static '/css/dataTables.bootstrap4.min.css' %}">
+
+
+{% endblock %}{% block content %}
+<h1 class="text-center"> FLI Pharmacy - Select orders for new mixed solution</h1>
+<form action="/initmixedsolution/" method="POST"> {% csrf_token %}
+  <input name="mixedpharmacy" type="hidden" value="{{mixed_pharmacy.pk}}" readonly="readonly" id="mixedpharmacy">
+  <div class="col-lg-12">
+    <div class="table-responsive">
+      <table id="datatable" class="table table is-striped table is-hoverable">
+        <thead>
+          <tr>
+            <th class="header">
+            </th>
+            <th class="header"> Identifier
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Pharmacy
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Molecule
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Company
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Vendor
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Delivery Date
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Expiry Date
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Batch Number
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Delivered quantity
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Delivered containers
+              <i class="icon-sort"></i>
+          </th>
+          <th class="header"> Available quantity
+          </th>
+          <th class="header"> Available containers 
+          </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orderlist %}
+          <tr>
+            <td>
+              <input type="checkbox" name="selected" value="{{o.pk}}" id="select{{o.pk}}">
+            </td>
+            <td>{{o.identifier}}</td>
+            <td>{{o.pharmacy}}</td>
+            <td>{{o.pharmacy.get_molecule}}</td>
+            <td>{{o.pharmacy.company}}</td>
+            <td>{{o.vendor}}</td>
+            <td>{{o.delivery_date}}</td>
+            <td>{{o.expiry_date}}</td>
+            <td>{{o.batch_number}}</td>
+            <td>{{o.delivered_quantity|floatformat:0}} {{o.unit}}</td>
+            <td>{{o.amount_containers}}</td>
+            <td>{{o.available_quantity|floatformat:0}} {{o.unit}}</td>
+            <td>{{o.available_containers}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="m-sm-2"> 
+        <input type="submit" name='select' value="Create solution " class="btn btn-info">
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

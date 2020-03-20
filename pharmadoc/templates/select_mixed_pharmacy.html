@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+<script src="{% static '/js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+$(function () { function moveItems(origin, dest) {
+  $(origin).find(':selected').appendTo(dest);
+}
+
+function moveAllItems(origin, dest) {
+  $(origin).children().appendTo(dest);
+}
+
+$('#left').click(function () {
+  moveItems('#sbTwo', '#sbOne');
+});
+
+$('#right').on('click', function () {
+  moveItems('#sbOne', '#sbTwo');
+});
+
+$('#leftall').on('click', function () {
+  moveAllItems('#sbTwo', '#sbOne');
+});
+
+$('#rightall').on('click', function () {
+  moveAllItems('#sbOne', '#sbTwo');
+});
+});
+</script>
+<link rel="stylesheet" href="{% static '/css/dataTables.bootstrap4.min.css' %}">
+
+
+{% endblock %}{% block content %}
+<h1 class="text-center"> FLI Pharmacy - Select the substances to mix</h1>
+<form action="/selectordersformixedpharmacy/" method="post"> {% csrf_token %}
+<div style="height:20px"></div>
+<div class="columns is-mobile is-multiline is-centered" style="height: 400px;">
+  <div class="column is-narrow">
+    <div class="select">
+      <select id="mixedpharmacy" name="mixedpharmacy" multiple size="10" style="height:180px;">
+        {% for f in mixed_pharmacy %}
+        <option value="{{f.pk}}">{{f.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="column is-narrow">
+    <input type="submit" name='select' value="OK" class="button is-medium btn-info">
+  </div>
+</div>
+  
+</form>
+
+{% endblock %}

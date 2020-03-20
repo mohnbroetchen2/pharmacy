@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number, Mixed_Pharmacy
+from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number, Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution
 from .filters import OrderViewFilter, OrderFilter, PharmacyFilter, SubmissionFilter, MixedPharmacyFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -381,6 +381,83 @@ def mixed_solutions(request):
     mixed_pharmacylist = Mixed_Pharmacy.objects.filter(state='active')
     f = MixedPharmacyFilter(request.GET, queryset=mixed_pharmacylist)
     return render(request, 'overview_mixed_solutions.html', {'filter': f})
+
+@login_required
+def selectmixedpharmacy(request):
+    mixed_pharmacylist = Mixed_Pharmacy.objects.filter(state='active')
+    return render(request, 'select_mixed_pharmacy.html', {'mixed_pharmacy': mixed_pharmacylist})
+
+@login_required
+def selectordersformixedpharmacy(request):
+    if request.method == "POST":
+        tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
+        try:
+            mixed_pharmacy_pk   = request.POST.get("mixedpharmacy")
+            mixed_pharmacy      = Mixed_Pharmacy.objects.get(pk=mixed_pharmacy_pk)
+            pharmacylist        = mixed_pharmacy.included_pharmacy.all()
+            orderlist           = Order.objects.filter(pharmacy__in=pharmacylist).filter(state='active')
+            return render(request, 'selectordersformixedsolution.html', {'orderlist': orderlist, 'mixed_pharmacy':mixed_pharmacy})
+        except BaseException as e:  
+            #messages.add_message(request, messages.SUCCESS, "Error Pharmacy Pharmacy error {} selectordersformixedpharmacy in line {} ".format(e,sys.exc_info()[2].tb_lineno))
+            messages.error(request, 'Thera was an error: {}. The IT Admin has been informed about it'.format(e))  
+            send_mail("Error Pharmacy","Pharmacy error {} selectordersformixedpharmacy in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
+    return HttpResponseRedirect('/')
+
+@login_required
+def initmixedsolution(request):
+    if request.method == "POST":
+        tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
+        try:
+            mixed_pharmacy_pk   = request.POST.get("mixedpharmacy")
+            mixed_pharmacy      = Mixed_Pharmacy.objects.get(pk=mixed_pharmacy_pk)
+            orders              = request.POST.getlist("selected",None)
+            orderlist           = Order.objects.filter(pk__in = orders)
+            return render(request, 'init_mixed_solution.html', {'mixed_pharmacy': mixed_pharmacy, 'orderlist':orderlist})
+        except BaseException as e: 
+            messages.error(request, 'Thera was an error: {}. The IT Admin has been informed about it'.format(e))  
+            send_mail("Error Pharmacy","Pharmacy error {} init mixed solution in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
+    return HttpResponseRedirect('/')
+
+@login_required
+def addmixedsolution(request):
+    if request.method == "POST":
+        tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
+        try:
+            mixed_pharmacy_pk   = request.POST.get("mixedpharmacy")
+            mixed_pharmacy      = Mixed_Pharmacy.objects.get(pk=mixed_pharmacy_pk)
+            
+            new_mixed_solution                  = Mixed_Solution()
+            new_mixed_solution.expiry_date      = request.POST.get("expiry_date",None)
+            new_mixed_solution.mixed_date       = request.POST.get("mixed_date",None)
+            new_mixed_solution.comment          = request.POST.get("comment",None)
+            new_mixed_solution.added_by         = request.user
+            new_mixed_solution.state            = 'active'
+            new_mixed_solution.identifier       = request.POST.get("identifier",None)
+            new_mixed_solution.amount_containers= request.POST.get("amount_containers",None)
+            new_mixed_solution.quantity         = request.POST.get("quantity",None)
+            new_mixed_solution.unit             = request.POST.get("unit",None)
+            new_mixed_solution.mixed_pharmacy   = mixed_pharmacy
+            new_mixed_solution.save()
+            
+            orderlist                               = request.POST.getlist("orderid",None)
+            quantitylist                            = request.POST.getlist("quantity",None)
+            full_containerslist                     = request.POST.getlist("full_containers",None)
+            i=0  
+            for o in orderlist:
+                new_sub_for_mix_sol                     = Submission_For_Mixed_Solution()
+                new_sub_for_mix_sol.order               = Order.objects.get(pk=o)
+                new_sub_for_mix_sol.used_for            = new_mixed_solution
+                new_sub_for_mix_sol.amount_containers   = full_containerslist[i]
+                new_sub_for_mix_sol.quantity            = quantitylist[i]
+                new_sub_for_mix_sol.added_by         = request.user
+                new_sub_for_mix_sol.save()
+                i=i+1
+            messages.success(request, 'Mixed solution {} saved'.format(new_mixed_solution.identifier))
+            return HttpResponseRedirect('/mixedsolutions')
+        except BaseException as e:
+            messages.error(request, 'Thera was an error: {}. The new entry hasn\'t been saved'.format(e)) 
+            send_mail("Error Pharmacy","Pharmacy error {} add mixed solution in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
+    return HttpResponseRedirect('/')
 
 @login_required
 def change_password(request):

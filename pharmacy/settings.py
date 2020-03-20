@@ -121,6 +121,7 @@ ADMIN_REORDER = (
         {'model': 'pharmadoc.Mixed_Pharmacy', 'label': 'Mixed Pharmacy'},
         {'model': 'pharmadoc.Mixed_Solution', 'label': 'Mixed Solution'},
         {'model': 'pharmadoc.Mixed_Submission', 'label': 'Mixed Submission'},
+        {'model': 'pharmadoc.Submission_For_Mixed_Solution', 'label': 'Submissions For Mixed Solutions'},
         )},
     {'app': 'auth', 'models': ('auth.User',) },
     {'app': 'changelog', 'label': 'Changelog' },

@@ -44,6 +44,10 @@ urlpatterns = [
     path('selectordersformixedsubmission/', pharmadoc.views.selectordersformixedsubmission, name='selectordersformixedsubmission'),
     path('submitmixedsubmission/', pharmadoc.views.submitmixedsubmission, name='submitmixedsubmission'),
     path('createmixedsubmission/', pharmadoc.views.createmixedsubmission, name='createmixedsubmission'),
+    path('selectmixedpharmacy/', pharmadoc.views.selectmixedpharmacy, name='selectmixedpharmacy'),
+    path('selectordersformixedpharmacy/', pharmadoc.views.selectordersformixedpharmacy, name='selectordersformixedpharmacy'),
+    path('initmixedsolution/', pharmadoc.views.initmixedsolution, name='initmixedsolution'),
+    path('addmixedsolution/', pharmadoc.views.addmixedsolution, name='addmixedsolution'),
     path('order/', pharmadoc.views.order_view, name='showorders'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
