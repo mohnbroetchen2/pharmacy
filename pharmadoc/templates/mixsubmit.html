@@ -2,18 +2,18 @@
 {% load bulma_tags %}
 
 {% endblock %}{% block content %}
-<h1 class="text-center"> FLI Pharmacy - Submission</h1>
+<h1 class="text-center"> FLI Pharmacy - Submission Mixed Solution</h1>
 <div class="field is-grouped is-grouped-right">
     <div class="control">
         <button type="button" onclick="discard()" class="btn btn-outline-warning">Discard</button>
     </div>
   </div>
-<form action="/submit/createsubmission" method="post"> {% csrf_token %}
+<form action="/mix/submit/createsubmission" method="post"> {% csrf_token %}
   <div class="field">
-    <label class="label">Pharmacy</label>
+    <label class="label">Mixed Solution</label>
     <div class="control">
-      <input class="input" name="pharmacy" type="text" readonly="readonly" value="{{object.pharmacy}}" required>
-      <input name="productid" type="hidden" value="{{object.pk}}" readonly="readonly">
+      <input class="input" name="mixed_solution" type="text" readonly="readonly" value="{{object.mixed_pharmacy}}" required>
+      <input name="solutionid" type="hidden" value="{{object.pk}}" readonly="readonly">
     </div>
   </div> 
   <div class="field">
@@ -23,18 +23,11 @@
     </div>
   </div>
   <div class="field">
-    <label class="label">Batch number</label>
-    <div class="control">
-      <input class="input" name="batch_number" type="text" readonly="readonly" value="{{object.batch_number}}" required>
-    </div>
-  </div>
-  <div class="field">
     <label class="label">Application number</label>
     <div class="control">
       <input class="input" id="application_number" name="application_number" type="text" required>
     </div>
   </div>
-
   <div class="field">
     <label class="label">Submission date</label>
     <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-today-highlight="true" >
@@ -55,12 +48,6 @@
       </select>
     </div>
   </div>
-  <!--div class="field">
-    <label class="label">Submission date</label>
-    <div class="control">
-      <input id="submissiondate" data-provide="datepicker" data-date-format="dd/mm/yyyy" class="input" name="submission_date" type="date" required>
-    </div>
-  </div-->
   <div class="control">
     <label class="label">Recipient</label>
     <div class="select">

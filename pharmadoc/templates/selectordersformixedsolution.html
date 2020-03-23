@@ -35,7 +35,7 @@ $('#rightall').on('click', function () {
 
 {% endblock %}{% block content %}
 <h1 class="text-center"> FLI Pharmacy - Select orders for new mixed solution</h1>
-<form action="/initmixedsolution/" method="POST"> {% csrf_token %}
+<form action="/mix/initmixedsolution" method="POST"> {% csrf_token %}
   <input name="mixedpharmacy" type="hidden" value="{{mixed_pharmacy.pk}}" readonly="readonly" id="mixedpharmacy">
   <div class="col-lg-12">
     <div class="table-responsive">

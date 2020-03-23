@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django import forms
+from itertools import chain
 from django.contrib.auth.models import User
 import os
 
@@ -177,7 +178,9 @@ class Order (models.Model):
         return(self.amount_containers * self.quantity)
 
     def available_containers(self):
-        submissionlist = Submission.objects.filter(order__pk=self.pk)
+        submissionlist      = Submission.objects.filter(order__pk=self.pk)
+        mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=self.pk)
+        submissionlist = list(chain(submissionlist, mixedsubmissionlist))
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -206,6 +209,8 @@ class Order (models.Model):
 
     def available_quantity(self):
         submissionlist = Submission.objects.filter(order__pk=self.pk)
+        mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=self.pk)
+        submissionlist.union(submissionlist,mixedsubmissionlist)
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -280,21 +285,6 @@ class Submission(models.Model):
     def __str__(self):
         return ("{} | {}".format(self.application_number, self.order))
 
-
-class Mixed_Submission(models.Model):
-    name                = models.CharField(max_length=250)
-    application_number  = models.CharField(max_length=250)
-    date                = models.DateField(null=False)
-    submission          = models.ManyToManyField(Submission, related_name='submissions',) 
-    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
-    person              = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
-    comment             = models.TextField(blank=True, null=True)
-    procedure_control   = models.CharField(max_length=800,  null=True, blank=True,)
-    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
-    attachment1         = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/')
-    attachment2         = models.FileField(null=True, blank=True, upload_to='uploads/order/%Y/%m/%d/') 
-
-
 class Mixed_Pharmacy(models.Model):
     name                = models.CharField(max_length=250)
     state               = models.CharField(max_length=50, choices=(
@@ -309,6 +299,44 @@ class Mixed_Pharmacy(models.Model):
         return self.name
     def get_substances(self):
         return ",\n".join([ph.name for ph in self.included_pharmacy.all()])
+
+    def available_quantity_date(self, Date):
+        solutions = self.mixed_solution_set.all()
+        quantity = 0
+        for s in solutions:
+            if s.state == 'active':
+                quantity = quantity + s.available_quantity_date(Date=Date)
+        return quantity
+
+    def available_quantity(self):
+        solutions = self.mixed_solution_set.all()
+        quantity = 0
+        for s in solutions:
+            if s.state == 'active':
+                quantity = quantity + s.available_quantity()
+        return quantity 
+    
+    def available_container(self):
+        solutions = self.mixed_solution_set.all()
+        quantity = 0
+        for s in solutions:
+            if s.state == 'active':
+                quantity = quantity + s.available_containers()
+        
+        return quantity 
+    
+    def unit(self):
+        solutions = self.mixed_solution_set.all()
+        i=0
+        unit = ''
+        for s in solutions:
+            if i == 0:
+                unit = s.unit
+            else:
+                if unit != s.unit:
+                    return ('false')
+            i = i +1
+        return (unit)
 
 
 class Mixed_Solution(models.Model):
@@ -335,8 +363,106 @@ class Mixed_Solution(models.Model):
     class Meta:
         verbose_name = "Mixed Solution"
         verbose_name_plural = "Mixed Solutions"
+    
     def __str__(self):
         return self.identifier
+
+    def available(self):
+        """
+        Returns True if order is not expired
+        """
+        today = datetime.now().date()
+        return (self.expiry_date >= today)
+
+    def mixed_quantity(self):
+        return(self.amount_containers * self.quantity)
+
+    def available_containers(self):
+        submissionlist = Mixed_Submission.objects.filter(mixed_solution__pk=self.pk)
+        if submissionlist is None:
+            return(self.amount_containers)
+        quantity = self.quantity
+        containers = self.amount_containers
+        fullamount = quantity * containers
+        realamount = fullamount  
+        for s in submissionlist:
+            realamount = realamount - s.fullamount()
+        if realamount % quantity == 0:
+            return (realamount // quantity)
+        else:
+            return((realamount // quantity)+1)
+
+    def available_quantity_date(self, Date):
+        submissionlist  = Mixed_Submission.objects.filter(mixed_solution__pk=self.pk)
+        if submissionlist is None:
+            return(self.amount_containers)
+        quantity        = self.quantity
+        containers      = self.amount_containers
+        fullamount      = quantity * containers
+        realamount      = fullamount
+        for s in submissionlist:
+            if s.date >= Date: #datetime.date(datetime.strptime(Date, '%Y-%m-%d')): #convert string to datetime and datetime to date
+                realamount = realamount - s.fullamount() #amount now minus all submission ever since the date
+        return(realamount)
+
+    def available_quantity(self):
+        submissionlist = Mixed_Submission.objects.filter(mixed_solution__pk=self.pk)
+        if submissionlist is None:
+            return(self.amount_containers)
+        quantity = self.quantity
+        containers = self.amount_containers
+        fullamount = quantity * containers
+        realamount = fullamount  
+        for s in submissionlist:
+            realamount = realamount - s.fullamount()
+        if realamount == 0:
+            self.state = 'deactivated'
+            self.save()
+        return(realamount)
+    
+    def available_quantity_last_container(self):
+        submissionlist = Mixed_Submission.objects.filter(mixed_solution__pk=self.pk)
+        if submissionlist is None:
+            return(self.amount_containers)
+        quantity = self.quantity
+        containers = self.amount_containers
+        fullamount = quantity * containers
+        realamount = fullamount  
+        for s in submissionlist:
+            realamount = realamount - s.fullamount()
+        #if realamount == quantity:
+        #    self.state = 'deactivated'
+        #    self.save()
+        #    return(0)
+        if realamount % quantity == 0:
+            return (quantity)
+        else:
+            return(realamount % quantity)
+
+
+class Mixed_Submission(models.Model):
+    application_number  = models.CharField(max_length=250)
+    mixed_solution      = models.ForeignKey(Mixed_Solution, null=True, on_delete=models.SET_NULL)
+    date                = models.DateField(null=False)
+    creation_date       = models.DateTimeField(null=False, auto_now_add=True)
+    person              = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
+    amount_containers   = models.PositiveIntegerField(null=True)
+    quantity            = models.DecimalField(null=False, default=0,max_digits=10, decimal_places=3,)
+    comment             = models.TextField(blank=True, null=True)
+    license             = models.ForeignKey(License_Number, null=True, blank=False, on_delete=models.SET_NULL)
+    procedure_control   = models.CharField(max_length=800,  null=True, blank=True,)
+    added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
+    attachment1         = models.FileField(null=True, blank=True, upload_to='uploads/mixedsubmission/%Y/%m/%d/')
+    attachment2         = models.FileField(null=True, blank=True, upload_to='uploads/mixedsubmission/%Y/%m/%d/') 
+
+    def fullamount(self):
+        if self.amount_containers is None:
+            return (self.quantity)
+        else:
+            return (self.amount_containers * self.order.quantity + self.quantity)
+    def __str__(self):
+        return ("{} | {}".format(self.application_number, self.mixed_solution))
+
 
 class Submission_For_Mixed_Solution(models.Model):
     order               = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
@@ -348,4 +474,9 @@ class Submission_For_Mixed_Solution(models.Model):
     class Meta:
         verbose_name = "Submission For Mixed Solution"
         verbose_name_plural = "Submission For Mixed Solution"
+    def fullamount(self):
+        if self.amount_containers is None:
+            return (self.quantity)
+        else:
+            return (self.amount_containers * self.order.quantity + self.quantity)
 

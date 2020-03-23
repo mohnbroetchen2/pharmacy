@@ -51,7 +51,7 @@
         <tbody>
           {% for p in filter.qs %}
           <tr {% if p.available_quantity == 0 %}style="display:none;" {% endif %}>
-            <td><a href="/allsubmissions/{{p.pk}}">{{p}}</a></td>
+            <td><a href="/mix/allsubmissions/{{p.pk}}">{{p}}</a></td>
             <td>{{p.get_substances}}</td>
             <!--td>{{p.delivery_date}}</td>
             <td>{{p.expiry_date}}</td>
@@ -60,8 +60,8 @@
             <td>{{p.available_quantity|floatformat:0}} {{p.unit}}</td>
             <td>{{p.available_container}}</td>
             <td><a href="{{MEDIA_URL}}{{p.attachment}}">{{p.attachment_name}}</a></td>
-            <td><a href="/selectpharmacyforsubmitview/{{p.pk}}">submit</a></td>
-            <td><a href="/showorders/{{p.pk}}">more</a></td>
+            <td><a href="/mix/selectmixedpharmacyforsubmitview/{{p.pk}}">submit</a></td>
+            <td><a href="/mix/showmixedsolutions{{p.pk}}">more</a></td>
           </tr>
           {% endfor %}
         </tbody>

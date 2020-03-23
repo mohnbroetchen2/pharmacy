@@ -9,7 +9,7 @@
 
 {% endblock %}{% block content %}
 <h1 class="text-center"> FLI Pharmacy - Create new mixed solution {{mixed_pharmacy}}</h1>
-<form action="/addmixedsolution/" method="post"> {% csrf_token %}
+<form action="/mix/addmixedsolution" method="post"> {% csrf_token %}
   <div class="field">
     <label class="label">Mixed Pharmacy</label>
     <div class="control">

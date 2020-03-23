@@ -120,9 +120,9 @@ class SubmissionAdmin(admin.ModelAdmin):
 
 @admin.register(Mixed_Submission)
 class Mixed_SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('name','application_number','date','person','comment',)
-    search_fields = ('name','date','application_number','person__name','comment',)
-    ordering = ('-date','name','application_number','person__name','comment','procedure_control')
+    list_display = ('application_number','date','person','comment',)
+    search_fields = ('date','application_number','person__name','comment',)
+    ordering = ('-date','application_number','person__name','comment','procedure_control')
     list_filter = (('application_number', DropdownFilter),
                    ('date', DropdownFilter),
                    'person',
@@ -130,16 +130,19 @@ class Mixed_SubmissionAdmin(admin.ModelAdmin):
     actions = ["export_as_csv"]
 
 @admin.register(Mixed_Pharmacy)
-class Mixed_SubmissionAdmin(admin.ModelAdmin):
+class Mixed_PharmacyAdmin(admin.ModelAdmin):
     list_display = ('name','state')
     search_fields = ('name','state')
     ordering = ('name','state')
+    class Meta:
+        model = Mixed_Pharmacy
 
 @admin.register(Mixed_Solution)
 class Mixed_SolutionAdmin(admin.ModelAdmin):
     list_display = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
     search_fields = ('identifier','state')
     ordering = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
+    readonly_fields = ('identifier','added_by')
     class Meta:
         model = Mixed_Solution
         fields = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
@@ -149,6 +152,7 @@ class Submission_For_Mixed_SolutionAdmin(admin.ModelAdmin):
     list_display    = ('order','used_for','creation_date','amount_containers','quantity')
     search_fields   = ('order__identifier','used_for__name','creation_date','amount_containers','quantity')
     ordering        = ('order','used_for','creation_date','amount_containers','quantity')
+    readonly_fields = ('order','used_for','creation_date','amount_containers','quantity','added_by')
     class Meta:
         model       = Submission_For_Mixed_Solution
         fields      = ('order','used_for','creation_date','amount_containers','quantity')

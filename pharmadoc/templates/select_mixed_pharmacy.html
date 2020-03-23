@@ -34,8 +34,8 @@ $('#rightall').on('click', function () {
 
 
 {% endblock %}{% block content %}
-<h1 class="text-center"> FLI Pharmacy - Select the substances to mix</h1>
-<form action="/selectordersformixedpharmacy/" method="post"> {% csrf_token %}
+<h1 class="text-center"> FLI Pharmacy - Select the pharmacy to mix</h1>
+<form action="selectordersformixedpharmacy" method="post"> {% csrf_token %}
 <div style="height:20px"></div>
 <div class="columns is-mobile is-multiline is-centered" style="height: 400px;">
   <div class="column is-narrow">

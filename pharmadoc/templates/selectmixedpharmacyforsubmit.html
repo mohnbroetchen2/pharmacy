@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+<script src="{% static '/js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+<link rel="stylesheet" href="{% static '/css/dataTables.bootstrap4.min.css' %}">
+
+
+{% endblock %}{% block content %}
+<h1 class="text-center"> FLI Pharmacy - Select the order for the submission</h1>
+<form action="/submit/0" method="post"> {% csrf_token %}
+
+<div class="col-lg-12">
+  <div class="table-responsive">
+    <table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
+      <thead>
+        <tr>
+          <th class="header">
+          </th>
+          <th class="header"> Pharmacy
+          </th>
+          <th class="header"> Identifier
+          </th>
+          <th class="header"> Batch number
+          </th>
+          <th class="header"> Delivery Date
+          </th>
+          <th class="header"> Expiry Date
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in order %}
+        <tr >
+          <td>
+              <input type="radio"  id="select{{o.pk}}" name="selected" value="{{o.pk}}">
+          </td>
+          <td>{{pharmacy}}</td>
+          <td>{{o.identifier}}</td>
+          <td>{{o.batch_number}}</td>
+          <td>{{o.delivery_date}}</td>
+          <td>{{o.expiry_date}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      
+    </table>
+    <div class="m-sm-2"> 
+        <input type="submit" name='select' value="Select" class="btn btn-info">
+      </div> 
+  </div>
+</div>
+  
+</form>
+
+{% endblock %}
