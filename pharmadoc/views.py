@@ -214,6 +214,16 @@ def selectpharmacyforsubmitview(request, primary_key):
         return(submit_view(request,order[0].pk))
 
 @login_required
+def selectmixedpharmacyforsubmitview(request, primary_key):
+    mixedsolution = Mixed_Solution.objects.filter(mixed_pharmacy__pk=primary_key).filter(state='active')
+    mixedpharmacy = get_object_or_404(Mixed_Pharmacy, pk=primary_key)
+    if len(mixedsolution) > 1:
+        return render(request, 'selectpharmacyforsubmit.html', {'mixedsolution': mixedsolution, 'mixedpharmacy': mixedpharmacy,})
+    else:
+        return(mixedsubmit_view(request,mixedsolution[0].pk))
+
+
+@login_required
 def selectordersformixedsubmission(request):
     orders = Order.objects.filter(state='active')
     return render(request, 'selectordersformixedsubmission.html', {'orders': orders,})
@@ -412,7 +422,13 @@ def initmixedsolution(request):
             mixed_pharmacy      = Mixed_Pharmacy.objects.get(pk=mixed_pharmacy_pk)
             orders              = request.POST.getlist("selected",None)
             orderlist           = Order.objects.filter(pk__in = orders)
-            return render(request, 'init_mixed_solution.html', {'mixed_pharmacy': mixed_pharmacy, 'orderlist':orderlist})
+            available_containers =[]
+            available_quantity = []
+            for o in orderlist:
+                o.temp_available_containers=o.available_containers()
+                o.temp_available_quantity=o.available_quantity()
+                o.save()
+            return render(request, 'init_mixed_solution.html', {'mixed_pharmacy': mixed_pharmacy, 'orderlist':orderlist, 'available_containers':available_containers,'available_quantity':available_quantity,})
         except BaseException as e: 
             messages.error(request, 'Thera was an error: {}. The IT Admin has been informed about it'.format(e))  
             send_mail("Error Pharmacy","Pharmacy error {} init mixed solution in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
@@ -453,7 +469,7 @@ def addmixedsolution(request):
                 new_sub_for_mix_sol.save()
                 i=i+1
             messages.success(request, 'Mixed solution {} saved'.format(new_mixed_solution.identifier))
-            return HttpResponseRedirect('/mixedsolutions')
+            return HttpResponseRedirect('/mix/mixedsolutions')
         except BaseException as e:
             messages.error(request, 'Thera was an error: {}. The new entry hasn\'t been saved'.format(e)) 
             send_mail("Error Pharmacy","Pharmacy error {} add mixed solution in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
@@ -475,57 +491,40 @@ def mixedcreatesubmission(request):
     tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
     if request.method == "POST":
         try:
-            productid = request.POST.get("productid")
+            solutionid = request.POST.get("solutionid")
             personid  = request.POST.get("recipient")
             licenseid = request.POST.get("license")
-            orderObject = Order.objects.get(pk=productid)
-            pharmacyObject = orderObject.pharmacy
-            submitted_amount = (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0"))
-            if float(orderObject.available_quantity()) < (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0")):
-                messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount {} is higher than the available stock {}'.format(round(submitted_amount,3),orderObject.available_quantity()))
+            mixedSolution = Mixed_Solution.objects.get(pk=solutionid)
+            mixedPharmacyObject = mixedSolution.mixed_pharmacy
+            submitted_amount = (float(request.POST.get("full_containers","0")) * float(mixedSolution.quantity)) + float(request.POST.get("quantity","0"))
+            if float(mixedSolution.available_quantity()) < (float(request.POST.get("full_containers","0")) * float(mixedSolution.quantity)) + float(request.POST.get("quantity","0")):
+                messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount {} is higher than the available stock {}'.format(round(submitted_amount,3),mixedSolution.available_quantity()))
                 return HttpResponseRedirect('/')
-            new_submission = Submission()
-            new_submission.order                = orderObject
+            new_mixed_submission                = Mixed_Submission()
+            new_mixed_submission.mixed_solution = mixedSolution
             if personid!="Trash":
-                new_submission.person               = Person.objects.get(pk=personid)
+                new_mixed_submission.person     = Person.objects.get(pk=personid)
             else:
                 try:
-                    new_submission.person               = Person.objects.get(name="Trash")
+                    new_mixed_submission.person = Person.objects.get(name="Trash")
                 except:
                     messages.add_message(request, messages.WARNING, 'There is not a person called Trash') 
             if licenseid!="Trash":
-                new_submission.license              = License_Number.objects.get(pk=licenseid)
+                new_mixed_submission.license    = License_Number.objects.get(pk=licenseid)
             else:
                 try:
-                    new_submission.license               = License_Number.objects.get(license="Trash")
+                    new_mixed_submission.license= License_Number.objects.get(license="Trash")
                 except:
                     messages.add_message(request, messages.WARNING, 'There is not a License called Trash') 
-            new_submission.application_number   = request.POST.get("application_number",None)
-            new_submission.date                 = request.POST.get("submission_date",None)
+            new_mixed_submission.application_number   = request.POST.get("application_number",None)
+            new_mixed_submission.date                 = request.POST.get("submission_date",None)
             #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
-            new_submission.amount_containers    = request.POST.get("full_containers",0)
-            new_submission.quantity             = request.POST.get("quantity",0)
-            new_submission.comment              = request.POST.get("comment",None)
-            new_submission.added_by             = request.user
-            new_submission.save()
-            messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
-
-            
-            quantityMin = pharmacyObject.alarm_value
-            if quantityMin == None:
-                quantityMin = 0
-            quantityCurrent = pharmacyObject.available_container() #is this the total quantity?yes
-            quantitySubmission = float(request.POST.get("full_containers",0)) * float(orderObject.quantity) + float(request.POST.get("quantity",0))
-            #messages.add_message(request, messages.SUCCESS, '{} {}'.format(quantitySubmission, ))
-            if (quantityMin>=quantityCurrent):
-                from_email = admin_mail #settings.EMAIL_ADMIN
-                to_email = [admin_mail] #settings.EMAIL_RESPONSIBLE
-                message = "This item is running low: {}.<br> Alarm value: {} container<br> Current amount: {} container".format(pharmacyObject.name,
-                                                                                                        pharmacyObject.alarm_value,
-                                                                                                        quantityCurrent)
-                subject = "FLI-Pharmacy: {} is running low".format(pharmacyObject.name)
-                send_mail(subject, message, from_email, to_email, html_message=message)
-                messages.add_message(request, messages.SUCCESS, admin_mail +' has been informed about a little stock of '+pharmacyObject.name)
+            new_mixed_submission.amount_containers    = request.POST.get("full_containers",0)
+            new_mixed_submission.quantity             = request.POST.get("quantity",0)
+            new_mixed_submission.comment              = request.POST.get("comment",None)
+            new_mixed_submission.added_by             = request.user
+            new_mixed_submission.save()
+            messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_mixed_submission.pk))
             return HttpResponseRedirect('/')
         except BaseException as e:  
             send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 

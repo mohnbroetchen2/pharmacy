@@ -180,7 +180,7 @@ class Order (models.Model):
     def available_containers(self):
         submissionlist      = Submission.objects.filter(order__pk=self.pk)
         mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=self.pk)
-        submissionlist = list(chain(submissionlist, mixedsubmissionlist))
+        submissionlist      = list(chain(submissionlist, mixedsubmissionlist))
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -208,9 +208,10 @@ class Order (models.Model):
         return(realamount)
 
     def available_quantity(self):
-        submissionlist = Submission.objects.filter(order__pk=self.pk)
+        submissionlist      = Submission.objects.filter(order__pk=self.pk)
         mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=self.pk)
-        submissionlist.union(submissionlist,mixedsubmissionlist)
+        #submissionlist.union(submissionlist,mixedsubmissionlist)
+        submissionlist      = list(chain(submissionlist,mixedsubmissionlist))
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
@@ -459,7 +460,7 @@ class Mixed_Submission(models.Model):
         if self.amount_containers is None:
             return (self.quantity)
         else:
-            return (self.amount_containers * self.order.quantity + self.quantity)
+            return (self.amount_containers * self.mixed_solution.quantity + self.quantity)
     def __str__(self):
         return ("{} | {}".format(self.application_number, self.mixed_solution))
 

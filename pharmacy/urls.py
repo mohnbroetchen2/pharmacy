@@ -41,6 +41,7 @@ urlpatterns = [
     path('addorder/', pharmadoc.views.add_order, name='addorder'),
     path('addpharmacy/', pharmadoc.views.add_pharmacy, name='addpharmacy'),
     path('mix/selectordersformixedsubmission/', pharmadoc.views.selectordersformixedsubmission, name='selectordersformixedsubmission'),
+    path('mix/selectmixedpharmacyforsubmitview/<int:primary_key>', pharmadoc.views.selectmixedpharmacyforsubmitview, name='selectmixedpharmacyforsubmitview'),
     path('mix/submitmixedsubmission', pharmadoc.views.submitmixedsubmission, name='submitmixedsubmission'),
     path('mix/createmixedsubmission', pharmadoc.views.createmixedsubmission, name='createmixedsubmission'),
     path('mix/selectmixedpharmacy', pharmadoc.views.selectmixedpharmacy, name='selectmixedpharmacy'),
