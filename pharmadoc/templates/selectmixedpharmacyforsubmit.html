@@ -8,8 +8,8 @@
 
 
 {% endblock %}{% block content %}
-<h1 class="text-center"> FLI Pharmacy - Select the order for the submission</h1>
-<form action="/submit/0" method="post"> {% csrf_token %}
+<h1 class="text-center"> FLI Pharmacy - Select solution for the submission</h1>
+<form action="/mix/submit/0" method="post"> {% csrf_token %}
 
 <div class="col-lg-12">
   <div class="table-responsive">
@@ -18,28 +18,29 @@
         <tr>
           <th class="header">
           </th>
-          <th class="header"> Pharmacy
+          <th class="header"> Mixed Solution
           </th>
           <th class="header"> Identifier
-          </th>
-          <th class="header"> Batch number
-          </th>
-          <th class="header"> Delivery Date
+          </th>    
+          <th class="header"> Mixed Date
           </th>
           <th class="header"> Expiry Date
+          </th>
+          <th class="header"> Comment
+          </th>
         </tr>
       </thead>
       <tbody>
-        {% for o in order %}
+        {% for s in mixedsolution %}
         <tr >
           <td>
-              <input type="radio"  id="select{{o.pk}}" name="selected" value="{{o.pk}}">
+              <input type="radio"  id="select{{s.pk}}" name="selected" value="{{s.pk}}">
           </td>
-          <td>{{pharmacy}}</td>
-          <td>{{o.identifier}}</td>
-          <td>{{o.batch_number}}</td>
-          <td>{{o.delivery_date}}</td>
-          <td>{{o.expiry_date}}</td>
+          <td>{{mixedpharmacy}}</td>
+          <td>{{s.identifier}}</td>
+          <td>{{s.mixed_date}}</td>
+          <td>{{s.expiry_date}}</td>
+          <td>{{s.comment}}</td>
         </tr>
         {% endfor %}
       </tbody>

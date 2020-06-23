@@ -1,5 +1,5 @@
 from django import forms
-from .models import Pharmacy, Order
+from .models import Pharmacy, Order, Vendor
 from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import datetime
 
@@ -17,6 +17,8 @@ class addOrderForm(forms.ModelForm):
     delivery_date   = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget(),initial=datetime.now())
     expiry_date     = forms.DateField(label='Expiry date', widget=forms.SelectDateWidget)
     attachment      = forms.FileField(required=False)
+    pharmacy        = forms.ModelChoiceField(queryset=Pharmacy.objects.order_by('name'))
+    vendor          = forms.ModelChoiceField(queryset=Vendor.objects.order_by('name'))
     #added_by        = forms.CharField(label='request.user(label)
     class Meta:
         model = Order

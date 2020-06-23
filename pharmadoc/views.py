@@ -218,7 +218,7 @@ def selectmixedpharmacyforsubmitview(request, primary_key):
     mixedsolution = Mixed_Solution.objects.filter(mixed_pharmacy__pk=primary_key).filter(state='active')
     mixedpharmacy = get_object_or_404(Mixed_Pharmacy, pk=primary_key)
     if len(mixedsolution) > 1:
-        return render(request, 'selectpharmacyforsubmit.html', {'mixedsolution': mixedsolution, 'mixedpharmacy': mixedpharmacy,})
+        return render(request, 'selectmixedpharmacyforsubmit.html', {'mixedsolution': mixedsolution, 'mixedpharmacy': mixedpharmacy,})
     else:
         return(mixedsubmit_view(request,mixedsolution[0].pk))
 
@@ -477,13 +477,23 @@ def addmixedsolution(request):
 
 @login_required
 def mixedsubmit_view(request, primary_key):
-    mix_solution = get_object_or_404(Mixed_Solution, pk=primary_key)
-    persons = Person.objects.filter(state='active')
-    license = License_Number.objects.filter(state='active').order_by('license')
-    available_containers = mix_solution.available_containers()
-    available_quantity = mix_solution.available_quantity()
-    available_quantity_last_container = mix_solution.available_quantity_last_container()
-    return render(request, 'mixsubmit.html', {'license':license,'object': mix_solution, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,})
+    try:
+        if primary_key == 0:
+            if request.method == "POST":
+                pk_mixed_solution = request.POST.get("selected",None)
+                if pk_mixed_solution:
+                    primary_key = pk_mixed_solution
+        mix_solution = get_object_or_404(Mixed_Solution, pk=primary_key)
+        persons = Person.objects.filter(state='active')
+        license = License_Number.objects.filter(state='active').order_by('license')
+        available_containers = mix_solution.available_containers()
+        available_quantity = mix_solution.available_quantity()
+        available_quantity_last_container = mix_solution.available_quantity_last_container()
+        return render(request, 'mixsubmit.html', {'license':license,'object': mix_solution, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,})
+    except BaseException as e:
+         messages.error(request, 'Thera was an error: {}. The admin has been informed'.format(e)) 
+         tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
+         send_mail("Error Pharmacy","Pharmacy error {} mixedsubmit_view in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
 
 @login_required
 def mixedcreatesubmission(request):
