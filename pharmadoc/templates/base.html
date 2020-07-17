@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{% endblock title %}</title>
+  <title>{% block title %}FLI Pharmacy{% endblock title %}</title>
   {% block css %}
     <link rel="stylesheet" href="{% static '/bulma/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static '/bulma/css/style.css' %}">
@@ -17,20 +17,20 @@
     <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
     <script src="{% static '/js/bootstrap.min.js' %}"></script>
     <script src="{% static '/js/bootstrap-datepicker.js' %}"></script>
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon-96x96.png' %}">
     {% block extrascripts %} 
     {% endblock %}
     {% block extra_css %}{% endblock extra_css %}
   {% endblock css %}
 </head>
 <body>
-
   {% block header %}
   <div class="container">
     <nav class="navbar">
       <div class="navbar-brand">
         <!--a class="navbar-item" href="/">
-          <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox"
-               width="112" height="28">
+          <img src="{% static 'logo.png' %}" alt="Bulma: a modern CSS framework based on Flexbox"
+               width="100" height="100">
         </a-->
 
       </div>
@@ -141,12 +141,13 @@
 
 {% block footer %}
   <footer class="footer">
-    <div class="container">
+    <div class="container has-text-centered">
       <div class="content has-text-centered">
         <p>
           <strong>FLI Pharmacy</strong> by Alessia Montesano, Fabian Monheim, Irene Weinzierl, Jana Sie and Nicolas Huber
         </p>
       </div>
+      <img src="{% static 'logo.png' %}" alt="Bulma: a modern CSS framework based on Flexbox" width="200" height="200">
     </div>
   </footer>
 {% endblock footer %}
