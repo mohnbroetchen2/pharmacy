@@ -342,7 +342,7 @@ class Mixed_Pharmacy(models.Model):
 
 class Mixed_Solution(models.Model):
     identifier          = models.CharField(max_length=50)
-    mixed_pharmacy      = models.ForeignKey(Mixed_Pharmacy, unique=False, on_delete=models.CASCADE)
+    mixed_pharmacy      = models.ForeignKey(Mixed_Pharmacy,null=True, unique=False, on_delete=models.CASCADE)
     amount_containers   = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
     quantity            = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
     state               = models.CharField(max_length=50, choices=(
