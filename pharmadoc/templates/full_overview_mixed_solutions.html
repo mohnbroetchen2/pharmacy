@@ -48,7 +48,7 @@
         </thead>
         <tbody>
           {% for p in filter.qs %}
-          <tr {% if p.available_quantity == 0 %}style="display:none;" {% endif %}>
+          <tr>
             <td><a href="/mix/allsubmissions/{{p.pk}}">{{p}}</a></td>
             <td>{{p.get_substances}}</td>
             <!--td>{{p.delivery_date}}</td>
