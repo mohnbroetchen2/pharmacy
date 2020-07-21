@@ -387,18 +387,43 @@ def showorders(request, primary_key):
 
 
 @login_required
-def mixed_solutions(request):
+def mixed_solutions(request): #shows mixed pharmacy which is active
     mixed_pharmacylist = Mixed_Pharmacy.objects.filter(state='active')
     f = MixedPharmacyFilter(request.GET, queryset=mixed_pharmacylist)
     return render(request, 'overview_mixed_solutions.html', {'filter': f})
 
 @login_required
-def selectmixedpharmacy(request):
+def all_mixed_solutions(request): #shows mixed pharmacy wich can be deactive also
+    mixed_pharmacylist = Mixed_Pharmacy.objects.filter()
+    f = MixedPharmacyFilter(request.GET, queryset=mixed_pharmacylist)
+    return render(request, 'full_overview_mixed_solutions.html', {'filter': f})
+
+@login_required
+def selectmixedpharmacy(request): # select a mixed pharmacy to create a mixed solution
     mixed_pharmacylist = Mixed_Pharmacy.objects.filter(state='active')
     return render(request, 'select_mixed_pharmacy.html', {'mixed_pharmacy': mixed_pharmacylist})
 
 @login_required
-def selectordersformixedpharmacy(request):
+def allmixedsubmissions(request, primary_key): #shows all submission concerning a mixed pharmacy
+    m_pharmacy = get_object_or_404(Mixed_Pharmacy, pk=primary_key)
+    m_solution = Mixed_Solution.objects.filter(mixed_pharmacy=m_pharmacy)
+    submissionlist = Mixed_Submission.objects.filter(mixed_solution__mixed_pharmacy = m_pharmacy).order_by('-date')
+    return render(request, 'mixed_submissions.html', {'mixed_pharmacy':m_pharmacy, 'mixed_solution': m_solution, 'submissions':submissionlist})
+
+@login_required
+def showmixedsolutions(request, primary_key): #shows all solutions concerning a mixed pharmacy
+    m_pharmacy = get_object_or_404(Mixed_Pharmacy, pk=primary_key)
+    m_solution_list = Mixed_Solution.objects.filter(mixed_pharmacy=m_pharmacy)
+    return render(request, 'mixed_solutions.html', {'mixed_pharmacy':m_pharmacy, 'mixed_solution': m_solution_list,})
+
+@login_required
+def showmixedsubmissions(request, primary_key):  #shows all submissions concerning a mixed solutions
+    m_solution = get_object_or_404(Mixed_Solution,pk=primary_key)
+    submissionlist = Mixed_Submission.objects.filter(mixed_solution=m_solution).order_by('-date')
+    return render(request, 'mixed_submissions_solution.html', {'mixed_solution': m_solution, 'submissions':submissionlist})
+
+@login_required
+def selectordersformixedpharmacy(request): #select the orders those are used to create a mixed solution
     if request.method == "POST":
         tec_admin_mail = getattr(settings, "TEC_ADMIN_EMAIL", None)
         try:

@@ -1,0 +1,88 @@
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
+{% load bulma_tags %}
+
+<script>
+  $(document).ready(function () {
+    $('#datatable').DataTable({
+      "searching": true,
+      "scrollX": false,
+      "scrollY": "500px",
+      "order": [[0, 'desc']],
+      "scrollCollapse": true,
+      "paging": true,
+      "pageLength": 25,
+      "fixedHeader": true, 
+    });
+  });
+</script> {% endblock %} {% block content %}
+<style>
+ #filterform label {
+    font-size: 75%;
+  }
+
+  #filterform select {
+    font-size: 75%;
+  }
+
+  #filterform input {
+    font-size: 75%;
+  }
+
+  #filterform {
+    padding: 10px;
+  }
+</style>
+<h1 class="text-center"> FLI Pharmacy - Mixed Solution Overview {{mixed_pharmacy}}</h1>
+<form action="/animals/claim" method="POST"> {% csrf_token %}
+  <div class="col-lg-12">
+    <div class="table-responsive">
+      <table id="datatable" class="table table is-striped table is-hoverable">
+        <thead>
+          <tr>
+            <th class="header"> Identifier
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Pharmacy
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> State
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Mixed Date
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Expiry Date
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Available Containers
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Available Quantity
+              <i class="icon-sort"></i>
+            </th>
+            <th class="header"> Comment
+              <i class="icon-sort"></i>
+            </th>
+            <th class=""><a href="/mix/allsubmissions/{{mixed_pharmacy.pk}}">All submissions</a></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in mixed_solution %}
+          <tr>
+            <td>{{m.identifier}}</td>
+            <td>{{m.mixed_pharmacy}}</td>
+            <td>{{m.state}}</td>
+            <td>{{m.mixed_date}}</td>
+            <td>{{m.expiry_date}}</td>
+            <td>{{m.available_containers}} from {{m.amount_containers}}</td>
+            <td>{{m.available_quantity}} from {{m.mixed_quantity}}{{m.unit}} </td>
+            <td>{{m.comment}}</td>
+            <td><a href="/mix/submissions/{{m.pk}}">Submissions</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</form>
+{% endblock %}

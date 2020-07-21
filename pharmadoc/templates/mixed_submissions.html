@@ -35,65 +35,24 @@
     padding: 10px;
   }
 </style>
-<h1 class="text-center"> FLI Pharmacy - Submissions {{order.identifier}}</h1>
+<h1 class="text-center"> FLI Pharmacy - Mixed Submissions: {{mixed_pharmacy}}</h1>
   <div class="col-lg-12">
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
         <thead>
           <tr>
-            <th class="header"> Identifier
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Name
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Vendor
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Molecule
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Company
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Delivery Date
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Expiry Date
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Batch Number
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Delivered quantity ({{order.unit}})
-                <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Delivered containers
-                <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Available ({{order.unit}})
-            </th>
-            <th class="header"> Available containers 
-            </th>
-            <th class="header"> Comments
-            </th>
+            <th class="header"> Name</th>
+            <th class="header"> Substances</th>
+            <th class="header"> Available quantity</th>
+            <th class="header"> Available containers</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{{order.identifier}}</td>
-            <td>{{pharmacy}}</td>
-            <td>{{vendor}}</td>
-            <td>{{pharmacy.get_molecule}}</td>
-            <td>{{pharmacy.company}}</td>
-            <td>{{order.delivery_date}}</td>
-            <td>{{order.expiry_date}}</td>
-            <td>{{order.batch_number}}</td>
-            <td>{{order.delivered_quantity}}</td>
-            <td>{{order.amount_containers}}</td>
-            <td>{{order.available_quantity}} from {{order.delivered_quantity}}</td>
-            <td>{{order.available_containers}} from {{order.amount_containers}}</td>
-            <td>{{order.comments}}</td>
+            <td>{{mixed_pharmacy.name}}</td>
+            <td>{{mixed_pharmacy.get_substances}}</td>
+            <td>{{mixed_pharmacy.available_quantity|floatformat:0}} {{mixed_pharmacy.unit}} </td>
+            <td>{{mixed_pharmacy.available_container}}</td>
           </tr>
         </tbody>
       </table>
@@ -138,7 +97,7 @@
           <td>{{s.application_number}}</td>
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>
-          <td>{{s.fullamount}}{{product.unit}}</td>
+          <td>{{s.fullamount}}{{mixed_solution.unit}}</td>
           <td>{{s.comment}}</td>
           <td>{{s.added_by}}</td>
         </tr>

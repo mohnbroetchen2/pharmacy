@@ -35,7 +35,7 @@
     padding: 10px;
   }
 </style>
-<h1 class="text-center"> FLI Pharmacy - Submissions {{order.identifier}}</h1>
+<h1 class="text-center"> FLI Pharmacy - Mixed Submissions: {{mixed_solution}}</h1>
   <div class="col-lg-12">
     <div class="table-responsive">
       <table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
@@ -44,36 +44,23 @@
             <th class="header"> Identifier
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Name
+            <th class="header"> Mixed Pharamcy
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Vendor
+            <th class="header"> State
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Molecule
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Company
-              <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Delivery Date
+            <th class="header"> Mixed Date
               <i class="icon-sort"></i>
             </th>
             <th class="header"> Expiry Date
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Batch Number
+            <th class="header"> Available Containers
               <i class="icon-sort"></i>
             </th>
-            <th class="header"> Delivered quantity ({{order.unit}})
-                <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Delivered containers
-                <i class="icon-sort"></i>
-            </th>
-            <th class="header"> Available ({{order.unit}})
-            </th>
-            <th class="header"> Available containers 
+            <th class="header"> Available Quantity
+              <i class="icon-sort"></i>
             </th>
             <th class="header"> Comments
             </th>
@@ -81,19 +68,14 @@
         </thead>
         <tbody>
           <tr>
-            <td>{{order.identifier}}</td>
-            <td>{{pharmacy}}</td>
-            <td>{{vendor}}</td>
-            <td>{{pharmacy.get_molecule}}</td>
-            <td>{{pharmacy.company}}</td>
-            <td>{{order.delivery_date}}</td>
-            <td>{{order.expiry_date}}</td>
-            <td>{{order.batch_number}}</td>
-            <td>{{order.delivered_quantity}}</td>
-            <td>{{order.amount_containers}}</td>
-            <td>{{order.available_quantity}} from {{order.delivered_quantity}}</td>
-            <td>{{order.available_containers}} from {{order.amount_containers}}</td>
-            <td>{{order.comments}}</td>
+            <td>{{mixed_solution.identifier}}</td>
+            <td>{{mixed_solution.mixed_pharmacy}}</td>
+            <td>{{mixed_solution.state}}</td>
+            <td>{{mixed_solution.mixed_date}}</td>
+            <td>{{mixed_solution.expiry_date}}</td>
+            <td>{{mixed_solution.available_containers}} from {{mixed_solution.amount_containers}}</td>
+            <td>{{mixed_solution.available_quantity}} from {{mixed_solution.mixed_quantity}}{{mixed_solution.unit}} </td>
+            <td>{{mixed_solution.comments}}</td>
           </tr>
         </tbody>
       </table>
@@ -138,7 +120,7 @@
           <td>{{s.application_number}}</td>
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>
-          <td>{{s.fullamount}}{{product.unit}}</td>
+          <td>{{s.fullamount}}{{mixed_solution.unit}}</td>
           <td>{{s.comment}}</td>
           <td>{{s.added_by}}</td>
         </tr>

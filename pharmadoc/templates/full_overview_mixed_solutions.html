@@ -31,7 +31,7 @@
     padding: 10px;
   }
 </style>
-<h1 class="text-center"> FLI Pharmacy - Overview Mixed Solutions</h1>
+<h1 class="text-center"> FLI Pharmacy - Full Overview Mixed Solutions</h1>
 <form action="/exportadvanced" method="POST"> {% csrf_token %}
   <div class="col-lg-12">
     <div class="table-responsive">
@@ -51,6 +51,10 @@
           <tr {% if p.available_quantity == 0 %}style="display:none;" {% endif %}>
             <td><a href="/mix/allsubmissions/{{p.pk}}">{{p}}</a></td>
             <td>{{p.get_substances}}</td>
+            <!--td>{{p.delivery_date}}</td>
+            <td>{{p.expiry_date}}</td>
+            <td>{{p.batch_number}}</td>
+            <td>{{p.delivered_quantity}}{{p.unit}}</td-->
             <td>{{p.available_quantity|floatformat:0}} {{p.unit}}</td>
             <td>{{p.available_container}}</td>
             <td><a href="/mix/selectmixedpharmacyforsubmitview/{{p.pk}}">submit</a></td>
