@@ -6,3 +6,5 @@ django-admin-list-filter-dropdown>=1.0.2
 django_extensions>=2.1.6
 Django>=2.2.10
 django-crispy-forms>=1.7
+django-bootstrap-email>=0.0.1
+

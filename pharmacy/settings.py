@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'bulma',
     'django_extensions',
     'crispy_forms',
+    'bootstrap_email',
 ]
 
 MIDDLEWARE = [
