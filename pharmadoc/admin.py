@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission,License_Number
+from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission,License_Number, Profile
 from .models import Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution
 from django import forms
 import csv
@@ -173,6 +173,11 @@ class PharmacyAdmin(admin.ModelAdmin, ExportCsvMixin):
                    ('storage_instructions',DropdownFilter),
                    ('comment',DropdownFilter))
     actions = ["export_as_csv"]
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'get_expiration_info')
+
    
 class SubmissionForm(forms.ModelForm):
     """
@@ -203,4 +208,6 @@ class Mixed_SolutionForm(forms.ModelForm):
     class Meta:
         model = Mixed_Solution
         fields = ('identifier','state','amount_containers','quantity','unit','mixed_date','expiry_date')
+
+
 

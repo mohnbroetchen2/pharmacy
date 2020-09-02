@@ -56,6 +56,7 @@ urlpatterns = [
     path('mix/submit/<int:primary_key>', pharmadoc.views.mixedsubmit_view, name='mixedsubmitview'),                 #submit from a mixed solution
     path('mix/submit/createsubmission', pharmadoc.views.mixedcreatesubmission, name='mixedcreatesubmission'),       #save (mixed) submission
     path('order/', pharmadoc.views.order_view, name='showorders'),
+    path('expirations/<int:primary_key>', pharmadoc.views.expiration_view, name='expirationview'),   
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

@@ -3,6 +3,8 @@ from datetime import datetime
 from django import forms
 from itertools import chain
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import os
 
 class Company(models.Model):
@@ -481,3 +483,16 @@ class Submission_For_Mixed_Solution(models.Model):
         else:
             return (self.amount_containers * self.order.quantity + self.quantity)
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    get_expiration_info = models.BooleanField(null=False,default=False)
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

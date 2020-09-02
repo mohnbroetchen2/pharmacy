@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% load bootstrap_email %}
+{% load static %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Pharmacy Expirations</title>
+    <style media="all" type="text/css">
+        {% bootstrap_email_min %}
+    </style>
+    <style>
+        p.ex1 
+        {
+            padding-left:1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading"> Dear {{fist_name}},</h4>
+        <p> </p>
+        <p>Following medicines will expire in the next {{delta}} days
+        </p>
+    </div>
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td class="navbar navbar-inverse" align="center">
+                <!-- This setup makes the nav background stretch the whole width of the screen. -->
+                <table class="table table-striped" width="80%" cellspacing="1" cellpadding="3">
+                    <thead>
+                        <tr>
+                            <th scope="col">Expiry Date</th>
+                            <th scope="col">Identifier</th>
+                            <th scope="col">Pharmacy</th>
+                            <th scope="col">Molecule</th>
+                            <th scope="col">Vendor</th>
+                            <th scope="col">Delivery Date</th>
+                            <th scope="col">Batch Number</th>
+                            <th scope="col">Delivered quantity</th>
+                            <th scope="col">Delivered containers</th>
+                            <th scope="col">Available quantity</th>
+                            <th scope="col">Available containers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in orderlist %}
+                        <tr>
+                            <td>{{o.expiry_date}}</td>
+                            <td>{{o.identifier}}</td>
+                            <td>{{o.pharmacy}}</td>
+                            <td>{{o.pharmacy.get_molecule}}</td>
+                            <td>{{o.vendor}}</td>
+                            <td>{{o.delivery_date}}</td>
+                            <td>{{o.batch_number}}</td>
+                            <td>{{o.delivered_quantity|floatformat:0}} {{o.unit}}</td>
+                            <td>{{o.amount_containers}}</td>
+                            <td>{{o.available_quantity|floatformat:0}} {{o.unit}}</td>
+                            <td>{{o.available_containers}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </td>
+        </tr>                  
+    </table>
+        <hr>
+        <div class="alert">
+    <p> Please have a look at the <a href="http://pharmacy.leibniz-fli.de/expirations/7">Pharmacy</a> for more details.</p>
+    </div>
+</body>
+</html>

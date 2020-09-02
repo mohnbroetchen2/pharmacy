@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.views import generic
-from datetime import datetime
+from datetime import datetime, timedelta
 from django import forms
 import time
 from django.contrib import messages
@@ -184,6 +184,17 @@ def start_all_view(request):
     return render(request, 'home_all.html', {'filter': f})
 
 @login_required
+def expiration_view(request,primary_key):
+    today = datetime.now().date()
+    orderlist = Order.objects.filter(state='active').order_by('expiry_date')
+    for o in orderlist:
+        if o.expiry_date > today + timedelta(days=primary_key):
+            orderlist = orderlist.exclude(pk=o.pk)
+    #f = OrderFilter(request.GET, queryset=orderlist)
+    return render(request, 'expiration.html', {'orders': orderlist})
+
+
+@login_required
 def order_view(request):
     orderlist = Order.objects.all()
     f = OrderViewFilter(request.GET, queryset=orderlist)
@@ -197,7 +208,7 @@ def submit_view(request, primary_key):
             if pk_order:
                 primary_key = pk_order
     order= get_object_or_404(Order, pk=primary_key)
-    persons = Person.objects.filter(state='active')
+    persons = Person.objects.filter(state='active').order_by('name')
     license = License_Number.objects.filter(state='active').order_by('license')
     available_containers = order.available_containers()
     available_quantity = order.available_quantity()
@@ -210,6 +221,9 @@ def selectpharmacyforsubmitview(request, primary_key):
     pharmacy = get_object_or_404(Pharmacy, pk=primary_key)
     if len(order) > 1:
         return render(request, 'selectpharmacyforsubmit.html', {'order': order, 'pharmacy': pharmacy,})
+    elif len(order) < 1:
+        messages.add_message(request, messages.WARNING, 'The selected pharmacy is inactive / empty')
+        return(start_all_view(request))
     else:
         return(submit_view(request,order[0].pk))
 
@@ -219,6 +233,9 @@ def selectmixedpharmacyforsubmitview(request, primary_key):
     mixedpharmacy = get_object_or_404(Mixed_Pharmacy, pk=primary_key)
     if len(mixedsolution) > 1:
         return render(request, 'selectmixedpharmacyforsubmit.html', {'mixedsolution': mixedsolution, 'mixedpharmacy': mixedpharmacy,})
+    elif len(mixedsolution) < 1:
+        messages.add_message(request, messages.WARNING, 'The selected pharmacy is inactive / empty')
+        return(all_mixed_solutions(request))
     else:
         return(mixedsubmit_view(request,mixedsolution[0].pk))
 
@@ -242,7 +259,7 @@ def submitmixedsubmission(request):
                     o.temp_available_quantity = o.available_quantity()
                     o.save()
                 orders = Order.objects.filter(pk__in = orderlist)
-                persons = Person.objects.filter(state='active')
+                persons = Person.objects.filter(state='active').order_by('name')
                 return render(request, 'submitmixedsubmission.html', {'orders': orders,'persons':persons,})
             else:
                 pharmacylist = Pharmacy.objects.all()
@@ -509,7 +526,7 @@ def mixedsubmit_view(request, primary_key):
                 if pk_mixed_solution:
                     primary_key = pk_mixed_solution
         mix_solution = get_object_or_404(Mixed_Solution, pk=primary_key)
-        persons = Person.objects.filter(state='active')
+        persons = Person.objects.filter(state='active').order_by('name')
         license = License_Number.objects.filter(state='active').order_by('license')
         available_containers = mix_solution.available_containers()
         available_quantity = mix_solution.available_quantity()

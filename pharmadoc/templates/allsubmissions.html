@@ -5,14 +5,14 @@
     $('#submission').DataTable({
       "searching": true,
       "scrollX": false,
-      "order": [[0, 'desc']],
+      "order": [[2, 'asc']],
       "scrollCollapse": true,
       "paging": false,
     });
   });
 </script> {% endblock %} {% block content %}
 <style>
-  < !-- style the filterform so it kinda fits on the screen>-->#filterform label {
+ #filterform label {
     font-size: 75%;
   }
 
@@ -157,7 +157,7 @@
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>
           <td>{{s.fullamount|floatformat:0}} {{s.order.unit}}</td>
-          <td><span class="has-tooltip-arrow has-tooltip-multiline has-tooltip-right" data-tooltip="{{s.comment}}">{{s.comment|slice:"0:30"}}</span></td>
+          <td><span class="has-tooltip-arrow has-tooltip-multiline has-tooltip-right" data-toggle="tooltip" title="{{s.comment}}">{{s.comment|slice:"0:30"}}</span></td>
           <td>{{s.added_by}}</td>
         </tr>
         {% endfor %}
