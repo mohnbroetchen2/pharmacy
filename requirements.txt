@@ -1,10 +1,10 @@
-django-filter>=2.1
+django-filter>=2.3
 django-bulma>=0.5.1
 django-modeladmin-reorder>=0.1.0
 django-widget-tweaks>=1.4.2
 django-admin-list-filter-dropdown>=1.0.2
 django_extensions>=2.1.6
-Django>=2.2.10
-django-crispy-forms>=1.7
+Django>=3.1.1
+django-crispy-forms>=1.9
 django-bootstrap-email>=0.0.1
 

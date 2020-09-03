@@ -26,7 +26,7 @@ class Job(WeeklyJob):
                     if len(orderlist)>0:                        
                         message = render_to_string('mail/expiration_mail.html',{'delta':delta, 'orderlist':orderlist, 'first_name':recipient.user.first_name})
                         subject = "Pharmacy Expirations" 
-                        msg = EmailMessage(subject, message, "noreply@leibniz-fli.de", [recipient.user.email])
+                        msg = EmailMessage(subject, message, "noreply@pharmacy.leibniz-fli.de", [recipient.user.email])
                         msg.content_subtype = "html"
                         msg.send()
         except BaseException as e:
