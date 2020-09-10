@@ -80,6 +80,9 @@ def add_order(request):
                 messages.success(request, 'Order successfully created')
 
                 return HttpResponseRedirect('/')  # Redirect after POST
+            else:
+                messages.error(request, 'The form is not valid. Please try it again')
+                return render(request, 'form_orderadd.html', {'form': addOrderForm()})
         else:
             return render(request, 'form_orderadd.html', {'form': addOrderForm()})
     except BaseException as e:
