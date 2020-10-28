@@ -229,6 +229,8 @@ class Order (models.Model):
     
     def available_quantity_last_container(self):
         submissionlist = Submission.objects.filter(order__pk=self.pk)
+        mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=self.pk)
+        submissionlist      = list(chain(submissionlist,mixedsubmissionlist))
         if submissionlist is None:
             return(self.amount_containers)
         quantity = self.quantity
