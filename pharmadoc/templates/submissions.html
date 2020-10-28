@@ -138,8 +138,20 @@
           <td>{{s.application_number}}</td>
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>
-          <td>{{s.fullamount}}{{product.unit}}</td>
+          <td>{{s.fullamount}}{{order.unit}}</td>
           <td><span class="has-tooltip-arrow has-tooltip-multiline has-tooltip-right" data-toggle="tooltip" title="{{s.comment}}">{{s.comment|slice:"0:30"}}</span></td>
+          <td>{{s.added_by}}</td>
+        </tr>
+        {% endfor %}
+        {% for s in mixedsubmissionlist %}
+        <tr>
+          <td>{{s.pk}}</td>
+          <td>{{s.creation_date|date:"M d, Y"}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{s.fullamount}} {{order.unit}}</td>
+          <td><span>Submission for mixed solution: {{s.used_for}} ({{s.used_for.mixed_pharmacy}})</span></td>
           <td>{{s.added_by}}</td>
         </tr>
         {% endfor %}

@@ -46,7 +46,9 @@ def add_order(request):
         if request.method == 'POST':  # If the form has been submitted...
             form = addOrderForm(request.POST, request.FILES)  # A form bound to the POST data
             if form.is_valid():  # All validation rules pass
-                form.save()
+                new_order = form.save()
+                new_order.added_by = request.user
+                new_order.save()
                 """"pharmacy = Pharmacy.objects.all()
                 new_order = Order()
                 new_order.pharmacy          = pharmacy[int(form.cleaned_data['pharmacy'])-2]
@@ -378,13 +380,13 @@ def seesubmissions(request, primary_key):
     order = get_object_or_404(Order, pk=primary_key)
     pharmacy = Pharmacy.objects.get(order__pk=primary_key)
     submissionlist = Submission.objects.filter(order__pk=primary_key).order_by('-date')
-
+    mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=primary_key).order_by('-creation_date')
     #product= get_object_or_404(Order, pk=primary_key)
     #submissionlist = Submission.objects.filter(product__pk=primary_key).order_by('-date')
     #available_containers = product.available_containers()
     #available_quantity = product.available_quantity()
     #available_quantity_last_container = product.available_quantity_last_container()
-    return render(request, 'submissions.html', {'order': order, 'submissions':submissionlist, 'pharmacy': pharmacy,})
+    return render(request, 'submissions.html', {'order': order, 'submissions':submissionlist, 'pharmacy': pharmacy,'mixedsubmissionlist':mixedsubmissionlist})
 
 
 @login_required
