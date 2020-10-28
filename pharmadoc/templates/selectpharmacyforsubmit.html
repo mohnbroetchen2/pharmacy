@@ -38,8 +38,8 @@
           <td>{{pharmacy}}</td>
           <td>{{o.identifier}}</td>
           <td>{{o.batch_number}}</td>
-          <td>{{o.delivery_date}}</td>
-          <td>{{o.expiry_date}}</td>
+          <td>{{o.delivery_date|date:'d.m.Y'}}</td>
+          <td>{{o.expiry_date|date:'d.m.Y'}}</td>
         </tr>
         {% endfor %}
       </tbody>

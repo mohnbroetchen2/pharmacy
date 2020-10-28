@@ -72,8 +72,8 @@
             <td>{{m.identifier}}</td>
             <td>{{m.mixed_pharmacy}}</td>
             <td>{{m.state}}</td>
-            <td>{{m.mixed_date}}</td>
-            <td>{{m.expiry_date}}</td>
+            <td>{{m.mixed_date|date:'d.m.Y'}}</td>
+            <td>{{m.expiry_date|date:'d.m.Y'}}</td>
             <td>{{m.available_containers}} from {{m.amount_containers}}</td>
             <td>{{m.available_quantity}} from {{m.mixed_quantity}}{{m.unit}} </td>
             <td>{{m.comment}}</td>

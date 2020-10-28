@@ -7,6 +7,7 @@
       "order": [[2, 'asc']],
       "scrollCollapse": true,
       "paging": false,
+      "columnDefs": [{ "type": "de_date", targets:2}],
     });
   });
 </script> {% endblock %} {% block content %}
@@ -152,7 +153,7 @@
         <tr>
           <td>{{s.application_number}}</td>
           <td>{{s.order.identifier}}</td>
-          <td>{{s.date}}</td>
+          <td>{{s.date|date:'d.m.Y'}}</td>
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>
           <td>{{s.fullamount|floatformat:0}} {{s.order.unit}}</td>

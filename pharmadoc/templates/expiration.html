@@ -12,6 +12,7 @@
       "paging": true,
       "pageLength": 25,
       "fixedHeader": true, 
+      "columnDefs": [{ "type": "de_date", targets:0},{ "type": "de_date", targets:5}],
     });
   });
 </script> {% endblock %} {% block content %}
@@ -76,12 +77,12 @@
         <tbody>
           {% for o in orders %}
           <tr>
-            <td>{{o.expiry_date}}</td>
+            <td>{{o.expiry_date|date:'d.m.Y'}}</td>
             <td>{{o.identifier}}</td>
             <td>{{o.pharmacy}}</td>
             <td>{{o.pharmacy.get_molecule}}</td>
             <td>{{o.vendor}}</td>
-            <td>{{o.delivery_date}}</td>
+            <td>{{o.delivery_date|date:'d.m.Y'}}</td>
             <td>{{o.batch_number}}</td>
             <td>{{o.delivered_quantity|floatformat:0}} {{o.unit}}</td>
             <td>{{o.amount_containers}}</td>

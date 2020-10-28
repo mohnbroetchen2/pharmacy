@@ -15,6 +15,7 @@
       "paging": true,
       "pageLength": 25,
       "fixedHeader": true, 
+      "columnDefs": [{ "type": "de_date", targets:1}],
     });
   });
 </script> {% endblock %} {% block content %}
@@ -93,7 +94,7 @@
         {% for s in submissions %}
         <tr>
           <td>{{s.pk}}</td>
-          <td>{{s.date}}</td>
+          <td>{{s.date|date:'d.m.Y'}}</td>
           <td>{{s.application_number}}</td>
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>

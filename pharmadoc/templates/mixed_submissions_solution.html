@@ -15,6 +15,7 @@
       "paging": true,
       "pageLength": 25,
       "fixedHeader": true, 
+      "columnDefs": [{ "type": "de_date", targets:1}],
     });
   });
 </script> {% endblock %} {% block content %}
@@ -71,8 +72,8 @@
             <td>{{mixed_solution.identifier}}</td>
             <td>{{mixed_solution.mixed_pharmacy}}</td>
             <td>{{mixed_solution.state}}</td>
-            <td>{{mixed_solution.mixed_date}}</td>
-            <td>{{mixed_solution.expiry_date}}</td>
+            <td>{{mixed_solution.mixed_date|date:'d.m.Y'}}</td>
+            <td>{{mixed_solution.expiry_date|date:'d.m.Y'}}</td>
             <td>{{mixed_solution.available_containers}} from {{mixed_solution.amount_containers}}</td>
             <td>{{mixed_solution.available_quantity}} from {{mixed_solution.mixed_quantity}}{{mixed_solution.unit}} </td>
             <td>{{mixed_solution.comments}}</td>
@@ -116,7 +117,7 @@
         {% for s in submissions %}
         <tr>
           <td>{{s.pk}}</td>
-          <td>{{s.date}}</td>
+          <td>{{s.date|date:'d.m.Y'}}</td>
           <td>{{s.application_number}}</td>
           <td>{{s.person}}</td>
           <td>{{s.license}}</td>

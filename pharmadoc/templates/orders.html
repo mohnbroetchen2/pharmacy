@@ -12,6 +12,7 @@
       "paging": true,
       "pageLength": 25,
       "fixedHeader": true, 
+      "columnDefs": [{ "type": "de_date", targets:5},{ "type": "de_date", targets:6}]
     });
   });
 </script> {% endblock %} {% block content %}
@@ -84,8 +85,8 @@
             <td>{{pharmacy.get_molecule}}</td>
             <td>{{pharmacy.company}}</td>
             <td>{{o.vendor}}</td>
-            <td>{{o.delivery_date}}</td>
-            <td>{{o.expiry_date}}</td>
+            <td>{{o.delivery_date|date:'d.m.Y'}}</td>
+            <td>{{o.expiry_date|date:'d.m.Y'}}</td>
             <td>{{o.batch_number}}</td>
             <td>{{o.delivered_quantity|floatformat:0}} {{o.unit}}</td>
             <td>{{o.amount_containers}}</td>

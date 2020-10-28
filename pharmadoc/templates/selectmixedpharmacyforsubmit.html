@@ -38,8 +38,8 @@
           </td>
           <td>{{mixedpharmacy}}</td>
           <td>{{s.identifier}}</td>
-          <td>{{s.mixed_date}}</td>
-          <td>{{s.expiry_date}}</td>
+          <td>{{s.mixed_date|date:'d.m.Y'}}</td>
+          <td>{{s.expiry_date|date:'d.m.Y'}}</td>
           <td>{{s.comment}}</td>
         </tr>
         {% endfor %}

@@ -19,7 +19,7 @@
   });
 </script> {% endblock %} {% block content %}
 <style>
-  < !-- style the filterform so it kinda fits on the screen>-->#filterform label {
+  #filterform label {
     font-size: 75%;
   }
 
@@ -114,8 +114,8 @@
       {% for s in submissions %}
       <tr>
         <td>{{p.batch_number}}</td>
-        <td>{{p.delivery_date}}</td>
-        <td>{{p.expiry_date}}</td>
+        <td>{{p.delivery_date|date:'d.m.Y'}}</td>
+        <td>{{p.expiry_date|date:'d.m.Y'}}</td>
         <td>{{p.delivered_quantity}}</td>
         <td>{{p.amount_containers</td>
         <td>{{p.available_quantity}} from {{p.delivered_quantity}}</td>
