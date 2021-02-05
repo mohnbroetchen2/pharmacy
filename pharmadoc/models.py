@@ -180,7 +180,7 @@ class Order (models.Model):
         return(self.amount_containers * self.quantity)
 
     def available_containers(self):
-        if self.state == 'deactivated':
+        if self.state == 'deactivated': # issue #7
             return (0)
         submissionlist      = Submission.objects.filter(order__pk=self.pk)
         mixedsubmissionlist = Submission_For_Mixed_Solution.objects.filter(order__pk=self.pk)

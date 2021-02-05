@@ -96,7 +96,7 @@ def exportcsvadvanced(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
     response.write(codecs.BOM_UTF8)
-    writer = csv.writer(response, delimiter=',', dialect='excel')
+    writer = csv.writer(response, delimiter=';', dialect='excel')
     pharmacy = Pharmacy.objects.all()
 
 #get the dates the user has chosen for the export
@@ -141,7 +141,7 @@ def exportcsv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
     response.write(codecs.BOM_UTF8)
-    writer = csv.writer(response, delimiter=',', dialect='excel')
+    writer = csv.writer(response, delimiter=';', dialect='excel')
     pharmacy = Pharmacy.objects.all()
     writer.writerow(["Name", "Molecule","available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
                     "Comment"])
@@ -156,7 +156,7 @@ def exportcsv_all(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="FLI_pharmacy.csv"'
     response.write(codecs.BOM_UTF8)
-    writer = csv.writer(response, delimiter=',', dialect='excel')
+    writer = csv.writer(response, delimiter=';', dialect='excel')
     pharmacy = Pharmacy.objects.all()
     writer.writerow(["Name", "Molecule","available Quantity", "available Container", "Company", "State", "Drug Class", "Dose", "Type", "Animal Species", "Umwidmungsstufe", "Storage Instructions",
                     "Comment"])
