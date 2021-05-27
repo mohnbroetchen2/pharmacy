@@ -1,5 +1,5 @@
 from django import forms
-from .models import Pharmacy, Order, Vendor
+from .models import Pharmacy, Order, Vendor, Person, License_Number, Vendor
 from django.core.files.uploadedfile import SimpleUploadedFile
 from datetime import datetime
 from django.contrib.auth.models import User
@@ -20,6 +20,12 @@ class addOrderForm(forms.ModelForm):
     attachment      = forms.FileField(required=False)
     pharmacy        = forms.ModelChoiceField(queryset=Pharmacy.objects.order_by('name'))
     vendor          = forms.ModelChoiceField(queryset=Vendor.objects.order_by('name'))
+
+    def __init__(self, *args, **kwargs):
+        super (addOrderForm,self ).__init__(*args,**kwargs) 
+        link_to_add_new_vendor = '<a href="/vendor/create" id="add_vendor" onclick="return showAddPopup(this);"><img src = "/static/admin/img/icon-addlink.svg" %}"></a>'
+        self.fields['vendor'].label = "Vendor {}".format(link_to_add_new_vendor)
+
     class Meta:
         model = Order
         fields = ('pharmacy','vendor','state','amount_containers','quantity','unit','delivery_date','expiry_date','batch_number','attachment','comment')
@@ -59,6 +65,20 @@ class addPharmacyForm(forms.ModelForm):
         model = Pharmacy
         exclude =()
 
+class addPersonForm(forms.ModelForm): 
+    class Meta:
+        model = Person
+        exclude =()
+
+class addLicenseForm(forms.ModelForm): 
+    class Meta:
+        model = License_Number
+        exclude =()
+
+class addVendorForm(forms.ModelForm): 
+    class Meta:
+        model = Vendor
+        exclude =()
 
 
 

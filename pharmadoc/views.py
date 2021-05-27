@@ -21,7 +21,7 @@ import csv
 import codecs
 import time
 import sys
-from .forms import addOrderForm, addPharmacyForm
+from .forms import addOrderForm, addPharmacyForm, addPersonForm, addLicenseForm, addVendorForm
 from django.core.mail import send_mail
 from django.core import management
 
@@ -603,3 +603,29 @@ def change_password(request):
     return render(request, 'accounts/change_password.html', {
         'form': form
     })
+
+
+@login_required
+def PersonCreatePopup(request):
+    form = addPersonForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse('<script>opener.closePopup(window, "{}", "{}", "#id_person");</script>'.format(instance.pk, instance))
+    return render(request, "form_personadd.html", {"form" : form})
+
+
+@login_required
+def LicenseCreatePopup(request):
+    form = addLicenseForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse('<script>opener.closePopup(window, "{}", "{}", "#id_license");</script>'.format(instance.pk, instance))
+    return render(request, "form_licenseadd.html", {"form" : form})
+
+@login_required
+def VendorCreatePopup(request):
+    form = addVendorForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse('<script>opener.closePopup(window, "{}", "{}", "#id_vendor");</script>'.format(instance.pk, instance))
+    return render(request, "form_vendoradd.html", {"form" : form})

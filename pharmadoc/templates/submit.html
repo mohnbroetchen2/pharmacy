@@ -1,7 +1,28 @@
 {% extends "base.html" %}  {% load static %} {% block extrascripts %}
 {% load bulma_tags %}
 
-{% endblock %}{% block content %}
+{% endblock %}
+{% block content %}
+<script type="text/javascript">
+  function showEditPopup(url) {
+      var win = window.open(url, "Edit", 
+          'height=500,width=800,resizable=yes,scrollbars=yes');
+      return false;
+  }
+  function showAddPopup(triggeringLink) {
+      var name = triggeringLink.id.replace(/^add_/, '');
+      href = triggeringLink.href;
+      var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+      win.focus();
+      return false;
+  }
+  function closePopup(win, newID, newRepr, id) {
+      $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+      win.close();
+  }
+  
+</script>
+
 <h1 class="text-center"> FLI Pharmacy - Submission</h1>
 <div class="field is-grouped is-grouped-right">
     <div class="control">
@@ -45,9 +66,9 @@
     </div>
   </div>
   <div class="control">
-    <label class="label">License Number</label>
+    <label class="label">License Number <a href="/license/create" id="add_license" onclick="return showAddPopup(this);"><img src = "/static/admin/img/icon-addlink.svg"></a></label>
     <div class="select">
-      <select id="license" name="license" required>
+      <select id="id_license" name="license" required>
          <option></option>
          {% for l in license %}
          <option value="{{l.pk}}">{{l.license}}</option>
@@ -62,9 +83,9 @@
     </div>
   </div-->
   <div class="control">
-    <label class="label">Recipient</label>
+    <label class="label">Recipient <a href="/person/create" id="add_person" onclick="return showAddPopup(this);"><img src = "/static/admin/img/icon-addlink.svg"></a></label>
     <div class="select">
-      <select id="recipient" name="recipient" required>
+      <select id="id_person" name="recipient" required>
          <option></option>
          {% for p in persons %}
          <option value="{{p.pk}}">{{p.name}}</option>

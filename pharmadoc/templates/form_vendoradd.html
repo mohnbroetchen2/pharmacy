@@ -1,0 +1,14 @@
+{% extends "base.html" %}  {% load static %} {% block extrascripts %}
+{% load crispy_forms_tags %}
+{% load bulma_tags %}
+
+{% endblock %}{% block content %}
+<h1 class="text-center">New Vendor</h1>
+<form method = 'POST' action= '' enctype = "multipart/form-data" novalidate id = "vendor-form">
+<table>
+    {% csrf_token %}
+    {{ form|crispy }}
+</table>
+<input type="submit" value="Submit" class="btn btn-primary">
+</form>
+{% endblock %}

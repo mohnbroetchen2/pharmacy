@@ -5,6 +5,7 @@ from itertools import chain
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 import os
 
 class Company(models.Model):
@@ -52,7 +53,8 @@ class Pharmacy(models.Model):
     storage_instructions = models.CharField(max_length=400, null=True, blank=True,)
     comment = models.TextField(blank=True, null=True) 
     attachment = models.FileField(null=True, blank=True, upload_to='uploads/pharmacy/%Y/%m/')
-    alarm_value =  models.PositiveIntegerField(null=True, blank=True, help_text="Please enter a number of full containers. If less container are available Alessia gets a mail.") 
+    admin_mail = getattr(settings, "ADMIN_EMAIL", None)
+    alarm_value =  models.PositiveIntegerField(null=True, blank=True, help_text="Please enter a number of full containers. If less container are available the system sends a mail to {}.".format(admin_mail)) 
     class Meta:
         verbose_name = "Product Info"
         verbose_name_plural = "Product Infos"

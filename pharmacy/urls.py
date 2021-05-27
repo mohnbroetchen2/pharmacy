@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 import pharmadoc
@@ -56,7 +56,10 @@ urlpatterns = [
     path('mix/submit/<int:primary_key>', pharmadoc.views.mixedsubmit_view, name='mixedsubmitview'),                 #submit from a mixed solution
     path('mix/submit/createsubmission', pharmadoc.views.mixedcreatesubmission, name='mixedcreatesubmission'),       #save (mixed) submission
     path('order/', pharmadoc.views.order_view, name='showorders'),
-    path('expirations/<int:primary_key>', pharmadoc.views.expiration_view, name='expirationview'),   
+    path('expirations/<int:primary_key>', pharmadoc.views.expiration_view, name='expirationview'),
+    re_path(r'^person/create', pharmadoc.views.PersonCreatePopup, name = "PersonCreate"),
+    re_path(r'^license/create', pharmadoc.views.LicenseCreatePopup, name = "LicenseCreate"),
+    re_path(r'^vendor/create', pharmadoc.views.VendorCreatePopup, name = "VendorCreate"),        
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
