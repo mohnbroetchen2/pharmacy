@@ -15,8 +15,10 @@ def pharmacy_choices():
 
 #class addOrderForm(forms.Form):
 class addOrderForm(forms.ModelForm): 
-    delivery_date   = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget(),initial=datetime.now())
-    expiry_date     = forms.DateField(label='Expiry date', widget=forms.SelectDateWidget,initial=datetime.now())
+    #delivery_date   = forms.DateField(label='Delivery date', widget=forms.SelectDateWidget(),initial=datetime.now())
+    #expiry_date     = forms.DateField(label='Expiry date', widget=forms.SelectDateWidget,initial=datetime.now())
+    delivery_date   = forms.DateTimeField(input_formats=['%d/%m/%Y']) #https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
+    expiry_date     = forms.DateTimeField(input_formats=['%d/%m/%Y'])
     attachment      = forms.FileField(required=False)
     pharmacy        = forms.ModelChoiceField(queryset=Pharmacy.objects.order_by('name'))
     vendor          = forms.ModelChoiceField(queryset=Vendor.objects.order_by('name'))

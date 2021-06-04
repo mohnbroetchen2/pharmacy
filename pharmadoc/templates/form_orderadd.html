@@ -3,6 +3,8 @@
 {% load bulma_tags %}
 
 {% endblock %}{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.min.css"/>
+  <script type="text/javascript" src="/static/js/jquery.datetimepicker.full.min.js"></script>
 
 <script type="text/javascript">
     function showEditPopup(url) {
@@ -32,4 +34,16 @@
 </table>
 <input type="submit" value="Submit" class="btn btn-primary">
 </form>
+<script>
+    $(function () {
+      $("#id_delivery_date").datetimepicker({
+        format: 'd/m/Y',
+        timepicker:false,
+      });
+      $("#id_expiry_date").datetimepicker({
+        format: 'd/m/Y',
+        timepicker:false,
+      });
+    });
+  </script>
 {% endblock %}

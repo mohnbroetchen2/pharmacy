@@ -24,6 +24,8 @@
           </th>
           <th class="header"> Batch number
           </th>
+          <th class="header"> Quantity one container
+          </th>
           <th class="header"> Delivery Date
           </th>
           <th class="header"> Expiry Date
@@ -38,6 +40,7 @@
           <td>{{pharmacy}}</td>
           <td>{{o.identifier}}</td>
           <td>{{o.batch_number}}</td>
+          <td>{{o.quantity}} {{o.unit}}</td>
           <td>{{o.delivery_date|date:'d.m.Y'}}</td>
           <td>{{o.expiry_date|date:'d.m.Y'}}</td>
         </tr>
