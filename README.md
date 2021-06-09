@@ -166,3 +166,8 @@ The mixed solution is the equivalent to the order. It is the entity which can su
 
 Mixed Submission
 --------
+This is a submussion of a mixed solution to the end user. Be aware the values "amount containers" and "quantity" are detached from each other. The value quantity should be used when submitting a part of a container. 
+
+Profile
+--------
+The system creates for every user an extra profile entity. It inherits the boolean field "get expiration info". If it is activated the user gets a mail if there is a pharmacy which will expire within the next week.
