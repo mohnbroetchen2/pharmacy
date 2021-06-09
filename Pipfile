@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django-filter = ">=2.3"
+django-bulma = ">=0.8.2"
+django-modeladmin-reorder = ">=0.1.0"
+django-widget-tweaks = ">=1.4.8"
+django-admin-list-filter-dropdown = ">=1.0.2"
+django-extensions = ">=2.1.6"
+django-crispy-forms = ">=1.9"
+django-bootstrap-email = ">=0.0.1"
+Django = ">=3.1.1"
+
+[requires]
+python_version = "3.8"

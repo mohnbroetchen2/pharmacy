@@ -7,4 +7,5 @@ django_extensions>=2.1.6
 Django>=3.1.1
 django-crispy-forms>=1.9
 django-bootstrap-email>=0.0.1
+Pillow>=8.2.0
 

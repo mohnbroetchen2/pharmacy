@@ -34,6 +34,31 @@ organizations are required to purchase a license. By downloading the
 package you agree with conditions of the FLI Software License Agreement
 for Academic Non-commercial Research (LICENSE.pdf).
 
+
+Installation
+=======
+
+The webapp uses the Django framework as base.  
+
+With 
+''' pip install -r requirements.txt '''
+you install all dependencies.
+
+Copy the pharmacy/template_local_settings.py to pharmacy/local_settings.py and edit this file to your needs. Set the SECRET_KEY for your database.
+To prepare the database run the commands:
+'''     python manage.py migrate '''
+'''     python manage.py makemigrations '''
+'''     python manage.py migrate '''
+
+Create the superuser to login the first time
+''' python manage.py createsuperuser '''
+
+Finally
+''' python manage.py collectstatic ''' collects all static files like css, javascript and so far.
+''' python manage.py runserver ''' starts serving the app.
+
+
+
 Sitemap
 =======
 
@@ -41,19 +66,9 @@ Sitemap
 -   Full overview: <http://pharmacy.leibniz-fli.de/all>
 -   Passwort change:
     <http://pharmacy.fli-leibniz.de/accounts/password_change/>
--   Add pup directly from PyRAT:
+-   Changelog:
     <http://pharmacy.leibniz-fli.de/changes>
 
-\* Administration / Add pharmacy and add order:
-<https://pharmcy.leibniz-fli.de/admin> .. User types
-\-\-\-\-\-\-\-\-\--\* User: FLI employee from the animal facility
-Veterinarians and the Animal Welfare Officer. \* Manager: this person is
-appointed within the research group and coordinates the offering/sharing
-of animals. \* Person who perform euthanasia: this person will be named
-in anishare by the manager (relevant only for organ sharing). \*
-Superuser: this person is administrator of the database and has the full
-control of the function (IT, animal welfare officers, veterinarians and
-heads of animal facilities).
 
 Main user interface
 ===================
