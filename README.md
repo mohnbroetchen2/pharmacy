@@ -115,7 +115,7 @@ Pharmacy
 
 [Pharmacy](http://pharmacy.leibniz-fli.de/admin/pharmadoc/pharmacy/).
 The pharmacy is the medicine. The name is composed of the name of the
-pharmacy and the dose of the active molecule
+pharmacy and the dose of the active molecule. It's possible to set an "alarm value" for a pharmacy. If this value is set, the "Admin"  receives a mail, if the containers in stock is less then this value for this pharmacy. The available stock of a pharmacy is calculated from all active orders belonging to the pharmacy.
 
 Order
 -----
@@ -123,7 +123,7 @@ Order
 [Order](http://pharmacy.leibniz-fli.de/admin/pharmadoc/order/).
 An Order increase the stock of a pharmacy. Every order gets an
 identifier from the system. The identifier is composed of the first
-three letters of the name of the pharmacy and the delivery date. If
+three letters of the name of the pharmacy or if set the "identifier shortcut" of the pharmacy and the delivery date. If
 there is already an order with the designated identifier the new
 identifier gets a ongoing number as last character. Every order belongs
 to a pharmacy and have a state `active` or `deactivated`. It turns
