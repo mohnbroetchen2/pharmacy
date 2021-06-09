@@ -102,7 +102,7 @@ The full overview shows also pharmacy which isn\'t available
 Entities
 ========
 
-![image](doc/source/images/models.png)
+![Entities](models.png)
 
 Persons
 -------
