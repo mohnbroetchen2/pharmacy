@@ -1,5 +1,4 @@
-title: 'Welcome to the documentation of pharmacy !'
-
+**Welcome to the documentation of pharmacy !**
 
 Introduction
 ============
@@ -41,21 +40,23 @@ Installation
 The webapp uses the Django framework as base.  
 
 With 
-''' pip install -r requirements.txt '''
+    `pip install -r requirements.txt `
 you install all dependencies.
 
 Copy the pharmacy/template_local_settings.py to pharmacy/local_settings.py and edit this file to your needs. Set the SECRET_KEY for your database.
 To prepare the database run the commands:
-'''     python manage.py migrate '''
-'''     python manage.py makemigrations '''
-'''     python manage.py migrate '''
+`python manage.py migrate ` 
+`python manage.py makemigrations`
+`python manage.py migrate `
 
 Create the superuser to login the first time
-''' python manage.py createsuperuser '''
+`python manage.py createsuperuser`
 
 Finally
-''' python manage.py collectstatic ''' collects all static files like css, javascript and so far.
-''' python manage.py runserver ''' starts serving the app.
+`python manage.py collectstatic` collects all static files like css, javascript and so far.
+`python manage.py runserver` starts serving the app.
+
+You will find how to deploy a Django app with a webserver at [https://docs.djangoproject.com/en/3.2/howto/deployment/](https://docs.djangoproject.com/en/3.2/howto/deployment/)
 
 
 
