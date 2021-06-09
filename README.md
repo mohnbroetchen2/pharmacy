@@ -155,3 +155,14 @@ The molecule is the active substance of a pharmacy
 Submission
 --------
 This is the delivery (part) of an order to the end user. A submission has the value "amount containers" and "quantity". Both values are detached from each other. It's possible to submit two containers and null quantity. The value quantity should be used when submitting a part of a container.  
+
+Mixed Pharmacy
+--------
+The mixed pharmacy entity is the recipe for a mixed solution. IT defines which pharmacy must be used to create a solution.
+
+Mixed Solution
+--------
+The mixed solution is the equivalent to the order. It is the entity which can submit to the end user. To create a mixed solution the user has to select a mixed pharamacy and the system checks all available orders belonging to the pharmacies. The user select the orders wich will be used for the mixed solution and enter the quantity which will be used for it.
+
+Mixed Submission
+--------
