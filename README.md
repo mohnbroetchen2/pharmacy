@@ -1,5 +1,4 @@
-title: 'Welcome to the documentation of pharmacy !'
-
+**Welcome to the documentation of pharmacy !**
 
 Introduction
 ============
@@ -41,21 +40,23 @@ Installation
 The webapp uses the Django framework as base.  
 
 With 
-''' pip install -r requirements.txt '''
+    `pip install -r requirements.txt `
 you install all dependencies.
 
 Copy the pharmacy/template_local_settings.py to pharmacy/local_settings.py and edit this file to your needs. Set the SECRET_KEY for your database.
 To prepare the database run the commands:
-'''     python manage.py migrate '''
-'''     python manage.py makemigrations '''
-'''     python manage.py migrate '''
+`python manage.py migrate ` 
+`python manage.py makemigrations`
+`python manage.py migrate `
 
 Create the superuser to login the first time
-''' python manage.py createsuperuser '''
+`python manage.py createsuperuser`
 
 Finally
-''' python manage.py collectstatic ''' collects all static files like css, javascript and so far.
-''' python manage.py runserver ''' starts serving the app.
+`python manage.py collectstatic` collects all static files like css, javascript and so far.
+`python manage.py runserver` starts serving the app.
+
+You will find how to deploy a Django app with a webserver at [https://docs.djangoproject.com/en/3.2/howto/deployment/](https://docs.djangoproject.com/en/3.2/howto/deployment/)
 
 
 
@@ -65,7 +66,7 @@ Sitemap
 -   Start: <http://pharmacy.leibniz-fli.de>
 -   Full overview: <http://pharmacy.leibniz-fli.de/all>
 -   Passwort change:
-    <http://pharmacy.fli-leibniz.de/accounts/password_change/>
+    <http://pharmacy.leibniz-fli.de/accounts/password_change/>
 -   Changelog:
     <http://pharmacy.leibniz-fli.de/changes>
 
@@ -101,6 +102,8 @@ The full overview shows also pharmacy which isn\'t available
 Entities
 ========
 
+![image](doc/source/images/models.png)
+
 Persons
 -------
 
@@ -110,14 +113,14 @@ Persons are members of the institute and can apply for a pharmacy
 Pharmacy
 --------
 
-[Pharmacy](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/pharmacy/).
+[Pharmacy](http://pharmacy.leibniz-fli.de/admin/pharmadoc/pharmacy/).
 The pharmacy is the medicine. The name is composed of the name of the
 pharmacy and the dose of the active molecule
 
 Order
 -----
 
-[Order](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/order/).
+[Order](http://pharmacy.leibniz-fli.de/admin/pharmadoc/order/).
 An Order increase the stock of a pharmacy. Every order gets an
 identifier from the system. The identifier is composed of the first
 three letters of the name of the pharmacy and the delivery date. If
@@ -132,7 +135,7 @@ which is set to `deactivated`.
 Company
 -------
 
-[Company](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/company/).
+[Company](http://pharmacy.leibniz-fli.de/admin/pharmadoc/company/).
 A Company is the manufacturer of the pharmacy.
 
 Drug class
@@ -146,5 +149,5 @@ The drug class helps to classify the pharmacy into several groups like
 Molecules
 ---------
 
-[Molecule](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/molecule/).
+[Molecule](http://pharmacy.leibniz-fli.de/admin/pharmadoc/molecule/).
 The molecule is the active substance of a pharmacy
