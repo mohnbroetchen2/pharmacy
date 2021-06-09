@@ -115,7 +115,7 @@ Pharmacy
 
 [Pharmacy](http://pharmacy.leibniz-fli.de/admin/pharmadoc/pharmacy/).
 The pharmacy is the medicine. The name is composed of the name of the
-pharmacy and the dose of the active molecule. It's possible to set an "alarm value" for a pharmacy. If this value is set, the "Admin"  receives a mail, if the containers in stock is less then this value for this pharmacy. The available stock of a pharmacy is calculated from all active orders belonging to the pharmacy.
+pharmacy and the dose of the active molecule. It's possible to set an "alarm value" for a pharmacy. If this value is set, the "Admin"  receives a mail, if the containers in stock is less then this value for this pharmacy. The available stock of a pharmacy is calculated from all active orders belonging to the pharmacy. The unit of a pharmacy (e.g. gram, milligram, milliliters) is a calculated field from the orders. Ever order has to be the same unit. If not the unit of the pharmacy is false. This is obviously impractical but has not yet led to problems. 
 
 Order
 -----
@@ -151,3 +151,7 @@ Molecules
 
 [Molecule](http://pharmacy.leibniz-fli.de/admin/pharmadoc/molecule/).
 The molecule is the active substance of a pharmacy
+
+Submission
+--------
+This is the delivery (part) of an order to the end user. A submission has the value "amount containers" and "quantity". Both values are detached from each other. It's possible to submit two containers and null quantity. The value quantity should be used when submitting a part of a container.  
