@@ -66,7 +66,7 @@ Sitemap
 -   Start: <http://pharmacy.leibniz-fli.de>
 -   Full overview: <http://pharmacy.leibniz-fli.de/all>
 -   Passwort change:
-    <http://pharmacy.fli-leibniz.de/accounts/password_change/>
+    <http://pharmacy.leibniz-fli.de/accounts/password_change/>
 -   Changelog:
     <http://pharmacy.leibniz-fli.de/changes>
 
@@ -102,6 +102,8 @@ The full overview shows also pharmacy which isn\'t available
 Entities
 ========
 
+![image](doc/source/images/models.png)
+
 Persons
 -------
 
@@ -111,14 +113,14 @@ Persons are members of the institute and can apply for a pharmacy
 Pharmacy
 --------
 
-[Pharmacy](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/pharmacy/).
+[Pharmacy](http://pharmacy.leibniz-fli.de/admin/pharmadoc/pharmacy/).
 The pharmacy is the medicine. The name is composed of the name of the
 pharmacy and the dose of the active molecule
 
 Order
 -----
 
-[Order](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/order/).
+[Order](http://pharmacy.leibniz-fli.de/admin/pharmadoc/order/).
 An Order increase the stock of a pharmacy. Every order gets an
 identifier from the system. The identifier is composed of the first
 three letters of the name of the pharmacy and the delivery date. If
@@ -133,7 +135,7 @@ which is set to `deactivated`.
 Company
 -------
 
-[Company](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/company/).
+[Company](http://pharmacy.leibniz-fli.de/admin/pharmadoc/company/).
 A Company is the manufacturer of the pharmacy.
 
 Drug class
@@ -147,5 +149,5 @@ The drug class helps to classify the pharmacy into several groups like
 Molecules
 ---------
 
-[Molecule](http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/molecule/).
+[Molecule](http://pharmacy.leibniz-fli.de/admin/pharmadoc/molecule/).
 The molecule is the active substance of a pharmacy
