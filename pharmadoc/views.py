@@ -340,13 +340,13 @@ def createsubmission(request):
                     new_submission.person               = Person.objects.get(name="Trash")
                 except:
                     messages.add_message(request, messages.WARNING, 'There is not a person called Trash') 
-            if licenseid!="Trash":
-                new_submission.license              = License_Number.objects.get(pk=licenseid)
-            else:
-                try:
-                    new_submission.license               = License_Number.objects.get(license="Trash")
-                except:
-                    messages.add_message(request, messages.WARNING, 'There is not a License called Trash') 
+            #if licenseid!="Trash":
+            #    new_submission.license              = License_Number.objects.get(pk=licenseid)
+            #else:
+            #    try:
+            #        new_submission.license               = License_Number.objects.get(license="Trash")
+            #    except:
+            #        messages.add_message(request, messages.WARNING, 'There is not a License called Trash') 
             new_submission.application_number   = request.POST.get("application_number",None)
             new_submission.date                 = request.POST.get("submission_date",None)
             #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
