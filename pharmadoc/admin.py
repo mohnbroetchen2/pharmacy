@@ -104,14 +104,16 @@ class OrderAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('application_number','order','date','person','license','amount_containers','quantity','comment','procedure_control')
-    search_fields = ('date','application_number','person__name','license__license','amount_containers','quantity','comment','procedure_control')
+    exclude = ('license',)
+    filter_horizontal = ('licenses',)
+    list_display = ('application_number','order','date','person','amount_containers','quantity','comment','procedure_control')
+    search_fields = ('date','application_number','person__name','licenses__license','amount_containers','quantity','comment','procedure_control')
     ordering = ('-date','order__pharmacy','application_number','person__name','amount_containers','quantity','comment','procedure_control')
     list_filter = ('order',
                     ('application_number', DropdownFilter),
                    ('date', DropdownFilter),
                    'person',
-                   ('license__license',DropdownFilter),
+                   ('licenses__license',DropdownFilter),
                    ('amount_containers', DropdownFilter),
                    ('quantity', DropdownFilter),
                    ('comment', DropdownFilter),
@@ -180,6 +182,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
    
 class SubmissionForm(forms.ModelForm):
+    
     """
     Form for submission editing in admin
     """

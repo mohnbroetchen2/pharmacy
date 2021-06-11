@@ -1,34 +1,66 @@
-{% extends "base.html" %}  {% load static %} {% block extrascripts %}
+{% extends "base.html" %} {% load static %} {% block extrascripts %}
 {% load bulma_tags %}
 
 {% endblock %}
 {% block content %}
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css"/>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css"/>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
 <script type="text/javascript">
   function showEditPopup(url) {
-      var win = window.open(url, "Edit", 
-          'height=500,width=800,resizable=yes,scrollbars=yes');
-      return false;
+    var win = window.open(url, "Edit",
+      'height=500,width=800,resizable=yes,scrollbars=yes');
+    return false;
   }
   function showAddPopup(triggeringLink) {
-      var name = triggeringLink.id.replace(/^add_/, '');
-      href = triggeringLink.href;
-      var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-      win.focus();
-      return false;
+    var name = triggeringLink.id.replace(/^add_/, '');
+    href = triggeringLink.href;
+    var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+    win.focus();
+    return false;
   }
   function closePopup(win, newID, newRepr, id) {
-      $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
-      win.close();
+    $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+    win.close();
   }
-  
+
+</script>
+
+<script type="text/javascript">
+  function swapElement(fromList,toList){
+    var selectOptions = document.getElementById(fromList);
+    for (var i = 0; i < selectOptions.length; i++) {
+      var opt = selectOptions[i];
+      if (opt.selected) {
+        document.getElementById(fromList).removeChild(opt);
+        document.getElementById(toList).appendChild(opt);
+        i--;
+      }
+    }
+  }
+  function removeElement(fromList,toList){
+    var selectOptions = document.getElementById(fromList);
+    for (var i = 0; i < selectOptions.length; i++) {
+      var opt = selectOptions[i];
+      document.getElementById(fromList).removeChild(opt);
+      document.getElementById(toList).appendChild(opt);
+      i--;
+    }
+  }
 </script>
 
 <h1 class="text-center"> FLI Pharmacy - Submission</h1>
 <div class="field is-grouped is-grouped-right">
-    <div class="control">
-        <button type="button" onclick="discard()" class="btn btn-outline-warning">Discard</button>
-    </div>
+  <div class="control">
+    <button type="button" onclick="discard()" class="btn btn-outline-warning">Discard</button>
   </div>
+</div>
 <form action="/submit/createsubmission" method="post"> {% csrf_token %}
   <div class="field">
     <label class="label">Pharmacy</label>
@@ -36,7 +68,7 @@
       <input class="input" name="pharmacy" type="text" readonly="readonly" value="{{object.pharmacy}}" required>
       <input name="productid" type="hidden" value="{{object.pk}}" readonly="readonly">
     </div>
-  </div> 
+  </div>
   <div class="field">
     <label class="label">Identifier</label>
     <div class="control">
@@ -58,22 +90,62 @@
 
   <div class="field">
     <label class="label">Submission date</label>
-    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-today-highlight="true" >
-        <input id="submissiondate" type="text" class="input form-control" name="submission_date" required>
-        <div class="input-group-addon">
-            <span class="glyphicon glyphicon-th"></span>
-        </div>
+    <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+      data-date-today-highlight="true">
+      <input id="submissiondate" type="text" class="input form-control" name="submission_date" required>
+      <div class="input-group-addon">
+        <span class="glyphicon glyphicon-th"></span>
+      </div>
     </div>
   </div>
   <div class="control">
-    <label class="label">License Number <a href="/license/create" id="add_license" onclick="return showAddPopup(this);"><img src = "/static/admin/img/icon-addlink.svg"></a></label>
+    <label class="label">License Number <a href="/license/create" id="add_license"
+        onclick="return showAddPopup(this);"><img src="/static/admin/img/icon-addlink.svg"></a></label>
     <div class="select">
       <select id="id_license" name="license" required>
-         <option></option>
-         {% for l in license %}
-         <option value="{{l.pk}}">{{l.license}}</option>
-         {% endfor %}
+        <option></option>
+        {% for l in license %}
+        <option value="{{l.pk}}">{{l.license}}</option>
+        {% endfor %}
       </select>
+    </div>
+  </div>
+  <div class="selector">
+    <div class="selector-available">
+      <h2>Available presets for licenses
+        <span class="help help-tooltip help-icon"
+          title="This is the list of available license. You may choose some by selecting them in the box below and then clicking the &quot;Choose&quot; arrow between the two boxes."></span>
+      </h2>
+      <p id="id_licenses_filter" class="selector-filter">
+        <label for="id_licenses_type_input">
+          <span class="help-tooltip search-label-icon"
+            title="Type into this box to filter down the list of available presets for licenses."></span>
+        </label>
+        <input type="text" placeholder="Filter" id="id_licenses_input">
+      </p>
+      <select name="licenses_old" id="id_licenses_from" multiple="" class="filtered"
+        data-field-name="presets for licenses" data-is-stacked="0">
+        {% for l in license %}
+        <option value="{{l.pk}}" title="{{l.license}}">{{l.license}}</option>
+        {% endfor %}
+      </select>
+      <!--a title="Click to choose all presets for used organs at once." href="#" id="id_organ_type_add_all_link"
+        class="selector-chooseall active">Choose all</a-->
+    </div>
+    <ul class="selector-chooser">
+      <li>
+        <a title="Choose" onclick="swapElement('id_licenses_from','id_licenses_to')" id="id_licenses_add_link" class="selector-add">Choose</a>
+      </li>
+      <li>
+        <a title="Remove"  onclick="swapElement('id_licenses_to','id_licenses_from')" id="id_licenses_remove_link" class="selector-remove">Remove</a>
+      </li>
+    </ul>
+    <div class="selector-chosen">
+      <h2>Chosen presets for license <span class="help help-tooltip help-icon"
+          title="This is the list of chosen presets for license. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
+      </h2><select id="id_licenses_to" multiple="" size="0" name="licenses" class="filtered"
+        style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once." onclick="removeElement('id_licenses_to','id_licenses_from')"
+        id="id_license_remove_all_link" class="selector-clearall">Remove all</a>
     </div>
   </div>
   <!--div class="field">
@@ -83,18 +155,20 @@
     </div>
   </div-->
   <div class="control">
-    <label class="label">Recipient <a href="/person/create" id="add_person" onclick="return showAddPopup(this);"><img src = "/static/admin/img/icon-addlink.svg"></a></label>
+    <label class="label">Recipient <a href="/person/create" id="add_person" onclick="return showAddPopup(this);"><img
+          src="/static/admin/img/icon-addlink.svg"></a></label>
     <div class="select">
       <select id="id_person" name="recipient" required>
-         <option></option>
-         {% for p in persons %}
-         <option value="{{p.pk}}">{{p.name}}</option>
-         {% endfor %}
+        <option></option>
+        {% for p in persons %}
+        <option value="{{p.pk}}">{{p.name}}</option>
+        {% endfor %}
       </select>
     </div>
   </div>
   <div class="field">
-    <label class="label" style="margin-top: 5px">Amount of (full) containers of {{object.quantity|floatformat:0}} {{object.unit}}</label>
+    <label class="label" style="margin-top: 5px">Amount of (full) containers of {{object.quantity|floatformat:0}}
+      {{object.unit}}</label>
     <div class="field has-addons has-addons-left">
       <div class="control">
         <input id="containers" class="input" name="full_containers" onchange="calculate()" type="number" value="0">
@@ -102,37 +176,43 @@
       <label class="label" style="margin-left: 2em">Available containers:</label>
       {% if available_containers > 20 %}<span> &nbsp;{{available_containers}}</span>
       {% else %}
-        {% for c in range %}
+      {% for c in range %}
       <div style="width:4em; margin-bottom:1em ">
-        <progress class="progress" value="{{object.quantity}}" max="{{object.quantity}}" style="-webkit-transform: rotate(270deg);
+        <progress class="progress" title="{{object.quantity}} {{object.unit}}" value="{{object.quantity}}"
+          max="{{object.quantity}}" style="-webkit-transform: rotate(270deg);
         -moz-transform: rotate(270deg);
         -o-transform: rotate(270deg);
         transform: rotate(270deg);">100%</progress>
       </div>
       {% endfor %}
       <div style="width:4em; margin-bottom:1em">
-        <progress class="progress" value="{{quantity_last_container}}" max="{{object.quantity}}" style="-webkit-transform: rotate(270deg);
+        <progress class="progress" title="{{quantity_last_container}} {{object.unit}}"
+          value="{{quantity_last_container}}" max="{{object.quantity}}" style="-webkit-transform: rotate(270deg);
         -moz-transform: rotate(270deg);
         -o-transform: rotate(270deg);
         transform: rotate(270deg);">100%</progress>
       </div>
       {% endif %}
-      
+
     </div>
   </div>
   <div class="field ">
     <label class="label">Quantity ({{object.unit}})</label>
     <div class="field has-addons has-addons-left">
       <div class="control">
-        <input class="input" id="quantity" name="quantity" type="number" step="0.01" onchange="calculate()" placeholder="{{object.unit}}" value="0">
-        <input id="quantity_one_container" name="quantity_one_container" type="hidden" value="{{object.quantity}}" readonly="readonly">
-        <input id="available_quantity" name="available_quantity" type="hidden" value="{{object.available_quantity}}" readonly="readonly">
+        <input class="input" id="quantity" name="quantity" type="number" step="0.01" onchange="calculate()"
+          placeholder="{{object.unit}}" value="0">
+        <input id="quantity_one_container" name="quantity_one_container" type="hidden" value="{{object.quantity}}"
+          readonly="readonly">
+        <input id="available_quantity" name="available_quantity" type="hidden" value="{{object.available_quantity}}"
+          readonly="readonly">
       </div>
       <div class="field">
-          <label class="label" style="margin-left: 2em">Overall quantity ({{object.unit}})</label>
+        <label class="label" style="margin-left: 2em">Overall quantity ({{object.unit}})</label>
       </div>
-      <div class="field" style="margin-left: 2em" >
-          <input id="overall_quantity" class="input" name="overall_quantity" type="number" step="0.01" readonly="readonly" value="0" required>
+      <div class="field" style="margin-left: 2em">
+        <input id="overall_quantity" class="input" name="overall_quantity" type="number" step="0.01" readonly="readonly"
+          value="0" required>
       </div>
     </div>
   </div>
@@ -150,57 +230,69 @@
         <button class="button is-light">Cancel</button>
     </div-->
   </div>
-</div>
-<label id="unit" style="display:none">{{object.unit}}</label>
+  </div>
+  <label id="unit" style="display:none">{{object.unit}}</label>
 </form>
 
+
 <script type="text/javascript">
-  function calculate ()
-  {
+  function calculate() {
     var quantity = document.getElementById('quantity').value;
     var available_quantity = document.getElementById('available_quantity').value;
-    var containers= document.getElementById('containers').value;
+    var containers = document.getElementById('containers').value;
     var quantity_one_container = document.getElementById('quantity_one_container').value;
-    var summe = parseInt(quantity_one_container * containers) +  parseFloat(quantity);
+    var summe = parseInt(quantity_one_container * containers) + parseFloat(quantity);
 
-    if (parseFloat(summe)>parseFloat(available_quantity))
-    {
+    if (parseFloat(summe) > parseFloat(available_quantity)) {
       var summe = "";
-      var message="There are only " +available_quantity+ document.getElementById('unit').innerHTML+" available. Please reduce the submission amount."; 
+      var message = "There are only " + available_quantity + document.getElementById('unit').innerHTML + " available. Please reduce the submission amount.";
       alert(message);
       //document.getElementById('quantity_one_container').value = "0";
       //document.getElementById('quantity').value = "0";
     }
     document.getElementById('overall_quantity').value = summe;
   }
-  </script>
+</script>
+
+
+
 
 <script type="text/javascript">
-var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
-$.fn.bootstrapDP = datepicker;         
+  var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
+  $.fn.bootstrapDP = datepicker;         
 </script>
 
 <script type="text/javascript">
-  function discard(){
-    document.getElementById("comment").innerHTML="Disposal because the shelf life has been exceeded";
-    document.getElementById("application_number").value="00";
+  function discard() {
+    document.getElementById("comment").innerHTML = "Disposal because the shelf life has been exceeded";
+    document.getElementById("application_number").value = "00";
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
-    document.getElementById("submissiondate").value=yyyy+'-'+mm+'-'+dd;
-    document.getElementById("quantity").value="{{quantity_last_container}}";
+    document.getElementById("submissiondate").value = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("quantity").value = "{{quantity_last_container}}";
     calculate();
-    var recipient = document.getElementById("recipient");
+    var recipient = document.getElementById("id_person");
     var option = document.createElement("option");
     option.text = "Trash";
-    recipient.add(option,recipient[0]);
-    recipient.selectedIndex=0;
+    recipient.add(option, recipient[0]);
+    recipient.selectedIndex = 0;
     var option_trash = document.createElement("option");
     option_trash.text = "Trash";
-    var license = document.getElementById("license");
-    license.add(option_trash,license[0]);
-    license.selectedIndex=0;
+    var license = document.getElementById("id_license");
+    license.add(option_trash, license[0]);
+    license.selectedIndex = 0;
+
+    var selectOptions = document.getElementById("id_licenses_from");
+    for (var i = 0; i < selectOptions.length; i++) {
+      var opt = selectOptions[i];
+      if (selectOptions.options[i].text == 'Trash') {
+        document.getElementById("id_licenses_from").removeChild(opt);
+        document.getElementById("id_licenses_to").appendChild(opt);
+        i--;
+      }
+    }
   }
 </script>
 

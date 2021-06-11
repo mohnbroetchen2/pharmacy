@@ -323,6 +323,7 @@ def createsubmission(request):
             productid = request.POST.get("productid")
             personid  = request.POST.get("recipient")
             licenseid = request.POST.get("license")
+            licenses = request.POST.getlist("licenses",'None')
             orderObject = Order.objects.get(pk=productid)
             pharmacyObject = orderObject.pharmacy
             submitted_amount = (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0"))
@@ -331,6 +332,7 @@ def createsubmission(request):
                 return HttpResponseRedirect('/')
             new_submission = Submission()
             new_submission.order                = orderObject
+            
             if personid!="Trash":
                 new_submission.person               = Person.objects.get(pk=personid)
             else:
@@ -355,7 +357,16 @@ def createsubmission(request):
             new_submission.save()
             messages.add_message(request, messages.SUCCESS, 'Submission with id {} saved'.format(new_submission.pk))
 
-            
+            if new_submission.person.name == 'Trash':
+                try:
+                    new_submission.licenses.add(License_Number.objects.get(license="Trash"))
+                except:
+                    messages.add_message(request, messages.WARNING, 'There is not a License called Trash')
+            else:
+                for l in licenses:
+                    new_submission.licenses.add(License_Number.objects.get(pk=l))
+                     
+                
             quantityMin = pharmacyObject.alarm_value
             if quantityMin == None:
                 quantityMin = 0
@@ -374,6 +385,8 @@ def createsubmission(request):
             return HttpResponseRedirect('/')
         except BaseException as e:  
             send_mail("Error Pharmacy","Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno) , "pharmacy@leibniz-fli.de",[tec_admin_mail]) 
+            messages.add_message(request, messages.ERROR,"Pharmacy error {} create submission in line {} ".format(e,sys.exc_info()[2].tb_lineno))
+            return HttpResponseRedirect('/')
 
 @login_required
 def seesubmissions(request, primary_key):
