@@ -8,9 +8,9 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css"/>
-<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css"/>
-<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css"/>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
 <script type="text/javascript" src="/static/admin/js/core.js"></script>
 <script type="text/javascript">
   function showEditPopup(url) {
@@ -33,7 +33,7 @@
 </script>
 
 <script type="text/javascript">
-  function swapElement(fromList,toList){
+  function swapElement(fromList, toList) {
     var selectOptions = document.getElementById(fromList);
     for (var i = 0; i < selectOptions.length; i++) {
       var opt = selectOptions[i];
@@ -44,7 +44,7 @@
       }
     }
   }
-  function removeElement(fromList,toList){
+  function removeElement(fromList, toList) {
     var selectOptions = document.getElementById(fromList);
     for (var i = 0; i < selectOptions.length; i++) {
       var opt = selectOptions[i];
@@ -110,6 +110,63 @@
       </select>
     </div>
   </div-->
+  <div class="control">
+    <label class="label">Recipient <a href="/person/create" id="add_person" onclick="return showAddPopup(this);"><img
+          src="/static/admin/img/icon-addlink.svg"></a></label>
+    <div class="select">
+      <select id="id_person" name="recipient" required>
+        <option></option>
+        {% for p in persons %}
+        <option value="{{p.pk}}">{{p.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  {% if object.individual_container == True %}
+  <div class="selector">
+    <div class="selector-available">
+      <h2>Available containers
+        <span class="help help-tooltip help-icon"
+          title="This is the list of available license. You may choose some by selecting them in the box below and then clicking the &quot;Choose&quot; arrow between the two boxes."></span>
+      </h2>
+      <p id="id_container_filter" class="selector-filter">
+        <label for="id_container_input">
+          <span class="help-tooltip search-label-icon"
+            title="Type into this box to filter down the list of available presets for container."></span>
+        </label>
+        <input type="text" placeholder="Filter" id="id_container_input">
+      </p>
+      <select name="container_old" id="id_container_from" multiple="" class="filtered"
+        data-field-name="presets for container" data-is-stacked="0">
+        {% for c in container %}
+        <option value="{{l.container}}" title="{{l.container}}">{{l.container}}</option>
+        {% endfor %}
+      </select>
+      <!--a title="Click to choose all presets for used organs at once." href="#" id="id_organ_type_add_all_link"
+        class="selector-chooseall active">Choose all</a-->
+    </div>
+    <ul class="selector-chooser">
+      <li>
+        <a title="Choose" onclick="swapElement('id_container_from','id_container_to')" id="id_container_add_link"
+          class="selector-add">Choose</a>
+      </li>
+      <li>
+        <a title="Remove" onclick="swapElement('id_container_to','id_container_from')" id="id_container_remove_link"
+          class="selector-remove">Remove</a>
+      </li>
+    </ul>
+    <div class="selector-chosen">
+      <h2>Chosen containers <span class="help help-tooltip help-icon"
+          title="This is the list of chosen containers. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
+      </h2><select id="id_container_to" multiple="" size="0" name="container" class="filtered"
+        style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once."
+        onclick="removeElement('id_container_to','id_container_from')" id="id_container_remove_all_link"
+        class="selector-clearall">Remove all</a>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="selector">
     <div class="selector-available">
       <h2>Available presets for licenses
@@ -134,18 +191,21 @@
     </div>
     <ul class="selector-chooser">
       <li>
-        <a title="Choose" onclick="swapElement('id_licenses_from','id_licenses_to')" id="id_licenses_add_link" class="selector-add">Choose</a>
+        <a title="Choose" onclick="swapElement('id_licenses_from','id_licenses_to')" id="id_licenses_add_link"
+          class="selector-add">Choose</a>
       </li>
       <li>
-        <a title="Remove"  onclick="swapElement('id_licenses_to','id_licenses_from')" id="id_licenses_remove_link" class="selector-remove">Remove</a>
+        <a title="Remove" onclick="swapElement('id_licenses_to','id_licenses_from')" id="id_licenses_remove_link"
+          class="selector-remove">Remove</a>
       </li>
     </ul>
     <div class="selector-chosen">
       <h2>Chosen presets for license <span class="help help-tooltip help-icon"
           title="This is the list of chosen presets for license. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
       </h2><select id="id_licenses_to" multiple="" size="0" name="licenses" class="filtered"
-        style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once." onclick="removeElement('id_licenses_to','id_licenses_from')"
-        id="id_license_remove_all_link" class="selector-clearall">Remove all</a>
+        style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once."
+        onclick="removeElement('id_licenses_to','id_licenses_from')" id="id_license_remove_all_link"
+        class="selector-clearall">Remove all</a>
     </div>
   </div>
   <!--div class="field">
@@ -154,18 +214,7 @@
       <input id="submissiondate" data-provide="datepicker" data-date-format="dd/mm/yyyy" class="input" name="submission_date" type="date" required>
     </div>
   </div-->
-  <div class="control">
-    <label class="label">Recipient <a href="/person/create" id="add_person" onclick="return showAddPopup(this);"><img
-          src="/static/admin/img/icon-addlink.svg"></a></label>
-    <div class="select">
-      <select id="id_person" name="recipient" required>
-        <option></option>
-        {% for p in persons %}
-        <option value="{{p.pk}}">{{p.name}}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
+  <div class="control"></div>
   <div class="field">
     <label class="label" style="margin-top: 5px">Amount of (full) containers of {{object.quantity|floatformat:0}}
       {{object.unit}}</label>
@@ -230,9 +279,21 @@
         <button class="button is-light">Cancel</button>
     </div-->
   </div>
-  </div>
   <label id="unit" style="display:none">{{object.unit}}</label>
 </form>
+
+<script type="text/javascript">
+  (function ($) {
+    $(document).ready(function () {
+      $("#id_licenses_input").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#id_licenses_from option").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    })
+  })(django.jQuery);
+</script>
 
 
 <script type="text/javascript">
@@ -256,10 +317,9 @@
 
 
 
-
 <script type="text/javascript">
   var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
-  $.fn.bootstrapDP = datepicker;         
+  $.fn.bootstrapDP = datepicker;
 </script>
 
 <script type="text/javascript">

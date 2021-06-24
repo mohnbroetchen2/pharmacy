@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number, Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution
+from .models import Pharmacy, Person, Submission, DrugClass, Company, Order, Mixed_Submission, License_Number, Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution, Container
 from .filters import OrderViewFilter, OrderFilter, PharmacyFilter, SubmissionFilter, MixedPharmacyFilter
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -49,6 +49,15 @@ def add_order(request):
                 new_order = form.save()
                 new_order.added_by = request.user
                 new_order.save()
+                i=0
+                if new_order.individual_container == True:
+                    while i < new_order.amount_containers:
+                        new_container = Container()
+                        new_container.identifier = '{}_{}'.format(new_order.identifier,i)
+                        new_container.order = new_order
+                        new_container.amount = new_order.quantity
+                        new_container.save()
+                        i=i+1
                 """"pharmacy = Pharmacy.objects.all()
                 new_order = Order()
                 new_order.pharmacy          = pharmacy[int(form.cleaned_data['pharmacy'])-2]

@@ -124,6 +124,7 @@ class Order (models.Model):
     creation_date       = models.DateTimeField(null=False, auto_now_add=True)
     added_by            = models.ForeignKey(User, unique=False, on_delete=models.CASCADE, default=1)
     amount_containers   = models.PositiveIntegerField(default=1, verbose_name='Amount ordered Containers')
+    individual_container = models.BooleanField(null=False,default=False)
     quantity            = models.DecimalField(help_text="Quantity of one container",max_digits=10, decimal_places=3,verbose_name='Quantity one container')
     unit                = models.CharField(max_length=10, choices=(
         ('ml', 'ml'),
@@ -252,6 +253,11 @@ class Order (models.Model):
         else:
             return(realamount % quantity)
 
+class Container (models.Model):
+    identifier  = models.CharField(max_length=50, unique=True)
+    order       = models.ForeignKey(Order, null=False, on_delete=models.CASCADE)
+    amount      = models.DecimalField(help_text="Content amount",max_digits=10, decimal_places=3, null=False)
+    expiry_date = models.DateField(null=True)
 
 class Person(models.Model):
     name = models.CharField(max_length=250,)
