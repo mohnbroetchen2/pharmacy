@@ -7,10 +7,19 @@
 <script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
-
 <link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css" />
 <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
 <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+<style>
+  /* Style the input field */
+  #inputDropdownContainer {
+    padding: 10px;
+    margin-top: -6px;
+    border: 0;
+    border-radius: 0;
+    background: #f1f1f1;
+  }
+</style>
 <script type="text/javascript" src="/static/admin/js/core.js"></script>
 <script type="text/javascript">
   function showEditPopup(url) {
@@ -123,49 +132,6 @@
     </div>
   </div>
 
-  {% if object.individual_container == True %}
-  <div class="selector">
-    <div class="selector-available">
-      <h2>Available containers
-        <span class="help help-tooltip help-icon"
-          title="This is the list of available license. You may choose some by selecting them in the box below and then clicking the &quot;Choose&quot; arrow between the two boxes."></span>
-      </h2>
-      <p id="id_container_filter" class="selector-filter">
-        <label for="id_container_input">
-          <span class="help-tooltip search-label-icon"
-            title="Type into this box to filter down the list of available presets for container."></span>
-        </label>
-        <input type="text" placeholder="Filter" id="id_container_input">
-      </p>
-      <select name="container_old" id="id_container_from" multiple="" class="filtered"
-        data-field-name="presets for container" data-is-stacked="0">
-        {% for c in container %}
-        <option value="{{l.container}}" title="{{l.container}}">{{l.container}}</option>
-        {% endfor %}
-      </select>
-      <!--a title="Click to choose all presets for used organs at once." href="#" id="id_organ_type_add_all_link"
-        class="selector-chooseall active">Choose all</a-->
-    </div>
-    <ul class="selector-chooser">
-      <li>
-        <a title="Choose" onclick="swapElement('id_container_from','id_container_to')" id="id_container_add_link"
-          class="selector-add">Choose</a>
-      </li>
-      <li>
-        <a title="Remove" onclick="swapElement('id_container_to','id_container_from')" id="id_container_remove_link"
-          class="selector-remove">Remove</a>
-      </li>
-    </ul>
-    <div class="selector-chosen">
-      <h2>Chosen containers <span class="help help-tooltip help-icon"
-          title="This is the list of chosen containers. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
-      </h2><select id="id_container_to" multiple="" size="0" name="container" class="filtered"
-        style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once."
-        onclick="removeElement('id_container_to','id_container_from')" id="id_container_remove_all_link"
-        class="selector-clearall">Remove all</a>
-    </div>
-  </div>
-  {% endif %}
 
   <div class="selector">
     <div class="selector-available">
@@ -202,7 +168,7 @@
     <div class="selector-chosen">
       <h2>Chosen presets for license <span class="help help-tooltip help-icon"
           title="This is the list of chosen presets for license. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
-      </h2><select id="id_licenses_to" multiple="" size="0" name="licenses" class="filtered"
+      </h2><select required="" id="id_licenses_to" multiple="" size="0" name="licenses" class="filtered"
         style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once."
         onclick="removeElement('id_licenses_to','id_licenses_from')" id="id_license_remove_all_link"
         class="selector-clearall">Remove all</a>
@@ -214,6 +180,62 @@
       <input id="submissiondate" data-provide="datepicker" data-date-format="dd/mm/yyyy" class="input" name="submission_date" type="date" required>
     </div>
   </div-->
+  {% if object.individual_container == True %}
+  <div class="control"><label class="label">Choose the containers that are fully submitted</label></div>
+  <div class="selector">
+    <div class="selector-available">
+      <h2>Available containers
+        <span class="help help-tooltip help-icon"
+          title="This is the list of available licenses. You may choose some by selecting them in the box below and then clicking the &quot;Choose&quot; arrow between the two boxes."></span>
+      </h2>
+      <p id="id_container_filter" class="selector-filter">
+        <label for="id_container_input">
+          <span class="help-tooltip search-label-icon"
+            title="Type into this box to filter down the list of available presets for container."></span>
+        </label>
+        <input type="text" placeholder="Filter" id="id_container_input">
+      </p>
+      <select name="container_old" id="id_container_from" multiple="" class="filtered"
+        data-field-name="presets for container" data-is-stacked="0">
+        {% for c in containers %}
+        <option value="{{c.pk}}" title="{{c.identifier}}" data-amountcontainer="{{c.amount}}">{{c.identifier}} ({{c.amount}} {{object.unit}})</option>
+        {% endfor %}
+      </select>
+      <!--a title="Click to choose all presets for used organs at once." href="#" id="id_organ_type_add_all_link"
+        class="selector-chooseall active">Choose all</a-->
+    </div>
+    <ul class="selector-chooser">
+      <li>
+        <a title="Choose" onclick="swapElement('id_container_from','id_container_to'); calculate_individual()" id="id_container_add_link"
+          class="selector-add">Choose</a>
+      </li>
+      <li>
+        <a title="Remove" onclick="swapElement('id_container_to','id_container_from'); calculate_individual()" id="id_container_remove_link"
+          class="selector-remove">Remove</a>
+      </li>
+    </ul>
+    <div class="selector-chosen">
+      <h2>Chosen containers <span class="help help-tooltip help-icon"
+          title="This is the list of chosen containers. You may remove some by selecting them in the box below and then clicking the &quot;Remove&quot; arrow between the two boxes."></span>
+      </h2><select id="id_container_to" multiple="" size="0" name="containers" class="filtered"
+        style="height: 284px;"></select><a title="Click to remove all chosen presets for used organs at once."
+        onclick="removeElement('id_container_to','id_container_from'); calculate_individual()" id="id_container_remove_all_link"
+        class="selector-clearall">Remove all</a>
+    </div>
+  </div>
+  <div class="control">
+    <h2>Container to submit partly</h2>
+    <div class="select is-link">
+      <select id='id_container_partly' name='container_partly'>
+        <option value="0" data-amountcontainer="0">Select dropdown</option>
+        {% for c in containers %}
+        <option value="{{c.pk}}" title="{{c.identifier}}" data-amountcontainer="{{c.amount}}">{{c.identifier}} ({{c.amount}} {{object.unit}})</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  {% else %}
+
   <div class="control"></div>
   <div class="field">
     <label class="label" style="margin-top: 5px">Amount of (full) containers of {{object.quantity|floatformat:0}}
@@ -245,12 +267,18 @@
 
     </div>
   </div>
+  {% endif %}
   <div class="field ">
     <label class="label">Quantity ({{object.unit}})</label>
     <div class="field has-addons has-addons-left">
       <div class="control">
+        {% if object.individual_container == True %}
+        <input class="input" id="quantity" name="quantity" type="number" step="0.01" onchange="calculate_individual()"
+          placeholder="{{object.unit}}" value="0">
+        {% else %}
         <input class="input" id="quantity" name="quantity" type="number" step="0.01" onchange="calculate()"
           placeholder="{{object.unit}}" value="0">
+        {% endif %}
         <input id="quantity_one_container" name="quantity_one_container" type="hidden" value="{{object.quantity}}"
           readonly="readonly">
         <input id="available_quantity" name="available_quantity" type="hidden" value="{{object.available_quantity}}"
@@ -282,6 +310,20 @@
   <label id="unit" style="display:none">{{object.unit}}</label>
 </form>
 
+
+<script type="text/javascript">
+  (function ($){
+    $(document).ready(function(){
+      $("#inputDropdownContainer").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(".dropdown-menu li").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    })
+  })(django.jQuery);
+</script>
+
 <script type="text/javascript">
   (function ($) {
     $(document).ready(function () {
@@ -295,6 +337,45 @@
   })(django.jQuery);
 </script>
 
+<script type="text/javascript">
+  (function ($) {
+    $(document).ready(function () {
+      $("#id_container_input").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#id_container_from option").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    })
+  })(django.jQuery);
+</script>
+
+<script type="text/javascript">
+  function calculate_individual() {
+    var quantity = document.getElementById('quantity').value;
+    var available_quantity = document.getElementById('available_quantity').value;
+    var container_partly = document.getElementById('id_container_partly')
+    var available_quantity_selected_container = container_partly.options[container_partly.selectedIndex].getAttribute('data-amountcontainer');
+    var quantity_one_container = document.getElementById('quantity_one_container').value;
+    if (parseFloat(quantity) > parseFloat(available_quantity_selected_container)) {
+      var message = "There are only " + available_quantity_selected_container + document.getElementById('unit').innerHTML + " available. Please reduce the submission amount.";
+      alert(message);
+      document.getElementById('quantity').value = "0";
+      quantity = 0
+      //document.getElementById('quantity_one_container').value = "0";
+      
+    }
+    var summe = quantity;
+    var selectedContainers = document.getElementById("id_container_to");
+    for (var i = 0; i < selectedContainers.length; i++) {
+      var opt = selectedContainers[i];
+      summe = parseFloat(summe) + parseFloat(selectedContainers.options[i].getAttribute('data-amountcontainer'));
+      //summe = parseInt(summe) + parseFloat(opt.amount);
+    }
+    document.getElementById('overall_quantity').value = summe;
+  }
+</script>
+
 
 <script type="text/javascript">
   function calculate() {
@@ -302,7 +383,7 @@
     var available_quantity = document.getElementById('available_quantity').value;
     var containers = document.getElementById('containers').value;
     var quantity_one_container = document.getElementById('quantity_one_container').value;
-    var summe = parseInt(quantity_one_container * containers) + parseFloat(quantity);
+    var summe = parseFloat(quantity_one_container * containers) + parseFloat(quantity);
 
     if (parseFloat(summe) > parseFloat(available_quantity)) {
       var summe = "";
