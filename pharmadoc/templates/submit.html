@@ -421,14 +421,11 @@
     recipient.selectedIndex = 0;
     var option_trash = document.createElement("option");
     option_trash.text = "Trash";
-    var license = document.getElementById("id_license");
-    license.add(option_trash, license[0]);
-    license.selectedIndex = 0;
 
     var selectOptions = document.getElementById("id_licenses_from");
     for (var i = 0; i < selectOptions.length; i++) {
       var opt = selectOptions[i];
-      if (selectOptions.options[i].text == 'Trash') {
+      if (opt.text == 'Trash') {
         document.getElementById("id_licenses_from").removeChild(opt);
         document.getElementById("id_licenses_to").appendChild(opt);
         i--;
