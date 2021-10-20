@@ -53,7 +53,10 @@ def add_order(request):
                 if new_order.individual_container == True:
                     while i < new_order.amount_containers:
                         new_container = Container()
-                        new_container.identifier = '{}_{}'.format(new_order.identifier,i)
+                        if i < 10:
+                            new_container.identifier = '{}_0{}'.format(new_order.identifier,i+1)
+                        else:
+                            new_container.identifier = '{}_{}'.format(new_order.identifier,i+1)
                         new_container.order = new_order
                         new_container.amount = new_order.quantity
                         new_container.save()
@@ -227,6 +230,10 @@ def submit_view(request, primary_key):
     available_containers = order.available_containers()
     available_quantity = order.available_quantity()
     available_quantity_last_container = order.available_quantity_last_container()
+    if order.individual_container == True:
+        containers = Container.objects.filter(order=order).filter(amount__gt=0)
+        return render(request, 'submit.html', {'license':license,'object': order, 'persons':persons, 'range':range(int(available_containers)-1),
+        'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,'containers':containers})
     return render(request, 'submit.html', {'license':license,'object': order, 'persons':persons, 'range':range(int(available_containers)-1), 'quantity_last_container':available_quantity_last_container,'available_containers':available_containers,})
 
 @login_required
@@ -336,9 +343,6 @@ def createsubmission(request):
             orderObject = Order.objects.get(pk=productid)
             pharmacyObject = orderObject.pharmacy
             submitted_amount = (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0"))
-            if float(orderObject.available_quantity()) < (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0")):
-                messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount {} is higher than the available stock {}'.format(round(submitted_amount,3),orderObject.available_quantity()))
-                return HttpResponseRedirect('/')
             new_submission = Submission()
             new_submission.order                = orderObject
             
@@ -359,8 +363,36 @@ def createsubmission(request):
             new_submission.application_number   = request.POST.get("application_number",None)
             new_submission.date                 = request.POST.get("submission_date",None)
             #new_submission.date                 = time.strptime(request.POST.get("submission_date",None),"%d-%m-%Y")
-            new_submission.amount_containers    = request.POST.get("full_containers",0)
-            new_submission.quantity             = request.POST.get("quantity",0)
+            if orderObject.individual_container == False:
+                new_submission.amount_containers    = request.POST.get("full_containers",0)
+                new_submission.quantity             = request.POST.get("quantity",0)
+                if float(orderObject.available_quantity()) < (float(request.POST.get("full_containers","0")) * float(orderObject.quantity)) + float(request.POST.get("quantity","0")):
+                    messages.add_message(request, messages.WARNING, 'No submission created because the submitted amount {} is higher than the available stock {}'.format(round(submitted_amount,3),orderObject.available_quantity()))
+                    return HttpResponseRedirect('/')
+            else:
+                if licenses == 'None':
+                    messages.add_message(request, messages.WARNING, 'Please select a license. No submission has been created.'.format(round(submitted_amount,3),orderObject.available_quantity()))
+                    return HttpResponseRedirect('/')
+                containers              = request.POST.getlist("containers",'None')
+                container_partly        = request.POST.get("container_partly",'None')
+                new_submission.quantity = float(request.POST.get("quantity",0))
+                if container_partly in containers:
+                    messages.add_message(request, messages.WARNING, 'It is not possible to submit a container fully and in addition partly'.format(round(submitted_amount,3),orderObject.available_quantity()))
+                    return HttpResponseRedirect('/')
+                if new_submission.quantity == 0 and float(container_partly) > 0:
+                    messages.add_message(request, messages.WARNING, 'Please enter a quantity value. No submission has been created.'.format(round(submitted_amount,3),orderObject.available_quantity()))
+                    return HttpResponseRedirect('/')
+                i = 0
+                for c in containers:
+                   container = Container.objects.get(pk=c) 
+                   container.amount = 0
+                   container.save()
+                   i = i +1
+                new_submission.amount_containers = i
+                container = Container.objects.get(pk=container_partly) 
+                
+                container.amount = float(container.amount) - float(request.POST.get("quantity",0))
+                container.save()
             new_submission.comment              = request.POST.get("comment",None)
             new_submission.added_by             = request.user
             new_submission.save()
