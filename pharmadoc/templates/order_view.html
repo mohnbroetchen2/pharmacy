@@ -114,9 +114,9 @@
             <td>{{o.delivery_date|date:'d.m.Y'}}</td>
             <td>{{o.expiry_date|date:'d.m.Y'}}</td>
             <td>{{o.batch_number}}</td>
-            <td>{{o.delivered_quantity|floatformat:0}} {{o.unit}}</td>
+            <td>{{o.delivered_quantity|floatformat}} {{o.unit}}</td>
             <td>{{o.amount_containers}}</td>
-            <td>{{o.available_quantity|floatformat:0}} {{o.unit}}</td>
+            <td>{{o.available_quantity|floatformat}} {{o.unit}}</td>
             <td>{{o.available_containers}}</td>
             <td><a href="/submissions/{{o.pk}}">Submissions</a></td>
           </tr>
