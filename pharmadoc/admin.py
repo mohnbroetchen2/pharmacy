@@ -152,9 +152,9 @@ class Mixed_SolutionAdmin(admin.ModelAdmin):
 @admin.register(Submission_For_Mixed_Solution)
 class Submission_For_Mixed_SolutionAdmin(admin.ModelAdmin):
     list_display    = ('order','used_for','creation_date','amount_containers','quantity')
-    search_fields   = ('order__identifier','used_for__name','creation_date','amount_containers','quantity')
+    search_fields   = ('order__identifier','used_for__identifier','creation_date','amount_containers','quantity')
     ordering        = ('order','used_for','creation_date','amount_containers','quantity')
-    readonly_fields = ('order','used_for','creation_date','amount_containers','quantity','added_by')
+    #readonly_fields = ('order','used_for','creation_date','amount_containers','quantity','added_by')
     class Meta:
         model       = Submission_For_Mixed_Solution
         fields      = ('order','used_for','creation_date','amount_containers','quantity')
