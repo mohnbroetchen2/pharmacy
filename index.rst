@@ -123,3 +123,10 @@ Molecules
 `Molecule <http://pharmacy.scinet.fli-leibniz.de/admin/pharmadoc/molecule/>`_.
 The molecule is the active substance of a pharmacy
 
+Admin user interface
+-------------------
+
+Profiles
+"""""""""
+With the profiles it is possible to activate an email notification for a user if an order expires. For it the job pharmadoc/jobs/weekly/check_expirations has to be triggered.
+The mail includes all orders which will expires in the next week. 

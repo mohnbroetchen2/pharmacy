@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Company, DrugClass, Pharmacy, Person, Submission, Order, Molecule, Vendor, Mixed_Submission,License_Number, Profile
-from .models import Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution
+from .models import Mixed_Pharmacy, Mixed_Solution, Submission_For_Mixed_Solution, Container
 from django import forms
 import csv
 from django.http import HttpResponse
@@ -214,3 +214,11 @@ class Mixed_SolutionForm(forms.ModelForm):
 
 
 
+@admin.register(Container)
+class ContainerAdmin(admin.ModelAdmin):
+    list_display = ('order', 'identifier','amount','expiry_date')
+    search_fields = ('identifier','order')
+    ordering        = ('order','identifier','amount','expiry_date')
+    readonly_fields = ('order','identifier','amount','expiry_date')
+    class Meta:
+        model = Container
