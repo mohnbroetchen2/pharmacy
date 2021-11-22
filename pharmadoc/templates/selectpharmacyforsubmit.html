@@ -40,7 +40,7 @@
           <td>{{pharmacy}}</td>
           <td>{{o.identifier}}</td>
           <td>{{o.batch_number}}</td>
-          <td>{{o.quantity}} {{o.unit}}</td>
+          <td>{{o.quantity|floatformat}} {{o.unit}}</td>
           <td>{{o.delivery_date|date:'d.m.Y'}}</td>
           <td>{{o.expiry_date|date:'d.m.Y'}}</td>
         </tr>
