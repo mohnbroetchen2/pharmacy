@@ -273,10 +273,10 @@
     <div class="field has-addons has-addons-left">
       <div class="control">
         {% if object.individual_container == True %}
-        <input class="input" id="quantity" name="quantity" type="number" step="0.01" onchange="calculate_individual()"
+        <input class="input" id="quantity" name="quantity" type="number" step="0.001" onchange="calculate_individual()"
           placeholder="{{object.unit}}" value="0">
         {% else %}
-        <input class="input" id="quantity" name="quantity" type="number" step="0.01" onchange="calculate()"
+        <input class="input" id="quantity" name="quantity" type="number" step="0.001" onchange="calculate()"
           placeholder="{{object.unit}}" value="0">
         {% endif %}
         <input id="quantity_one_container" name="quantity_one_container" type="hidden" value="{{object.quantity}}"
@@ -288,7 +288,7 @@
         <label class="label" style="margin-left: 2em">Overall quantity ({{object.unit}})</label>
       </div>
       <div class="field" style="margin-left: 2em">
-        <input id="overall_quantity" class="input" name="overall_quantity" type="number" step="0.01" readonly="readonly"
+        <input id="overall_quantity" class="input" name="overall_quantity" type="number" step="0.001" readonly="readonly"
           value="0" required>
       </div>
     </div>
